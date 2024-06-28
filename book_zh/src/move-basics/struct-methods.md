@@ -1,65 +1,49 @@
-# Struct Methods
+# 结构体方法
 
-Move Compiler supports _receiver syntax_, which allows defining methods which can be called on
-instances of a struct. This is similar to the method syntax in other programming languages. It is a
-convenient way to define functions which operate on the fields of a struct.
+Move 编译器支持_接收者语法_，允许在结构体实例上定义可调用的方法。这类似于其他编程语言中的方法语法。这是一种方便的方式，可以在结构体的字段上定义操作。
 
-## Method syntax
+## 方法语法
 
-If the first argument of a function is a struct internal to the module, then the function can be
-called using the `.` operator. If the function uses a struct from another module, then method won't
-be associated with the struct by default. In this case, the function can be called using the
-standard function call syntax.
+如果函数的第一个参数是模块内部的结构体，则可以使用 `.` 运算符调用该函数。如果函数使用另一个模块中的结构体，则默认不会将方法与结构体关联起来。在这种情况下，可以使用标准的函数调用语法来调用该函数。
 
-When a module is imported, the methods are automatically associated with the struct.
+当导入一个模块时，方法会自动与结构体关联起来。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/struct-methods.move:hero}}
 ```
 
-## Method Aliases
+## 方法别名
 
-For modules that define multiple structs and their methods, it is possible to define method aliases
-to avoid name conflicts, or to provide a better-named method for a struct.
+对于定义多个结构体及其方法的模块，可以定义方法别名来避免名称冲突，或为结构体提供更好的方法名。
 
-The syntax for aliases is:
+别名的语法如下：
 
 ```move
-// for local method association
+// 用于本地方法关联
 use fun function_path as Type.method_name;
 
-// exported alias
+// 公共别名
 public use fun function_path as Type.method_name;
 ```
 
-> Public aliases are only allowed for structs defined in the same module. If a struct is defined in
-> another module, an alias can still be created but cannot be made public.
+> 公共别名只允许用于同一模块中定义的结构体。如果结构体在另一个模块中定义，仍然可以创建别名，但不能公开。
 
-In the example below, we changed the `hero` module and added another type - `Villain`. Both `Hero`
-and `Villain` have similar field names and methods. And to avoid name conflicts, we prefixed methods
-with `hero_` and `villain_` respectively. However, we can create aliases for these methods so that
-they can be called on the instances of the structs without the prefix.
+在下面的示例中，我们更改了 `hero` 模块，并添加了另一种类型 - `Villain`。`Hero` 和 `Villain` 都具有类似的字段名称和方法。为了避免名称冲突，我们为这些方法添加了前缀 `hero_` 和 `villain_`。但是，我们可以为这些方法创建别名，以便在结构体实例上调用时不需要前缀。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/struct-methods.move:hero_and_villain}}
 ```
 
-As you can see, in the test function, we called the `health` method on the instances of `Hero` and
-`Villain` without the prefix. The compiler will automatically associate the methods with the
-structs.
+正如你所看到的，在测试函数中，我们在 `Hero` 和 `Villain` 的实例上调用了 `health` 方法，而不使用前缀。编译器将自动将方法与结构体关联起来。
 
-## Aliasing an external module's method
+## 别名一个外部模块的方法
 
-It is also possible to associate a function defined in another module with a struct from the current
-module. Following the same approach, we can create an alias for the method defined in another
-module. Let's use the `bcs::to_bytes` method from the [Standard Library](./standard-library.md) and
-associate it with the `Hero` struct. It will allow serializing the `Hero` struct to a vector of
-bytes.
+还可以将在另一个模块中定义的函数与当前模块的结构体关联起来。按照相同的方法，我们可以为在另一个模块中定义的方法创建别名。让我们使用[标准库](./standard-library.md)中的 `bcs::to_bytes` 方法，并将其与 `Hero` 结构体关联起来。这将允许将 `Hero` 结构体序列化为字节向量。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/struct-methods.move:hero_to_bytes}}
 ```
 
-## Further reading
+## 进一步阅读
 
-- [Method Syntax](/reference/method-syntax.html) in the Move Reference.
+- 在 Move 参考中的 [方法语法](/reference/method-syntax.html)。

@@ -1,118 +1,95 @@
-# String
+# 字符串
 
-While Move does not have a built-in type to represent strings, it does have two standard
-implementations for strings in the [Standard Library](./standard-library.md). The `std::string`
-module defines a `String` type and methods for UTF-8 encoded strings, and the second module,
-`std::ascii`, provides an ASCII `String` type and its methods.
+虽然 Move 没有内置的字符串类型，但它在[标准库](./standard-library.md)中提供了两种字符串的标准实现。`std::string` 模块定义了一个 `String` 类型和处理 UTF-8 编码字符串的方法，而第二个模块 `std::ascii` 则提供了 ASCII `String` 类型及其方法。
 
-> Sui execution environment automatically converts bytevector into `String` in transaction inputs.
-> So in many cases, a String does not need to be constructed in the
-> [Transaction Block](./../concepts/what-is-a-transaction.md).
+> Sui 执行环境会自动将字节向量转换为事务输入中的 `String`。因此，在许多情况下，不需要在[事务块](./../concepts/what-is-a-transaction.md)中构造字符串。
 
 <!--
 
-## Bytestring Literal
+## 字节字符串字面量
 
-TODO:
+TODO：
 
-- reference vector
-- reference literals - [Expression](./expression.md#literals)
+- 引用向量
+- 引用字面量 - [表达式](./expression.md#literals)
 
 -->
 
-## Strings are bytes
+## 字符串即字节
 
-No matter which type of string you use, it is important to know that strings are just bytes. The
-wrappers provided by the `string` and `ascii` modules are just that: wrappers. They do provide
-safety checks and methods to work with strings, but at the end of the day, they are just vectors of
-bytes.
+无论使用哪种类型的字符串，重要的是要知道字符串只是字节。`string` 和 `ascii` 模块提供的封装只是封装而已。它们提供了安全检查和与字符串相关的方法，但归根结底，它们只是字节的向量。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/string.move:custom}}
 ```
 
-## Working with UTF-8 Strings
+## 使用 UTF-8 字符串
 
-While there are two types of strings in the standard library, the `string` module should be
-considered the default. It has native implementations of many common operations, and hence is more
-efficient than the `ascii` module, which is fully implemented in Move.
+虽然标准库中有两种类型的字符串，但应该将 `string` 模块视为默认选项。它具有许多常见操作的本地实现，因此比完全在 Move 中实现的 `ascii` 模块更高效。
 
-### Definition
+### 定义
 
-The `String` type in the `std::string` module is defined as follows:
+`std::string` 模块中的 `String` 类型定义如下：
 
 ```move
-// File: move-stdlib/sources/string.move
-/// A `String` holds a sequence of bytes which is guaranteed to be in utf8 format.
+// 文件：move-stdlib/sources/string.move
+/// `String` 保存一个字节序列，该序列保证是 utf8 格式的。
 public struct String has copy, drop, store {
     bytes: vector<u8>,
 }
 ```
 
-### Creating a String
+### 创建字符串
 
-To create a new UTF-8 `String` instance, you can use the `string::utf8` method. The
-[Standard Library](./standard-library.md) provides an alias `.to_string()` on the `vector<u8>` for
-convenience.
+要创建一个新的 UTF-8 `String` 实例，可以使用 `string::utf8` 方法。为了方便起见，[标准库](./standard-library.md)还为 `vector<u8>` 提供了别名 `.to_string()`。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/string.move:utf8}}
 ```
 
-### Common Operations
+### 常见操作
 
-UTF8 String provides a number of methods to work with strings. The most common operations on strings
-are: concatenation, slicing, and getting the length. Additionally, for custom string operations, the
-`bytes()` method can be used to get the underlying byte vector.
+UTF8 字符串提供了许多用于操作字符串的方法。字符串的常见操作包括连接、切片和获取长度。另外，对于自定义的字符串操作，可以使用 `bytes()` 方法获取底层字节向量。
 
 ```move
 let mut str = b"Hello,".to_string();
 let another = b" World!".to_string();
 
-// append(String) adds the content to the end of the string
+// append(String) 将内容添加到字符串的末尾
 str.append(another);
 
-// `sub_string(start, end)` copies a slice of the string
+// `sub_string(start, end)` 复制字符串的一个子串
 str.sub_string(0, 5); // "Hello"
 
-// `length()` returns the number of bytes in the string
-str.length(); // 12 (bytes)
+// `length()` 返回字符串中的字节数
+str.length(); // 12 (字节)
 
-// methods can also be chained! Get a length of a substring
-str.sub_string(0, 5).length(); // 5 (bytes)
+// 方法也可以链式调用！获取子串的长度
+str.sub_string(0, 5).length(); // 5 (字节)
 
-// whether the string is empty
+// 字符串是否为空
 str.is_empty(); // false
 
-// get the underlying byte vector for custom operations
+// 获取底层字节向量以进行自定义操作
 let bytes: &vector<u8> = str.bytes();
 ```
 
-### Safe UTF-8 Operations
+### 安全的 UTF-8 操作
 
-The default `utf8` method may abort if the bytes passed into it are not valid UTF-8. If you are not
-sure that the bytes you are passing are valid, you should use the `try_utf8` method instead. It
-returns an `Option<String>`, which contains no value if the bytes are not valid UTF-8, and a string
-otherwise.
+默认的 `utf8` 方法在传入的字节不是有效的 UTF-8 时可能会中止。如果不确定传入的字节是否有效，应改用 `try_utf8` 方法。它返回一个 `Option<String>`，如果字节不是有效的 UTF-8，则不包含值，否则包含一个字符串。
 
-> Hint: the name that starts with `try_*` indicates that the function returns an Option with the
-> expected result or `none` if the operation fails. It is a common naming convention borrowed from
-> Rust.
+> 提示：以 `try_*` 开头的名称表示函数返回一个包含期望结果的 Option，如果操作失败，则返回 `none`。这是从 Rust 借用的常见命名约定。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/string.move:safe_utf8}}
 ```
 
-### UTF-8 Limitations
+### UTF-8 的限制
 
-The `string` module does not provide a way to access individual characters in a string. This is
-because UTF-8 is a variable-length encoding, and the length of a character can be anywhere from 1 to
-4 bytes. Similarly, the `length()` method returns the number of bytes in the string, not the number
-of characters.
+`string` 模块没有提供一种访问字符串中单个字符的方法。这是因为 UTF-8 是一种可变长度编码，并且一个字符的长度可以从 1 到 4 个字节不等。类似地，`length()` 方法返回的是字符串的字节数，而不是字符数。
 
-However, methods like `sub_string` and `insert` check character boundaries and will abort when the
-index is in the middle of a character.
+然而，`sub_string` 和 `insert` 等方法会检查字符边界，并在索引位于字符中间时中止。
 
-## ASCII Strings
+## ASCII 字符串
 
-This section is coming soon!
+本节内容即将推出！

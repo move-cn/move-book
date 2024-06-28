@@ -1,70 +1,36 @@
-# Aborting Execution
+## 终止执行
 
-<!-- Consider "aborting execution" -->
+区块链上的交易可以成功，也可以失败。成功执行的交易会将所有对对象和链上数据的改动应用，并且该交易会被提交到区块链上。如果交易失败（abort），则不会应用这些改动。`abort` 关键字用于中止交易，并撤销到目前为止进行的所有更改。
 
-<!--
+> 需要注意的是，Move 语言中没有类似其他语言的捕获机制 (catch mechanism)。如果交易中止，到目前为止进行的所有更改都将被撤销，并且该交易被视为失败。
 
-Chapter: Basic Syntax
-Goal: Introduce abort keyword and `assert!` macro.
-Notes:
-    - previous chapter mentions constants
-    - error constants standard ECamelCase
-    - `assert!` macro
-    - asserts should go before the main logic
-    - Move has no catch mechanism
-    - abort codes are local to the module
-    - there are no error messages emitted
-    - error codes should handle all possible scenarios in this module
+## 终止 (Abort)
 
-Links:
-    - constants (previous section)
- -->
-
-A transaction can either succeed or fail. Successful execution applies all the changes made to
-objects and on-chain data, and the transaction is committed to the blockchain. Alternatively, if a
-transaction aborts, the changes are not applied. The `abort` keyword is used to abort a transaction
-and revert the changes made so far.
-
-> It is important to note that there is no catch mechanism in Move. If a transaction aborts, the
-> changes made so far are reverted, and the transaction is considered failed.
-
-## Abort
-
-The `abort` keyword is used to abort the execution of a transaction. It is used in combination with
-an abort code, which will be returned to the caller of the transaction. The abort code is an
-[integer](./primitive-types.md) of type `u64`.
+`abort` 关键字用于中止交易的执行。它与中止代码 (abort code) 一起使用，该代码会返回给交易的调用者。中止代码是一个无符号 64 位整数 (`u64`)。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/assert-and-abort.move:abort}}
 ```
 
-The code above will, of course, abort with abort code `1`.
+上面的代码肯定会中止执行，并返回中止代码 `1`。
 
-## assert!
+## 断言 (assert!)
 
-The `assert!` macro is a built-in macro that can be used to assert a condition. If the condition is
-false, the transaction will abort with the given abort code. The `assert!` macro is a convenient way
-to abort a transaction if a condition is not met. The macro shortens the code otherwise written with
-an `if` expression + `abort`. The `code` argument is required and has to be a `u64` value.
+`assert!` 是一个内置宏，用于断言一个条件是否成立。如果条件为假，则交易会中止，并返回给定的中止代码。`assert!` 宏提供了一种方便的方法，可以在条件不满足时中止交易。该宏可以替代使用 `if` 语句和 `abort` 来编写的代码。`code` 参数是必需的，它必须是一个 `u64` 值。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/assert-and-abort.move:assert}}
 ```
 
-## Error constants
+## 错误代码
 
-To make error codes more descriptive, it is a good practice to define
-[error constants](./constants.md). Error constants are defined as `const` declarations and are
-usually prefixed with `E` followed by a camel case name. Error constants are no different from other
-constants and don't have special handling, however, they are used to increase the readability of the
-code and make it easier to understand the abort scenarios.
+为了使中止代码更具描述性，定义 [错误代码](./constants.md) 是一个好习惯。错误代码使用 `const` 关键字声明，通常以 `E` 开头，后面跟驼峰式命名。错误代码与其他常量没有什么不同，没有特殊的处理方式，但是它们可以提高代码的可读性，并使人们更容易理解中止场景。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/assert-and-abort.move:error_const}}
 ```
 
-## Further reading
+## 进一步阅读
 
-- [Abort and Assert](/reference/abort-and-assert.html) in the Move Reference.
-- We suggest reading the [Better Error Handling](./../guides/better-error-handling.md) guide to
-  learn about best practices for error handling in Move.
+* Move 参考手册中的 [终止和断言](/reference/abort-and-assert.html)。
+* 我们建议阅读 [更好的错误处理](./../guides/better-error-handling.md) 指南，以学习 Move 中错误处理的最佳实践。

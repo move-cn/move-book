@@ -1,95 +1,58 @@
-# Importing Modules
+## 导入模块
 
-<!--
-    TODO: create a better example for:
-        1. Importing a module in general
-        2. Importing a member
-        3. Importing multiple members
-        4. Grouping imports
-        5. Self keyword for groups
--->
+Move 通过允许模块导入来实现高模块化和代码重用。同一个包中的模块可以互相导入，新的包也可以依赖现有的包并使用它们的模块。本节将介绍导入模块的基础知识以及如何在您自己的代码中使用它们。
 
-<!--
+## 导入模块
 
-Goals:
-    - Show the import syntax
-    - Local dependencies
-    - External dependencies
-    - Importing modules from other packages
-
- -->
-
-Move achieves high modularity and code reuse by allowing module imports. Modules within the same
-package can import each other, and a new package can depend on already existing packages and use
-their modules too. This section will cover the basics of importing modules and how to use them in
-your own code.
-
-## Importing a Module
-
-Modules defined in the same package can import each other. The `use` keyword is followed by the
-module path, which consists of the package address (or alias) and the module name separated by `::`.
+在同一个包中定义的模块可以互相导入。`use` 关键字后面跟着模块路径，该路径由包地址（或别名）和模块名称组成，两者之间用 `::` 分隔。
 
 ```move
-// File: sources/module_one.move
+// 文件: sources/module_one.move
 {{#include ../../../packages/samples/sources/move-basics/importing-modules.move:module_one}}
 ```
 
-Another module defined in the same package can import the first module using the `use` keyword.
+同一个包中定义的另一个模块可以使用 `use` 关键字导入第一个模块。
 
 ```move
-// File: sources/module_two.move
+// 文件: sources/module_two.move
 {{#include ../../../packages/samples/sources/move-basics/importing-modules.move:module_two}}
 ```
 
-## Importing Members
+## 导入成员
 
-You can also import specific members from a module. This is useful when you only need a single
-function or a single type from a module. The syntax is the same as for importing a module, but you
-add the member name after the module path.
+您还可以从模块中导入特定成员。这在您只需要来自模块的单个函数或单个类型时非常有用。语法与导入模块相同，但您在模块路径之后添加成员名称。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/importing-modules.move:members}}
 ```
 
-## Grouping Imports
+## 分组导入
 
-Imports can be grouped into a single `use` statement using the curly braces `{}`. This is useful
-when you need to import multiple members from the same module. Move allows grouping imports from the
-same module and from the same package.
+可以使用花括号 `{}` 将导入分组到单个 `use` 语句中。当您需要从同一个模块导入多个成员时，这非常有用。Move 允许对来自同一个模块和来自同一个包的导入进行分组。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/importing-modules.move:grouped}}
 ```
 
-Single function imports are less common in Move, since the function names can overlap and cause
-confusion. A recommended practice is to import the entire module and use the module path to access
-the function. Types have unique names and should be imported individually.
+在 Move 中，单个函数的导入并不常见，因为函数名称可能会重叠并引起混淆。推荐的做法是导入整个模块并使用模块路径来访问函数。类型具有唯一名称，应该单独导入。
 
-To import members and the module itself in the group import, you can use the `Self` keyword. The
-`Self` keyword refers to the module itself and can be used to import the module and its members.
+要将成员和模块本身一起导入到组导入中，可以使用 `Self` 关键字。`Self` 关键字指的是模块本身，可用于导入模块及其成员。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/importing-modules.move:self}}
 ```
 
-## Resolving Name Conflicts
+## 解决命名冲突
 
-When importing multiple members from different modules, it is possible to have name conflicts. For
-example, if you import two modules that both have a function with the same name, you will need to
-use the module path to access the function. It is also possible to have modules with the same name
-in different packages. To resolve the conflict and avoid ambiguity, Move offers the `as` keyword to
-rename the imported member.
+从不同模块导入多个成员时，可能会出现命名冲突。例如，如果您导入了两个都具有相同名称的函数的模块，则需要使用模块路径来访问该函数。不同的包中也可能存在具有相同名称的模块。为了解决冲突并避免歧义，Move 提供了 `as` 关键字来重命名导入的成员。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/importing-modules.move:conflict}}
 ```
 
-## Adding an External Dependency
+## 添加外部依赖项
 
-Every new package generated via the `sui` binary features a `Move.toml` file with a single
-dependency on the _Sui Framework_ package. The Sui Framework depends on the _Standard Library_
-package. And both of these packages are available in default configuration. Package dependencies are
-defined in the [Package Manifest](./../concepts/manifest.md) as follows:
+通过 `sui` 二进制程序生成的新包都包含一个 `Move.toml` 文件，其中对 _Sui 框架_ 包有一个依赖项。Sui 框架依赖于 _标准库_ 包。这两个包都可以在默认配置中使用。包依赖项在 [包清单](./../concepts/manifest.md) 中定义如下：
 
 ```toml
 [dependencies]
@@ -97,23 +60,15 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 Local = { local = "../my_other_package" }
 ```
 
-The `dependencies` section contains a list of package dependencies. The key is the name of the
-package, and the value is either a git import table or a local path. The git import contains the URL
-of the package, the subdirectory where the package is located, and the revision of the package. The
-local path is a relative path to the package directory.
+`dependencies` 部分包含了一个包依赖项列表。键是包的名称，值是 git 导入表或本地路径。git 导入表包含包的 URL、包所在的子目录以及包的修订版本。本地路径是包目录的相对路径。
 
-If a dependency is added to the `Move.toml` file, the compiler will automatically fetch (and later
-refetch) the dependencies when building the package.
+如果在 `Move.toml` 文件中添加了依赖项，编译器在构建包时会自动获取（稍后会重新获取）依赖项。
 
-## Importing a Module from Another Package
+## 从另一个包导入模块
 
-Normally, packages define their addresses in the `[addresses]` section, so you can use the alias
-instead of the address. For example, instead of `0x2::coin` module, you would use `sui::coin`. The
-`sui` alias is defined in the Sui Framework package. Similarly, the `std` alias is defined in the
-Standard Library package and can be used to access the standard library modules.
+通常，包会在 `[addresses]` 部分定义它们的地址，因此您可以使用别名代替地址。例如，您可以使用 `sui::coin` 模块代替 `0x2::coin` 模块。`sui` 别名在 Sui 框架包中定义。类似地，`std` 别名在标准库包中定义，可用于访问标准库模块。
 
-To import a module from another package, you use the `use` keyword followed by the module path. The
-module path consists of the package address (or alias) and the module name separated by `::`.
+要从另一个包导入模块，请使用 `use` 关键字后跟模块路径。模块路径由包地址（或别名）和模块名称组成，两者之间用 `::` 分隔。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/importing-modules.move:external}}

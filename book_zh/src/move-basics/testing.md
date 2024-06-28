@@ -1,123 +1,49 @@
-# Testing
+# 结构体方法
 
-A crucial part of any software development, and even more - blockchain development, is testing.
-Here, we will cover the basics of testing in Move and how to write and organize tests for your Move
-code.
+Move 编译器支持_接收者语法_，允许在结构体实例上定义可调用的方法。这类似于其他编程语言中的方法语法。这是一种方便的方式，可以在结构体的字段上定义操作。
 
-## The `#[test]` attribute
+## 方法语法
 
-Tests in Move are functions marked with the `#[test]` attribute. This attribute tells the compiler
-that the function is a test function, and it should be run when the tests are executed. Test
-functions are regular functions, but they must take no arguments and have no return value. They
-are excluded from the bytecode, and are never published.
+如果函数的第一个参数是模块内部的结构体，则可以使用 `.` 运算符调用该函数。如果函数使用另一个模块中的结构体，则默认不会将方法与结构体关联起来。在这种情况下，可以使用标准的函数调用语法来调用该函数。
+
+当导入一个模块时，方法会自动与结构体关联起来。
 
 ```move
-module book::testing {
-    // Test attribute is placed before the `fun` keyword. Can be both above or
-    // right before the `fun` keyword: `#[test] fun my_test() { ... }`
-    // The name of the test would be `book::testing::simple_test`.
-    #[test]
-    fun simple_test() {
-        let sum = 2 + 2;
-        assert!(sum == 4, 1);
-    }
-
-    // The name of the test would be `book::testing::more_advanced_test`.
-    #[test] fun more_advanced_test() {
-        let sum = 2 + 2 + 2;
-        assert!(sum == 4, 1);
-    }
-}
+{{#include ../../../packages/samples/sources/move-basics/struct-methods.move:hero}}
 ```
 
-## Running Tests
+## 方法别名
 
-To run tests, you can use the `sui move test` command. This command will first build the package in
-the _test mode_ and then run all the tests found in the package. During test mode, modules from both
-`sources/` and `tests/` directories are processed, and the tests are executed.
+对于定义多个结构体及其方法的模块，可以定义方法别名来避免名称冲突，或为结构体提供更好的方法名。
 
-```bash
-$ sui move test
-> INCLUDING DEPENDENCY Sui
-> INCLUDING DEPENDENCY MoveStdlib
-> BUILDING book
-> Running Move unit tests
-> ...
-```
-
-<!-- TODO: fill output -->
-
-## Test Fail Cases with `#[expected_failure]`
-
-Tests for fail cases can be marked with `#[expected_failure]`. This attribute placed on a `#[test]`
-function tells the compiler that the test is expected to fail. This is useful when you want to test
-that a function fails when a certain condition is met.
-
-> This attribute can only be placed on a `#[test]` function.
-
-The attribute can take an argument for abort code, which is the expected abort code when the test
-fails. If the test fails with a different abort code, the test will fail. If the execution did not
-abort, the test will also fail.
+别名的语法如下：
 
 ```move
-module book::testing_failure {
+// 用于本地方法关联
+use fun function_path as Type.method_name;
 
-    const EInvalidArgument: u64 = 1;
-
-    #[test]
-    #[expected_failure(abort_code = 0)]
-    fun test_fail() {
-        abort 0 // aborts with 0
-    }
-
-    // attributes can be grouped together
-    #[test, expected_failure(abort_code = EInvalidArgument)]
-    fun test_fail_1() {
-        abort 1 // aborts with 1
-    }
-}
+// 公共别名
+public use fun function_path as Type.method_name;
 ```
 
-The `abort_code` argument can use constants defined in the tests module as well as imported from
-other modules. This is the only case where constants can be used and "accessed" in other modules.
+> 公共别名只允许用于同一模块中定义的结构体。如果结构体在另一个模块中定义，仍然可以创建别名，但不能公开。
 
-## Utilities with `#[test_only]`
-
-In some cases, it is helpful to give the test environment access to some of the internal functions
-or features. It simplifies the testing process and allows for more thorough testing. However, it is
-important to remember that these functions should not be included in the final package. This is
-where the `#[test_only]` attribute comes in handy.
+在下面的示例中，我们更改了 `hero` 模块，并添加了另一种类型 - `Villain`。`Hero` 和 `Villain` 都具有类似的字段名称和方法。为了避免名称冲突，我们为这些方法添加了前缀 `hero_` 和 `villain_`。但是，我们可以为这些方法创建别名，以便在结构体实例上调用时不需要前缀。
 
 ```move
-module book::testing {
-    // Public function which uses the `secret` function.
-    public fun multiply_by_secret(x: u64): u64 {
-        x * secret()
-    }
-
-    /// Private function which is not available to the public.
-    fun secret(): u64 { 100 }
-
-    #[test_only]
-    /// This function is only available for testing purposes in tests and other
-    /// test-only functions. Mind the visibility - for `#[test_only]` it is
-    /// common to use `public` visibility.
-    public fun secret_for_testing(): u64 {
-        secret()
-    }
-
-    #[test]
-    // In the test environment we have access to the `secret_for_testing` function.
-    fun test_multiply_by_secret() {
-        let expected = secret_for_testing() * 2;
-        assert!(multiply_by_secret(2) == expected, 1);
-    }
-}
+{{#include ../../../packages/samples/sources/move-basics/struct-methods.move:hero_and_villain}}
 ```
 
-Functions marked with the `#[test_only]` will be available to the test environment, and to the other
-modules if their visibility is set so.
+正如你所看到的，在测试函数中，我们在 `Hero` 和 `Villain` 的实例上调用了 `health` 方法，而不使用前缀。编译器将自动将方法与结构体关联起来。
 
-## Further Reading
+## 别名一个外部模块的方法
 
-- [Unit Testing](https://move-book.com/reference/unit-testing.html) in the Move Reference.
+还可以将在另一个模块中定义的函数与当前模块的结构体关联起来。按照相同的方法，我们可以为在另一个模块中定义的方法创建别名。让我们使用[标准库](./standard-library.md)中的 `bcs::to_bytes` 方法，并将其与 `Hero` 结构体关联起来。这将允许将 `Hero` 结构体序列化为字节向量。
+
+```move
+{{#include ../../../packages/samples/sources/move-basics/struct-methods.move:hero_to_bytes}}
+```
+
+## 进一步阅读
+
+- 在 Move 参考中的 [方法语法](/reference/method-syntax.html)。

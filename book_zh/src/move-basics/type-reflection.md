@@ -1,24 +1,17 @@
-# Type Reflection
+## 类型反射 (Léixìng fǎnshè)
 
-In programming languages _reflection_ is the ability of a program to examine and modify its own
-structure and behavior. In Move, there's a limited form of reflection that allows you to inspect the
-type of a value at runtime. This is useful when you need to store type information in a homogeneous
-collection, or when you need to check if a type belongs to a package.
+在编程语言中，**反射 (fǎnshè)** 是程序检查和修改其自身结构和行为的能力。在 Move 中，有一种有限的反射形式，允许您在运行时检查值的类型。 这在需要将类型信息存储在同质集合 (tóngzhì jíhé) 中，或者需要检查类型是否属于某个包 (bāo) 时非常有用。
 
-Type reflection is implemented in the [Standard Library](./standard-library.md) module
-`std::type_name`. Expressed very roughly, it gives a single function `get<T>()` which returns the
-name of the type `T`.
+类型反射在 Move 标准库 (biaozhुन kù) 模块 `std::type_name` 中实现。简而言之，它提供了一个名为 `get<T>()` 的函数，用于返回类型 `T` 的名称。
 
-## In practice
+## 实践
 
-The module is pretty straightforward, and operations allowed on the result are limited to getting a
-string representation and extracting the module and address of the type.
+该模块非常简单，对结果允许的操作仅限于获取字符串表示形式以及提取类型的模块和地址。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/type-reflection.move:main}}
 ```
 
-## Further reading
+## 进一步阅读 (进一步阅读)
 
-Type reflection is an important part of the language, and it is a crucial part of some of the more
-advanced patterns.
+类型反射是该语言的重要组成部分，也是一些更高级模式的关键部分。

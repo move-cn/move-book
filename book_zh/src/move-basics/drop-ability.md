@@ -1,4 +1,4 @@
-# Abilities: Drop
+# 能力：Drop
 
 <!-- TODO: reiterate, given that we introduce abilities one by one -->
 
@@ -14,7 +14,7 @@ who is we? I am alone, there's no one else here
 
 -->
 
-<!--
+<!-- TODO: 
 
 // Shall we only talk about `drop` ?
 // So that we don't explain scopes and `copy` / `move` semantics just yet?
@@ -38,42 +38,31 @@ Links:
 
  -->
 
-The `drop` ability - the simplest of them - allows the instance of a struct to be _ignored_ or
-_discarded_. In many programming languages this behavior is considered default. However, in Move, a
-struct without the `drop` ability is not allowed to be ignored. This is a safety feature of the Move
-language, which ensures that all assets are properly handled. An attempt to ignore a struct without
-the `drop` ability will result in a compilation error.
+`drop` 能力是最简单的能力，允许对结构体的实例进行“忽略”或“丢弃”。在许多编程语言中，这被认为是默认行为。然而，在Move中，不允许忽略没有`drop`能力的结构体。这是Move语言的一个安全特性，它确保所有资产都得到正确处理。试图忽略没有`drop`能力的结构体将导致编译错误。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/drop-ability.move:main}}
 ```
 
-The `drop` ability is often used on custom collection types to eliminate the need for special
-handling of the collection when it is no longer needed. For example, a `vector` type has the `drop`
-ability, which allows the vector to be ignored when it is no longer needed. However, the biggest
-feature of Move's type system is the ability to not have `drop`. This ensures that the assets are
-properly handled and not ignored.
+`drop` 能力通常在自定义的集合类型上使用，以消除在不再需要集合时的特殊处理需求。例如，`vector` 类型具有 `drop` 能力，这使得在不再需要时可以忽略该向量。然而，Move类型系统最大的特点是能够没有 `drop`。这确保了资产得到正确处理，而不被忽略。
 
-A struct with a single `drop` ability is called a _Witness_. We explain the concept of a _Witness_
-in the
-[Witness and Abstract Implementation](./../programmability/witness-and-abstract-implementation.md)
-section.
+一个仅具有 `drop` 能力的结构体称为 _Witness_。我们在[见证和抽象实现](./../programmability/witness-and-abstract-implementation.md)部分解释了 _Witness_ 的概念。
 
-## Types with the `drop` Ability
+## 带有 `drop` 能力的类型
 
-All native types in Move have the `drop` ability. This includes:
+Move中的所有原生类型都具有 `drop` 能力。包括：
 
 - [bool](./../move-basics/primitive-types.md#booleans)
-- [unsigned integers](./../move-basics/primitive-types.md#integers)
+- [无符号整数](./../move-basics/primitive-types.md#integers)
 - [vector](./../move-basics/vector.md)
 - [address](./../move-basics/address.md)
 
-All of the types defined in the standard library have the `drop` ability as well. This includes:
+标准库中定义的所有类型也都具有 `drop` 能力。包括：
 
 - [Option](./../move-basics/option.md)
 - [String](./../move-basics/string.md)
 - [TypeName](./../move-basics/type-reflection.md#typename)
 
-## Further reading
+## 进一步阅读
 
-- [Type Abilities](/reference/type-abilities.html) in the Move Reference.
+- Move参考中的[Type Abilities](/reference/type-abilities.html)。

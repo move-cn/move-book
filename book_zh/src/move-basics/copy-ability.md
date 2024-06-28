@@ -1,57 +1,46 @@
-# Abilities: Copy
+# 能力：复制
 
-In Move, the _copy_ ability on a type indicates that the instance or the value of the type can be
-copied. While this behavior may feel very natural when working with numbers or other simple types,
-it is not the default for custom types in Move. This is because Move is designed to express digital
-assets and resources, and inability to copy is a key element of the resource model.
+在 Move 中，类型上的 _copy_ 能力表示该类型的实例或值可以被复制。尽管在处理数字或其他简单类型时，这种行为可能非常自然，但在 Move 中自定义类型默认不具备这种能力。这是因为 Move 旨在表达数字资产和资源，而无法复制是资源模型的一个关键要素。
 
-However, Move type system allows you to define custom types with the _copy_ ability.
+然而，Move 类型系统允许您定义具有 _copy_ 能力的自定义类型。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/copy-ability.move:copyable}}
 ```
 
-In the example above, we define a custom type `Copyable` with the _copy_ ability. This means that
-instances of `Copyable` can be copied, both implicitly and explicitly.
+在上面的例子中，我们定义了一个具有 _copy_ 能力的自定义类型 `Copyable`。这意味着 `Copyable` 的实例可以被复制，无论是隐式的还是显式的。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/copy-ability.move:copyable_test}}
 ```
 
-In the example above, `a` is copied to `b` implicitly, and then explicitly copied to `c` using the
-dereference operator. If `Copyable` did not have the _copy_ ability, the code would not compile, and
-the Move compiler would raise an error.
+在上面的例子中，`a` 被隐式地复制到 `b`，然后使用解引用操作符显式地复制到 `c`。如果 `Copyable` 没有 _copy_ 能力，代码将无法编译，Move 编译器会抛出错误。
 
-## Copying and Drop
+## 复制与丢弃
 
-The `copy` ability is closely related to [`drop` ability](./drop-ability.md). If a type has the
-_copy_ ability, very likely that it should have `drop` too. This is because the _drop_ ability is
-required to clean up the resources when the instance is no longer needed. If a type has only _copy_,
-then managing its instances gets more complicated, as the values cannot be ignored.
+`copy` 能力与 [`drop` 能力](./drop-ability.md) 密切相关。如果一个类型具有 _copy_ 能力，那么它很可能也应该具有 `drop` 能力。这是因为 _drop_ 能力用于在实例不再需要时清理资源。如果一个类型只有 _copy_，那么管理它的实例会变得更加复杂，因为这些值不能被忽略。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/copy-ability.move:copy_drop}}
 ```
 
-All of the primitive types in Move behave as if they have the _copy_ and _drop_ abilities. This
-means that they can be copied and dropped, and the Move compiler will handle the memory management
-for them.
+Move 中的所有原始类型都表现得像是具有 _copy_ 和 _drop_ 能力。这意味着它们可以被复制和丢弃，并且 Move 编译器会为它们处理内存管理。
 
-## Types with the `copy` Ability
+## 具有 `copy` 能力的类型
 
-All native types in Move have the `copy` ability. This includes:
+Move 中的所有本机类型都具有 `copy` 能力。这包括：
 
-- [bool](./../move-basics/primitive-types.md#booleans)
-- [unsigned integers](./../move-basics/primitive-types.md#integers)
-- [vector](./../move-basics/vector.md)
-- [address](./../move-basics/address.md)
+- [布尔值](./../move-basics/primitive-types.md#booleans)
+- [无符号整数](./../move-basics/primitive-types.md#integers)
+- [向量](./../move-basics/vector.md)
+- [地址](./../move-basics/address.md)
 
-All of the types defined in the standard library have the `copy` ability as well. This includes:
+标准库中定义的所有类型也具有 `copy` 能力。这包括：
 
 - [Option](./../move-basics/option.md)
 - [String](./../move-basics/string.md)
 - [TypeName](./../move-basics/type-reflection.md#typename)
 
-## Further reading
+## 进一步阅读
 
-- [Type Abilities](/reference/type-abilities.html) in the Move Reference.
+- [类型能力](/reference/type-abilities.html) 在 Move 参考中。

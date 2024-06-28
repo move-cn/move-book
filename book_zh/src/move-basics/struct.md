@@ -1,86 +1,55 @@
-# Custom Types with Struct
+# 使用结构体定义自定义类型
 
-Move's type system shines when it comes to defining custom types. User defined types can be custom
-tailored to the specific needs of the application. Not just on the data level, but also in its
-behavior. In this section we introduce the struct definition and how to use it.
+在 Move 的类型系统中，定义自定义类型可以根据应用程序的特定需求进行定制。这不仅仅局限于数据层面，还包括其行为。本节介绍了结构体的定义及其使用方法。
 
-## Struct
+## 结构体
 
-To define a custom type, you can use the `struct` keyword followed by the name of the type. After
-the name, you can define the fields of the struct. Each field is defined with the
-`field_name: field_type` syntax. Field definitions must be separated by commas. The fields can be of
-any type, including other structs.
+要定义自定义类型，可以使用 `struct` 关键字后跟类型的名称。在名称之后，可以定义结构体的字段。每个字段使用 `field_name: field_type` 语法进行定义，字段定义之间用逗号分隔。字段可以是任何类型，包括其他结构体。
 
-> Move does not support recursive structs, meaning a struct cannot contain itself as a field.
+> Move 不支持递归结构体，这意味着结构体不能包含自身作为字段。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/struct.move:def}}
 ```
 
-In the example above, we define a `Record` struct with five fields. The `title` field is of type
-`String`, the `artist` field is of type `Artist`, the `year` field is of type `u16`, the `is_debut`
-field is of type `bool`, and the `edition` field is of type `Option<u16>`. The `edition` field is of
-type `Option<u16>` to represent that the edition is optional.
+在上面的示例中，我们定义了一个 `Record` 结构体，它包含五个字段：`title` 字段是 `String` 类型，`artist` 字段是 `Artist` 类型，`year` 字段是 `u16` 类型，`is_debut` 字段是 `bool` 类型，`edition` 字段是 `Option<u16>` 类型。`edition` 字段的类型是 `Option<u16>`，表示版本号是可选的。
 
-Structs are private by default, meaning they cannot be imported and used outside of the module they
-are defined in. Their fields are also private and can't be accessed from outside the module. See
-[visibility](./visibility.md) for more information on different visibility modifiers.
+结构体默认是私有的，意味着它们不能被导入和在定义之外的模块中使用。它们的字段也是私有的，无法从模块外部访问。有关不同可见性修饰符的更多信息，请参阅[可见性](./visibility.md)章节。
 
-> Fields of a struct are private and can only be accessed by the module defining the struct. Reading
-> and writing the fields of a struct in other modules is only possible if the module defining the
-> struct provides public functions to access the fields.
+> 结构体的字段是私有的，只能由定义结构体的模块访问。要在其他模块中读取和写入结构体的字段，必须由定义结构体的模块提供公共函数来访问字段。
 
-## Create and use an instance
+## 创建和使用实例
 
-We described how struct _definition_ works. Now let's see how to initialize a struct and use it. A
-struct can be initialized using the `struct_name { field1: value1, field2: value2, ... }` syntax.
-The fields can be initialized in any order, and all of the fields must be set.
+我们已经描述了结构体的定义方式。现在让我们看看如何初始化结构体并使用它。结构体可以使用 `struct_name { field1: value1, field2: value2, ... }` 的语法进行初始化。字段的初始化顺序可以任意，但必须设置所有字段。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/struct.move:pack}}
 ```
 
-In the example above, we create an instance of the `Artist` struct and set the `name` field to a
-string "The Beatles".
+在上面的示例中，我们创建了 `Artist` 结构体的一个实例，并将 `name` 字段设置为字符串 "The Beatles"。
 
-To access the fields of a struct, you can use the `.` operator followed by the field name.
+要访问结构体的字段，可以使用 `.` 运算符后跟字段名。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/struct.move:access}}
 ```
 
-Only module defining the struct can access its fields (both mutably and immutably). So the above
-code should be in the same module as the `Artist` struct.
+只有定义结构体的模块才能访问其字段（可变和不可变）。因此，上述代码应该与 `Artist` 结构体位于同一个模块中。
 
-<!-- ## Accessing Fields
+## 解构结构体
 
-Struct fields are private and can be accessed only by the module defining the struct. To access the fields of a struct, you can use the `.` operator followed by the field name.
-
-```move
-# anchor: access
-{{#include ../../../packages/samples/sources/move-basics/struct.move:access}}
-```
--->
-
-## Unpacking a struct
-
-Structs are non-discardable by default, meaning that the initiated struct value must be used: either
-stored or _unpacked_. Unpacking a struct means deconstructing it into its fields. This is done using
-the `let` keyword followed by the struct name and the field names.
+结构体默认是非可丢弃的，这意味着初始化的结构体值必须被使用：要么存储，要么进行 _解构_。解构结构体意味着将其拆解为其各个字段。可以使用 `let` 关键字后跟结构体名称和字段名称来完成解构。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/struct.move:unpack}}
 ```
 
-In the example above we unpack the `Artist` struct and create a new variable `name` with the value
-of the `name` field. Because the variable is not used, the compiler will raise a warning. To
-suppress the warning, you can use the underscore `_` to indicate that the variable is intentionally
-unused.
+在上面的示例中，我们解构 `Artist` 结构体，并创建了一个新变量 `name`，其值为 `name` 字段的值。因为变量未被使用，编译器会发出警告。为了消除警告，可以使用下划线 `_` 表示变量是有意未使用的。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/struct.move:unpack_ignore}}
 ```
 
-## Further reading
+## 进一步阅读
 
-- [Structs](/reference/structs.html) in the Move Reference.
+- 在 Move 参考中查看 [结构体](/reference/structs.html)。
