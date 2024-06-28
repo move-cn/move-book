@@ -1,73 +1,55 @@
-# Upgradeability Practices
+# 可升级性实践
 
-To talk about best practices for upgradeability, we need to first understand what can be upgraded in
-a package. The base premise of upgradeability is that an upgrade should not break public
-compatibility with the previous version. The parts of the module which can be used in dependent
-packages should not change their static signature. This applies to modules - a module can not be
-removed from a package, public structs - they can be used in function signatures and public
-functions - they can be called from other packages.
+为了讨论可升级性的最佳实践，我们首先需要了解包中哪些部分可以升级。可升级性的基本前提是，升级不应破坏与先前版本的公共兼容性。模块中可以在依赖包中使用的部分不应更改其静态签名。这适用于模块——模块不能从包中删除，公共结构体——它们可以在函数签名中使用，以及公共函数——它们可以从其他包中调用。
 
 ```move
-// module can not be removed from the package
+// 模块不能从包中删除
 module book::upgradable {
-    // dependencies can be changed (if they are not used in public signatures)
+    // 依赖项可以更改（如果它们未在公共签名中使用）
     use std::string::String;
-    use sui::event; // can be removed
+    use sui::event; // 可以删除
 
-    // public structs can not be removed and can't be changed
+    // 公共结构体不能删除且不能更改
     public struct Book has key {
         id: UID,
         title: String,
     }
 
-    // public structs can not be removed and can't be changed
+    // 公共结构体不能删除且不能更改
     public struct BookCreated has copy, drop {
         /* ... */
     }
 
-    // public functions can not be removed and their signature can never change
-    // but the implementation can be changed
+    // 公共函数不能删除且其签名不能更改，但实现可以更改
     public fun create_book(ctx: &mut TxContext): Book {
         create_book_internal(ctx)
 
-        // can be removed and changed
+        // 可以删除和更改
         event::emit(BookCreated {
             /* ... */
         })
     }
 
-    // package-visibility functions can be removed and changed
+    // 包可见性函数可以删除和更改
     public(package) fun create_book_package(ctx: &mut TxContext): Book {
         create_book_internal(ctx)
     }
 
-    // entry functions can be removed and changed as long they're not public
+    // 入口函数可以删除和更改，只要它们不是公共的
     entry fun create_book_entry(ctx: &mut TxContext): Book {
         create_book_internal(ctx)
     }
 
-    // private functions can be removed and changed
+    // 私有函数可以删除和更改
     fun create_book_internal(ctx: &mut TxContext): Book {
         abort 0
     }
 }
 ```
 
-<!--
-## Using entry and friend functions
+## 对象版本控制
 
-TODO: Add a section about entry and friend functions
--->
-
-## Versioning objects
-
-<!-- This practice is for function version locking based on a shared state -->
-
-To discard previous versions of the package, the objects can be versioned. As long as the object
-contains a version field, and the code which uses the object expects and asserts a specific version,
-the code can be force-migrated to the new version. Normally, after an upgrade, admin functions can
-be used to update the version of the shared state, so that the new version of code can be used, and
-the old version aborts with a version mismatch.
+要放弃包的先前版本，可以对对象进行版本控制。只要对象包含一个版本字段，并且使用对象的代码期望并断言特定版本，代码就可以强制迁移到新版本。通常，在升级后，可以使用管理员函数来更新共享状态的版本，以便可以使用新版本的代码，而旧版本由于版本不匹配而中止。
 
 ```move
 module book::versioned_state {
@@ -76,7 +58,7 @@ module book::versioned_state {
 
     const VERSION: u8 = 1;
 
-    /// The shared state (can be owned too)
+    /// 共享状态（也可以是所有的）
     public struct SharedState has key {
         id: UID,
         version: u8,
@@ -90,27 +72,22 @@ module book::versioned_state {
 }
 ```
 
-## Versioning configuration with dynamic fields
+## 使用动态字段进行配置版本控制
 
-<!-- This practice is for versioning the contents / structure of objects -->
-
-There's a common pattern in Sui which allows changing the stored configuration of an object while
-retaining the same object signature. This is done by keeping the base object simple and versioned
-and adding an actual configuration object as a dynamic field. Using this _anchor_ pattern, the
-configuration can be changed with package upgrades while keeping the same base object signature.
+在 Sui 中有一种常见模式，允许更改对象的存储配置，同时保留相同的对象签名。这是通过保持基础对象简单且有版本，并将实际配置对象作为动态字段添加来实现的。使用这种 _锚_ 模式，可以通过包升级更改配置，同时保持相同的基础对象签名。
 
 ```move
 module book::versioned_config {
     use sui::vec_map::VecMap;
     use std::string::String;
 
-    /// The base object
+    /// 基础对象
     public struct Config has key {
         id: UID,
         version: u16
     }
 
-    /// The actual configuration
+    /// 实际配置
     public struct ConfigV1 has store {
         data: Bag,
         metadata: VecMap<String, String>
@@ -120,8 +97,8 @@ module book::versioned_config {
 }
 ```
 
-## Modular architecture
+## 模块化架构
 
-This section is coming soon!
+此部分即将推出！
 
-<!-- TODO: add two patterns for modular architecture: object capability (SuiFrens) and witness registry (SuiNS) -->
+通过这些实践，你可以确保你的 Move 包在升级时保持兼容性，同时利用灵活的版本控制机制来管理对象和配置的变化。

@@ -1,37 +1,26 @@
-# Better error handling
+# 更好的错误处理
 
-Whenever execution encounters an abort, transaction fails and abort code is returned to the caller.
-Move VM returns the module name that aborted the transaction and the abort code. This behavior is
-not fully transparent to the caller of the transaction, especially when a single function contains
-multiple calls to the same function which may abort. In this case, the caller will not know which
-call aborted the transaction, and it will be hard to debug the issue or provide meaningful error
-message to the user.
+当执行过程中遇到中止时，交易将失败，并将中止代码返回给调用者。Move VM 返回中止交易的模块名称和中止代码。此行为对交易的调用者并不完全透明，尤其是在单个函数包含对可能中止的相同函数的多个调用时。在这种情况下，调用者将不知道哪个调用中止了交易，并且难以调试问题或向用户提供有意义的错误消息。
 
 ```move
 module book::module_a {
     use book::module_b;
 
     public fun do_something() {
-        let field_1 = module_b::get_field(1); // may abort with 0
-        /* ... a lot of logic ... */
-        let field_2 = module_b::get_field(2); // may abort with 0
-        /* ... some more logic ... */
-        let field_3 = module_b::get_field(3); // may abort with 0
+        let field_1 = module_b::get_field(1); // 可能中止并返回 0
+        /* ... 许多逻辑 ... */
+        let field_2 = module_b::get_field(2); // 可能中止并返回 0
+        /* ... 更多逻辑 ... */
+        let field_3 = module_b::get_field(3); // 可能中止并返回 0
     }
 }
 ```
 
-The example above illustrates the case when a single function contains multiple calls which may
-abort. If the caller of the `do_something` function receives an abort code `0`, it will be hard to
-understand which call to `module_b::get_field` aborted the transaction. To address this problem,
-there are common patterns that can be used to improve error handling.
+上面的例子说明了单个函数包含多个可能中止的调用的情况。如果 `do_something` 函数的调用者收到中止代码 `0`，将很难理解是哪个调用中止了交易。为了解决这个问题，可以使用一些常见的模式来改进错误处理。
 
-## Rule 1: Handle all possible scenarios
+## 规则 1：处理所有可能的情况
 
-It is considered a good practice to provide a safe "check" function that returns a boolean value
-indicating whether an operation can be performed safely. If the `module_b` provides a function
-`has_field` that returns a boolean value indicating whether a field exists, the `do_something`
-function can be rewritten as follows:
+提供一个安全的“检查”函数以返回布尔值，指示操作是否可以安全执行是一种良好的实践。如果 `module_b` 提供了一个返回布尔值指示字段是否存在的函数 `has_field`，则可以将 `do_something` 函数重写如下：
 
 ```move
 module book::module_a {
@@ -52,14 +41,11 @@ module book::module_a {
 }
 ```
 
-By adding custom checks before each call to `module_b::get_field`, the developer of the `module_a`
-takes control over the error handling. And it allows implementing the second rule.
+通过在每次调用 `module_b::get_field` 之前添加自定义检查，`module_a` 的开发者控制了错误处理。这也使得实现第二条规则成为可能。
 
-## Rule 2: Abort with different codes
+## 规则 2：使用不同的代码中止
 
-The second trick, once the abort codes are handled by the caller module, is to use different abort
-codes for different scenarios. This way, the caller module can provide a meaningful error message to
-the user. The `module_a` can be rewritten as follows:
+一旦调用者模块处理了中止代码，使用不同的中止代码针对不同的情况。这使得调用者模块可以向用户提供有意义的错误消息。可以将 `module_a` 重写如下：
 
 ```move
 module book::module_a {
@@ -82,16 +68,11 @@ module book::module_a {
 }
 ```
 
-Now, the caller module can provide a meaningful error message to the user. If the caller receives an
-abort code `0`, it can be translated to "Field 1 does not exist". If the caller receives an abort
-code `1`, it can be translated to "Field 2 does not exist". And so on.
+现在，调用者模块可以向用户提供有意义的错误消息。如果调用者收到中止代码 `0`，可以将其翻译为“字段 1 不存在”。如果调用者收到中止代码 `1`，可以将其翻译为“字段 2 不存在”，依此类推。
 
-## Rule 3: Return bool instead of assert
+## 规则 3：返回布尔值而不是断言
 
-A developer is often tempted to add a public function that would assert all the conditions and abort
-the execution. However, it is a better practice to create a function that returns a boolean value
-instead. This way, the caller module can handle the error and provide a meaningful error message to
-the user.
+开发人员常常倾向于添加一个公共函数来断言所有条件并中止执行。然而，更好的做法是创建一个返回布尔值的函数。这样，调用者模块可以处理错误并向用户提供有意义的错误消息。
 
 ```move
 module book::some_app_assert {
@@ -108,14 +89,14 @@ module book::some_app_assert {
         // ...
     }
 
-    /// Don't do this
+    /// 不要这样做
     public fun assert_is_authorized() {
-        assert!(/* some condition */ true, ENotAuthorized);
+        assert!(/* 一些条件 */ true, ENotAuthorized);
     }
 }
 ```
 
-This module can be rewritten as follows:
+此模块可以重写如下：
 
 ```move
 module book::some_app {
@@ -132,16 +113,15 @@ module book::some_app {
     }
 
     public fun is_authorized(): bool {
-        /* some condition */ true
+        /* 一些条件 */ true
     }
 
-    // a private function can still be used to avoid code duplication for a case
-    // when the same condition with the same abort code is used in multiple places
+    // 私有函数仍可以用于避免代码重复的情况
+    // 当相同的条件与相同的中止代码在多个地方使用时
     fun assert_is_authorized() {
         assert!(is_authorized(), ENotAuthorized);
     }
 }
 ```
 
-Utilizing these three rules will make the error handling more transparent to the caller of the
-transaction, and it will allow other developers to use custom abort codes in their modules.
+利用这三个规则可以使交易调用者的错误处理更加透明，并允许其他开发人员在其模块中使用自定义中止代码。
