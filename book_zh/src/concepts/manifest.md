@@ -1,8 +1,6 @@
-# Package Manifest
+# 包清单
 
-The `Move.toml` is a manifest file that describes the [package](./packages.md) and its dependencies.
-It is written in [TOML](https://toml.io/en/) format and contains multiple sections, the most
-important of which are `[package]`, `[dependencies]` and `[addresses]`.
+`Move.toml` 是描述 [包](./packages.md) 及其依赖关系的清单文件，采用 [TOML](https://toml.io/en/) 格式，包含多个部分，其中最重要的是 `[package]`、`[dependencies]` 和 `[addresses]`。
 
 ```toml
 [package]
@@ -21,46 +19,33 @@ alice = "0xA11CE"
 alice = "0xB0B"
 ```
 
-## Sections
+## 各部分详解
 
 ### Package
 
-The `[package]` section is used to describe the package. None of the fields in this section are
-published on chain, but they are used in tooling and release management; they also specify the Move
-edition for the compiler.
+`[package]` 部分用于描述包。该部分的字段不会被发布到链上，但会用于工具和版本管理；它还指定了编译器使用的 Move 版本。
 
-- `name` - the name of the package when it is imported;
-- `version` - the version of the package, can be used in release management;
-- `edition` - the edition of the Move language; currently, the only valid value is `2024`.
-
-<!-- published-at -->
+- `name` - 导入时包的名称；
+- `version` - 包的版本，可用于版本管理；
+- `edition` - Move 语言的版本；目前唯一有效的值是 `2024`。
 
 ### Dependencies
 
-The `[dependencies]` section is used to specify the dependencies of the project. Each dependency is
-specified as a key-value pair, where the key is the name of the dependency, and the value is the
-dependency specification. The dependency specification can be a git repository URL or a path to the
-local directory.
+`[dependencies]` 部分用于指定项目的依赖关系。每个依赖关系都以键值对的形式指定，键是依赖的名称，值是依赖的规范。依赖规范可以是 git 仓库的 URL 或本地目录的路径。
 
 ```toml
-# git repository
+# git 仓库
 Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
 
-# local directory
+# 本地目录
 MyPackage = { local = "../my-package" }
 ```
 
-Packages also import addresses from other packages. For example, the Sui dependency adds the `std`
-and `sui` addresses to the project. These addresses can be used in the code as aliases for the
-addresses.
+包还可以从其他包导入地址。例如，Sui 依赖项将 `std` 和 `sui` 地址添加到项目中。这些地址可以在代码中用作地址的别名。
 
-### Resolving version conflicts with override
+### 使用 override 解决版本冲突
 
-Sometimes dependencies have conflicting versions of the same package. For example, if you have two
-dependencies that use different versions of the Sui package, you can override the dependency in the
-`[dependencies]` section. To do so, add the `override` field to the dependency. The version of the
-dependency specified in the `[dependencies]` section will be used instead of the one specified in
-the dependency itself.
+有时候依赖项会有相同包的不同版本之间的冲突。例如，如果有两个依赖项使用了不同版本的 Sui 包，可以在 `[dependencies]` 部分使用 `override` 字段来解决冲突。在依赖关系中指定的版本将覆盖依赖项本身指定的版本。
 
 ```toml
 [dependencies]
@@ -69,39 +54,29 @@ Sui = { override = true, git = "https://github.com/MystenLabs/sui.git", subdir =
 
 ### Dev-dependencies
 
-It is possible to add `[dev-dependencies]` section to the manifest. It is used to override
-dependencies in the dev and test modes. For example, if you want to use a different version of the
-Sui package in the dev mode, you can add a custom dependency specification to the
-`[dev-dependencies]` section.
+可以在清单中添加 `[dev-dependencies]` 部分，用于在开发和测试模式下覆盖依赖关系。例如，如果想在开发模式下使用不同版本的 Sui 包，可以在 `[dev-dependencies]` 部分添加自定义的依赖规范。
 
 ### Addresses
 
-The `[addresses]` section is used to add aliases for the addresses. Any address can be specified in
-this section, and then used in the code as an alias. For example, if you add `alice = "0xA11CE"` to
-this section, you can use `alice` as `0xA11CE` in the code.
+`[addresses]` 部分用于为地址添加别名。可以在此部分指定任何地址，然后在代码中作为别名使用。例如，如果将 `alice = "0xA11CE"` 添加到此部分，可以在代码中使用 `alice` 代替 `0xA11CE`。
 
 ### Dev-addresses
 
-The `[dev-addresses]` section is the same as `[addresses]`, but only works for the test and dev
-modes. Important to note that it is impossible to introduce new aliases in this section, only
-override the existing ones. So in the example above, if you add `alice = "0xB0B"` to this section,
-the `alice` address will be `0xB0B` in the test and dev modes, and `0xA11CE` in the regular build.
+`[dev-addresses]` 部分与 `[addresses]` 类似，但仅在测试和开发模式下有效。需要注意的是，这部分无法引入新的别名，只能覆盖现有的别名。因此，在上面的示例中，如果将 `alice = "0xB0B"` 添加到此部分，那么在测试和开发模式下，`alice` 地址将是 `0xB0B`，而在常规构建中则是 `0xA11CE`。
 
-## TOML styles
+## TOML 样式
 
-The TOML format supports two styles for tables: inline and multiline. The examples above are using
-the inline style, but it is also possible to use the multiline style. You wouldn't want to use it
-for the `[package]` section, but it can be useful for the dependencies.
+TOML 格式支持两种表格样式：内联样式和多行样式。上面的示例使用的是内联样式，但对于依赖关系，多行样式也是可行的。
 
 ```toml
-# Inline style
+# 内联样式
 [dependencies]
 Sui = { override = true, git = "", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
 MyPackage = { local = "../my-package" }
 ```
 
 ```toml
-# Multiline style
+# 多行样式
 [dependencies.Sui]
 override = true
 git = "https://github.com/MystenLabs/sui.git"
@@ -112,6 +87,6 @@ rev = "framework/testnet"
 local = "../my-package"
 ```
 
-## Further Reading
+## 进一步阅读
 
-- [Packages](/reference/packages.html) in the Move Reference.
+- 在 Move 参考中的 [Packages](/reference/packages.html) 页面
