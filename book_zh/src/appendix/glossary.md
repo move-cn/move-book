@@ -1,21 +1,12 @@
-# Appendix A: Glossary
+# 附录 A: 术语表
 
-- Fast Path - term used to describe a transaction that does not involve shared objects, and can be
-  executed without the need for consensus.
-- Parallel Execution - term used to describe the ability of the Sui runtime to execute transactions
-  in parallel, including the ones that involve shared objects.
-- Internal Type - type that is defined within the module. Fields of this type can not be accessed
-  from outside the module, and, in case of "key"-only abilities, can not be used in `public_*`
-  transfer functions.
+- 快速路径 (Fast Path) - 用于描述不涉及共享对象且无需共识即可执行的交易。
+- 并行执行 (Parallel Execution) - 用于描述 Sui 运行时能够并行执行交易的能力，包括涉及共享对象的交易。
+- 内部类型 (Internal Type) - 在模块内定义的类型。此类型的字段不能在模块外访问，并且在仅具有 "key" 能力的情况下，不能在 `public_*` 转移函数中使用。
 
-## Abilities
+## 能力
 
-- key - ability that allows the struct to be used as a key in the storage. On Sui, the key ability
-  marks an object and requires the first field to be a `id: UID`.
-- store - ability that allows the struct to be stored inside other objects. This ability relaxes
-  restrictions applied to internal structs, allowing `public_*` transfer functions to accept them as
-  arguments. It also enables the object to be stored as a dynamic field.
-- copy - ability that allows the struct to be copied. On Sui, the `copy` ability conflicts with the
-  `key` ability, and can not be used together with it.
-- drop - ability that allows the struct to be ignored or discarded. On Sui, the `drop` ability
-  cannot be used together with the `key` ability, as objects are not allowed to be ignored.
+- key - 允许结构体在存储中用作键的能力。在 Sui 上，key 能力标记一个对象，并要求第一个字段为 `id: UID`。
+- store - 允许结构体存储在其他对象内的能力。此能力放宽了对内部结构体的限制，允许 `public_*` 转移函数接受它们作为参数。它还使对象能够作为动态字段存储。
+- copy - 允许结构体被复制的能力。在 Sui 上，`copy` 能力与 `key` 能力冲突，不能同时使用。
+- drop - 允许结构体被忽略或丢弃的能力。在 Sui 上，`drop` 能力不能与 `key` 能力一起使用，因为对象不允许被忽略。

@@ -1,5 +1,3 @@
-# Appendix D: Contributing
+# 附录 D: 贡献
 
-To contribute to this book, please, submit a pull request to the
-[GitHub repository](https://github.com/MystenLabs/move-book). The repository contains the source
-files for the book, written in mdBook format.
+如果你想为这本书做出贡献，请提交一个 pull request 到 [GitHub 仓库](https://github.com/MystenLabs/move-book)。该仓库包含用 mdBook 格式编写的书籍源文件。
