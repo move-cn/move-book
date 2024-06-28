@@ -1,47 +1,41 @@
-# Install Sui
+# 安装 Sui
 
-Move is a compiled language, so you need to install a compiler to be able to write and run Move
-programs. The compiler is included into the Sui binary, which can be installed or downloaded using
-one of the methods below.
+Move 是一种编译型语言，因此你需要安装一个编译器来编写和运行 Move 程序。编译器包含在 Sui 二进制文件中，可以通过以下方法之一进行安装或下载。
 
-## Download Binary
+## 下载二进制文件
 
-You can download the latest Sui binary from the
-[releases page](https://github.com/MystenLabs/sui/releases). The binary is available for macOS,
-Linux and Windows. For education purposes and development, we recommend using the `mainnet` version.
+你可以从 [发布页面](https://github.com/MystenLabs/sui/releases) 下载最新的 Sui 二进制文件。该二进制文件适用于 macOS、Linux 和 Windows。对于教育目的和开发，我们推荐使用 `mainnet` 版本。
 
-## Install using Homebrew (MacOS)
+## 使用 Homebrew 安装 (MacOS)
 
-You can install Sui using the [Homebrew](https://brew.sh/) package manager.
+你可以使用 [Homebrew](https://brew.sh/) 包管理器安装 Sui。
 
 ```bash
 brew install sui
 ```
 
-## Install using Chocolatey (Windows)
+## 使用 Chocolatey 安装 (Windows)
 
-You can install Sui using the [Chocolatey](https://chocolatey.org/install) package manager for
-Windows.
+你可以使用 Windows 的 [Chocolatey](https://chocolatey.org/install) 包管理器安装 Sui。
 
 ```bash
 choco install sui
 ```
 
-## Build using Cargo (MacOS, Linux)
+## 使用 Cargo 构建安装 (MacOS, Linux)
 
-You can install and build Sui locally by using the Cargo package manager (requires Rust)
+你可以使用 Cargo 包管理器本地安装和构建 Sui（需要 Rust）
 
 ```bash
 cargo install --git https://github.com/MystenLabs/sui.git --bin sui --branch mainnet
 ```
 
-Make sure that your system has the latest Rust versions with the command below.
+确保你的系统有最新版本的 Rust，可以使用以下命令更新。
 
 ```bash
 rustup update stable
 ```
 
-## Troubleshooting
+## 故障排除
 
-For troubleshooting the installation process, please refer to the
-[Install Sui](https://docs.sui.io/guides/developer/getting-started/sui-install) Guide.
+有关安装过程的故障排除，请参考 [安装 Sui](https://docs.sui.io/guides/developer/getting-started/sui-install) 指南。
