@@ -1,42 +1,32 @@
-# Move 2024 Migration Guide
+# Move 2024 迁移指南
 
-Move 2024 is the new edition of the Move language that is maintained by Mysten Labs. This guide is
-intended to help you understand the differences between the 2024 edition and the previous version of
-the Move language.
+Move 2024 是由 Mysten Labs 维护的新版本 Move 语言。本指南旨在帮助您了解 2024 版与之前版本的区别。
 
-> This guide provides a high-level overview of the changes in the new edition. For a more detailed
-> and exhaustive list of changes, refer to the
-> [Sui Documentation](https://docs.sui.io/guides/developer/advanced/move-2024-migration).
+> 本指南提供了新版本中变化的高级概述。有关更详细和详尽的更改列表，请参阅 [Sui Documentation](https://docs.sui.io/guides/developer/advanced/move-2024-migration)。
 
-## Using the New Edition
+## 使用新版
 
-To use the new edition, you need to specify the edition in the `move` file. The edition is specified
-in the `move` file using the `edition` keyword. Currently, the only available edition is
-`2024.beta`.
+要使用新版，您需要在 `move` 文件中指定版本。版本在 `move` 文件中使用 `edition` 关键字来指定。目前，唯一可用的版本是 `2024.beta`。
 
 ```ini
 edition = "2024.beta";
 ```
 
-## Migration Tool
+## 迁移工具
 
-The Move CLI has a migration tool that updates the code to the new edition. To use the migration
-tool, run the following command:
+Move CLI 提供了一个迁移工具，可以将代码更新到新版本。要使用迁移工具，请运行以下命令：
 
 ```bash
 $ sui move migrate
 ```
 
-The migration tool will update the code to use the `let mut` syntax, the new `public` modifier for
-strucs, and the `public(package)` function visibility instead of `friend` declarations.
+迁移工具将更新代码以使用 `let mut` 语法、新的 `public` 修饰符用于结构体，以及用 `public(package)` 函数可见性代替 `friend` 声明。
 
-## Mutable bindings with `let mut`
+## 使用 `let mut` 声明可变变量
 
-Move 2024 introduces `let mut` syntax to declare mutable variables. The `let mut` syntax is used to
-declare a mutable variable that can be changed after it is declared.
+Move 2024 引入了 `let mut` 语法来声明可变变量。`let mut` 语法用于声明一个可以在声明后更改的可变变量。
 
-> `let mut` declaration is now required for mutable variables. Compiler will emit an error if you
-> try to reassign a variable without the `mut` keyword.
+> 现在，声明可变变量必须使用 `let mut`。如果尝试在没有 `mut` 关键字的情况下重新赋值变量，编译器将发出错误。
 
 ```move
 // Move 2020
@@ -48,34 +38,32 @@ let mut x: u64 = 10;
 x = 20;
 ```
 
-Additionally, the `mut` keyword is used in tuple destructuring and function arguments to declare
-mutable variables.
+此外，`mut` 关键字在元组解构和函数参数中用于声明可变变量。
 
 ```move
-// takes by value and mutates
+// 通过值传递并修改
 fun takes_by_value_and_mutates(mut v: Value): Value {
     v.field = 10;
     v
 }
 
-// `mut` should be placed before the variable name
+// `mut` 应放在变量名之前
 fun destruct() {
     let (x, y) = point::get_point();
     let (mut x, y) = point::get_point();
     let (mut x, mut y) = point::get_point();
 }
 
-// in struct unpack
+// 在结构体解包中
 fun unpack() {
     let Point { x, mut y } = point::get_point();
     let Point { mut x, mut y } = point::get_point();
 }
 ```
 
-## Friends are Deprecated
+## `friend` 已被弃用
 
-In Move 2024, the `friend` keyword is deprecated. Instead, you can use the `public(package)`
-visibility modifier to make functions visible to other modules in the same package.
+在 Move 2024 中，`friend` 关键字已被弃用。相反，您可以使用 `public(package)` 可见性修饰符使函数对同一包中的其他模块可见。
 
 ```move
 // Move 2020
@@ -86,10 +74,9 @@ public(friend) fun protected_function() {}
 public(package) fun protected_function_2024() {}
 ```
 
-## Struct Visibility
+## 结构体可见性
 
-In Move 2024, structs get a visibility modifier. Currently, the only available visibility modifier
-is `public`.
+在 Move 2024 中，结构体具有可见性修饰符。目前，唯一可用的可见性修饰符是 `public`。
 
 ```move
 // Move 2020
@@ -99,15 +86,11 @@ struct Book {}
 public struct Book {}
 ```
 
-## Method Syntax
+## 方法语法
 
-In the new edition, functions which have a struct as the first argument are associated with the
-struct. This means that the function can be called using the dot notation. Methods defined in the
-same module with the type are automatically exported.
+在新版本中，以结构体作为第一个参数的函数与结构体关联。这意味着可以使用点表示法调用函数。在与类型定义在同一模块中的方法会自动导出。
 
-> Methods are automatically exported if the type is defined in the same module as the method. It is
-> impossible to export methods for types defined in other modules. However, you can create
-> [custom aliases](#method-aliases) for methods in the module scope.
+> 如果类型在与方法相同的模块中定义，则方法会自动导出。无法为在其他模块中定义的类型导出方法。但是，您可以在模块范围内创建[自定义别名](#method-aliases)来代替。
 
 ```move
 public fun count(c: &Counter): u64 { /* ... */ }
@@ -121,41 +104,37 @@ fun use_counter() {
 }
 ```
 
-## Methods for Built-in Types
+## 内置类型的方法
 
-In Move 2024, some of the native and standard types received associated methods. For example, the
-`vector` type has a `to_string` method that converts the vector into a UTF8 string.
+在 Move 2024 中，一些原生和标准类型具有关联方法。例如，`vector` 类型具有 `to_string` 方法，可以将向量转换为 UTF8 字符串。
 
 ```move
 fun aliases() {
-    // vector to string and ascii string
+    // 向量转字符串和 ASCII 字符串
     let str: String = b"Hello, World!".to_string();
     let ascii: ascii::String = b"Hello, World!".to_ascii_string();
 
-    // address to bytes
+    // 地址转字节
     let bytes = @0xa11ce.to_bytes();
 }
 ```
 
-For the full list of built-in aliases, refer to the
-[Standard Library](../move-basics/standard-library.md#source-code) and
-[Sui Framework](../programmability/sui-framework.md#source-code) source code.
+有关内置别名的完整列表，请参阅[标准库](../move-basics/standard-library.md#source-code)和[Sui 框架](../programmability/sui-framework.md#source-code)的源代码。
 
-## Borrowing Operator
+## 借用操作符
 
-Some of the built-in types support borrowing operators. The borrowing operator is used to get a
-reference to the element at the specified index. The borrowing operator is defined as `[]`.
+一些内置类型支持借用操作符。借用操作符用于获取指定索引处元素的引用。借用操作符定义为 `[]`。
 
 ```move
 fun play_vec() {
     let v = vector[1,2,3,4];
-    let first = &v[0];         // calls vector::borrow(v, 0)
-    let first_mut = &mut v[0]; // calls vector::borrow_mut(v, 0)
-    let first_copy = v[0];     // calls *vector::borrow(v, 0)
+    let first = &v[0];         // 调用 vector::borrow(v, 0)
+    let first_mut = &mut v[0]; // 调用 vector::borrow_mut(v, 0)
+    let first_copy = v[0];     // 调用 *vector::borrow(v, 0)
 }
 ```
 
-Types that support the borrowing operator are:
+支持借用操作符的类型有：
 
 - `vector`
 - `sui::vec_map::VecMap`
@@ -165,8 +144,7 @@ Types that support the borrowing operator are:
 - `sui::object_bag::ObjectBag`
 - `sui::linked_table::LinkedTable`
 
-To implement the borrowing operator for a custom type, you need to add a `#[syntax(index)]`
-attribute to the methods.
+要为自定义类型实现借用操作符，需要在方法上添加 `#[syntax(index)]` 属性。
 
 ```move
 #[syntax(index)]
@@ -176,34 +154,18 @@ public fun borrow(c: &List<T>, key: String): &T { /* ... */ }
 public fun borrow_mut(c: &mut List<T>, key: String): &mut T { /* ... */ }
 ```
 
-## Method Aliases
+## 方法别名
 
-In Move 2024, methods can be associated with types. The alias can be defined for any type locally to
-the module; or publicly, if the type is defined in the same module.
+在 Move 2024 中，方法可以与类型关联。可以为本地模块中的任何类型定义别名；如果类型在同一模块中定义，则可以公开定义别名。
 
 ```move
 // my_module.move
-// Local: type is foreign to the module
+// 本地：类型对模块来说是外来的
 use fun my_custom_function as vector.do_magic;
 
 // sui-framework/kiosk/kiosk.move
-// Exported: type is defined in the same module
+// 导出：类型在同一模块中定义
 public use fun kiosk_owner_cap_for as KioskOwnerCap.kiosk;
 ```
 
-<!-- ## Macros
-
-Macros are introduced in Move 2024. And `assert!` is no longer a built-in function - Instead, it's a macro.
-
-```move
-// can be called as for!(0, 10, |i| call(i));
-macro fun for($start: u64, $stop: u64, $body: |u64|) {
-    let mut i = $start;
-    let stop = $stop;
-    while (i < stop) {
-        $body(i);
-        i = i + 1
-    }
-}
-```
- -->
+这就是 Move 2024 迁移指南的主要内容。如果有更多问题或需要进一步指导，请随时询问！

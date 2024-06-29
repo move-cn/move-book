@@ -1,143 +1,124 @@
-# Primitive Types
+# 原始类型
 
-<!-- TODO: Shall we split this into two pages? Maybe give an overview and focus more on specifics? -->
+Move 提供了多种内置的基本类型，它们是构成所有其他类型的基础。这些原始类型包括：
 
-For simple values, Move has a number of built-in primitive types. They're the base that makes up all
-other types. The primitive types are:
+- [布尔类型](#布尔类型)
+- [无符号整数](#整数类型)
+- [地址](./address.md) - 在下一节中讨论
 
-- [Booleans](#booleans)
-- [Unsigned Integers](#integers)
-- [Address](./address.md) - covered in the next section
+然而，在深入讨论这些类型之前，让我们先了解如何在 Move 中声明和赋值变量。
 
-However, before we get to the types, let's first look at how to declare and assign variables in
-Move.
+## 变量和赋值
 
-## Variables and assignment
-
-Variables are declared using the `let` keyword. They are immutable by default, but can be made
-mutable using the `let mut` keyword. The syntax for the `let mut` statement is:
+变量使用 `let` 关键字声明。默认情况下它们是不可变的，但可以使用 `let mut` 关键字使其可变。`let mut` 语句的语法如下：
 
 ```
-let <variable_name>[: <type>]  = <expression>;
-let mut <variable_name>[: <type>] = <expression>;
+let <变量名>[: <类型>] = <表达式>;
+let mut <变量名>[: <类型>] = <表达式>;
 ```
 
-Where:
+其中：
 
-- `<variable_name>` - the name of the variable
-- `<type>` - the type of the variable, optional
-- `<expression>` - the value to be assigned to the variable
+- `<变量名>` - 变量的名称
+- `<类型>` - 变量的类型，可选的
+- `<表达式>` - 要分配给变量的值
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/primitive-types.move:variables_and_assignment}}
 ```
 
-A mutable variable can be reassigned using the `=` operator.
+可变变量可以使用 `=` 运算符重新赋值。
 
 ```move
 y = 43;
 ```
 
-Variables can also be shadowed by re-declaring.
+变量还可以通过重新声明进行隐藏。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/primitive-types.move:shadowing}}
 ```
 
-## Booleans
+## 布尔类型
 
-The `bool` type represents a boolean value - yes or no, true or false. It has two possible values:
-`true` and `false` which are keywords in Move. For booleans, there's no need to explicitly specify
-the type - the compiler can infer it from the value.
+`bool` 类型表示布尔值 - 是或否、真或假。它有两个可能的值：`true` 和 `false`，它们在 Move 中是关键字。对于布尔值，无需显式指定类型 - 编译器可以从值中推断出来。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/primitive-types.move:boolean}}
 ```
 
-Booleans are often used to store flags and to control the flow of the program. Please, refer to the
-[Control Flow](./control-flow.md) section for more information.
+布尔类型经常用于存储标志和控制程序的流程。更多信息，请参阅[控制流](./control-flow.md)部分。
 
-## Integer Types
+## 整数类型
 
-Move supports unsigned integers of various sizes: from 8-bit to 256-bit. The integer types are:
+Move 支持各种大小的无符号整数：从 8 位到 256 位。整数类型包括：
 
-- `u8` - 8-bit
-- `u16` - 16-bit
-- `u32` - 32-bit
-- `u64` - 64-bit
-- `u128` - 128-bit
-- `u256` - 256-bit
+- `u8` - 8 位
+- `u16` - 16 位
+- `u32` - 32 位
+- `u64` - 64 位
+- `u128` - 128 位
+- `u256` - 256 位
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/primitive-types.move:integers}}
 ```
 
-Unlike booleans, integer types need to be inferred. In most of the cases, the compiler will infer
-the type from the value, usually defaulting to `u64`. However, sometimes the compiler is unable to
-infer the type and will require an explicit type annotation. It can either be provided during
-assignment or by using a type suffix.
+与布尔类型不同，整数类型需要推断。在大多数情况下，编译器将从值中推断出类型，通常默认为 `u64`。但有时编译器无法推断类型，将需要显式的类型标注。可以在赋值时提供或使用类型后缀。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/primitive-types.move:integer_explicit_type}}
 ```
 
-### Operations
+### 运算
 
-Move supports the standard arithmetic operations for integers: addition, subtraction,
-multiplication, division, and remainder. The syntax for these operations is:
+Move 支持整数的标准算术运算：加法、减法、乘法、除法和取余。这些操作的语法如下：
 
-| Syntax | Operation           | Aborts If                                |
-| ------ | ------------------- | ---------------------------------------- |
-| +      | addition            | Result is too large for the integer type |
-| -      | subtraction         | Result is less than zero                 |
-| \*     | multiplication      | Result is too large for the integer type |
-| %      | modular division    | The divisor is 0                         |
-| /      | truncating division | The divisor is 0                         |
+| 语法 | 运算             | 如果中止则为 |
+| ---- | --------------- | ------------ |
+| +    | 加法            | 结果对整数类型过大 |
+| -    | 减法            | 结果小于零   |
+| \*   | 乘法            | 结果对整数类型过大 |
+| %    | 取模除法        | 除数为零     |
+| /    | 截断除法        | 除数为零     |
 
-> For more operations, including bitwise operations, please refer to the
-> [Move Reference](/reference/primitive-types/integers.html#bitwise).
+> 更多操作，包括位运算，请参阅[Move 参考文档](/reference/primitive-types/integers.html#bitwise)。
 
-The type of the operands _must match_, otherwise, the compiler will raise an error. The result of
-the operation will be of the same type as the operands. To perform operations on different types,
-the operands need to be cast to the same type.
+操作数的类型必须匹配，否则编译器将报错。操作的结果将与操作数相同类型。要对不同类型执行操作，需要将操作数转换为相同类型。
 
-<!-- TODO: add examples + parentheses for arithmetic operations -->
-<!-- TODO: add bitwise operators -->
+### 使用 `as` 进行类型转换
 
-### Casting with `as`
-
-Move supports explicit casting between integer types. The syntax for it is:
+Move 支持整数类型之间的显式转换。其语法为：
 
 ```move
-<expression> as <type>
+<表达式> as <类型>
 ```
 
-Note, that it may require parentheses around the expression to prevent ambiguity.
+注意，可能需要在表达式周围加上括号以避免歧义。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/primitive-types.move:cast_as}}
 ```
 
-A more complex example, preventing overflow:
+一个更复杂的例子，防止溢出：
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/primitive-types.move:overflow}}
 ```
 
-### Overflow
+### 溢出
 
-Move does not support overflow / underflow, an operation that results in a value outside the range
-of the type will raise a runtime error. This is a safety feature to prevent unexpected behavior.
+Move 不支持溢出/下溢，导致值超出类型范围的操作将引发运行时错误。这是为了防止意外行为的安全特性。
 
 ```move
 let x = 255u8;
 let y = 1u8;
 
-// This will raise an error
+// 这将引发错误
 let z = x + y;
 ```
 
-## Further reading
+## 进一步阅读
 
-- [Bool](/reference/primitive-types/bool.html) in the Move Reference.
-- [Integer](/reference/primitive-types/integers.html) in the Move Reference.
+- 在 Move 参考文档中阅读有关[布尔类型](/reference/primitive-types/bool.html)的更多信息。
+- 在 Move 参考文档中阅读有关[整数类型](/reference/primitive-types/integers.html)的更多信息。

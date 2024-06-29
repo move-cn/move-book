@@ -1,48 +1,31 @@
-# Building against Limits
+# 构建时的限制
 
-To guarantee the safety and security of the network, Sui has certain limits and restrictions. These
-limits are in place to prevent abuse and to ensure that the network remains stable and efficient.
-This guide provides an overview of these limits and restrictions, and how to build your application
-to work within them.
+为了保证网络的安全和稳定，Sui 设置了一些限制和约束。这些限制旨在防止滥用，确保网络保持稳定和高效。本指南概述了这些限制和约束，以及如何在这些限制内构建应用程序。
 
-The limits are defined in the protocol configuration and are enforced by the network. If any of the
-limits are exceeded, the transaction will either be rejected or aborted. The limits, being a part of
-the protocol, can only be changed through a network upgrade.
+这些限制在协议配置中定义，并由网络强制执行。如果任何限制被超出，交易将被拒绝或中止。作为协议的一部分，这些限制只能通过网络升级进行更改。
 
-## Transaction Size
+## 交易大小
 
-The size of a transaction is limited to 128KB. This includes the size of the transaction payload,
-the size of the transaction signature, and the size of the transaction metadata. If a transaction
-exceeds this limit, it will be rejected by the network.
+交易的大小限制为 128KB。这包括交易负载的大小、交易签名的大小和交易元数据的大小。如果交易超过这个限制，将被网络拒绝。
 
-## Object Size
+## 对象大小
 
-The size of an object is limited to 256KB. This includes the size of the object data. If an object
-exceeds this limit, it will be rejected by the network. While a single object cannot bypass this
-limit, for more extensive storage options, one could use a combination of a base object with other
-attached to it using dynamic fields (eg Bag).
+对象的大小限制为 256KB。这包括对象数据的大小。如果对象超过这个限制，将被网络拒绝。虽然单个对象不能绕过这个限制，但可以通过使用动态字段（例如 Bag）将一个基础对象与其他对象组合来实现更大存储需求。
 
-## Single Pure Argument Size
+## 单个纯参数大小
 
-The size of a single pure argument is limited to 16KB. A transaction argument bigger than this limit
-will result in execution failure. So in order to create a vector of more than ~500 addresses (given
-that a single address is 32 bytes), it needs to be joined dynamically either in Transaction Block or
-in a Move function. Standard functions like `vector::append()` can join two vectors of ~16KB
-resulting in a ~32KB of data as a single value.
+单个纯参数的大小限制为 16KB。超过这个限制的交易参数将导致执行失败。因此，要创建超过 ~500 个地址的向量（假设单个地址为 32 字节），需要在交易块或 Move 函数中动态拼接。标准函数如 `vector::append()` 可以将两个 ~16KB 的向量拼接成一个 ~32KB 的单一值。
 
-## Maximum Number of Objects created
+## 创建的最大对象数
 
-The maximum number of objects that can be created in a single transaction is 2048. If a transaction
-attempts to create more than 2048 objects, it will be rejected by the network. This also affects
-[dynamic fields](./../programmability/dynamic-fields.md), as both the key and the value are objects.
-So the maximum number of dynamic fields that can be created in a single transaction is 1024.
+单笔交易中最多可以创建 2048 个对象。如果交易尝试创建超过 2048 个对象，将被网络拒绝。这也影响了[动态字段](./../programmability/dynamic-fields.md)，因为键和值都是对象。所以单笔交易中最多可以创建 1024 个动态字段。
 
-## Maximum Number of Dynamic Fields created
+## 创建的最大动态字段数
 
-The maximum number of dynamic fields that can be created in a single object is 1024. If an object
-attempts to create more than 1024 dynamic fields, it will be rejected by the network.
+单个对象中最多可以创建 1024 个动态字段。如果对象尝试创建超过 1024 个动态字段，将被网络拒绝。
 
-## Maximum Number of Events
+## 最大事件数
 
-The maximum number of events that can be emitted in a single transaction is 1024. If a transaction
-attempts to emit more than 1024 events, it will be aborted.
+单笔交易中最多可以发出 1024 个事件。如果交易尝试发出超过 1024 个事件，将被中止。
+
+了解并遵守这些限制对于开发稳定和高效的应用程序至关重要。通过合理的设计和优化，可以在这些限制内构建出功能强大的应用程序。

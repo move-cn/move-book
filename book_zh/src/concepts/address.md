@@ -1,59 +1,27 @@
-# Address
+# 地址
 
-<!--
-
-Chapter: Concepts
-Goal: explain locations and addresses
-Notes:
-    - don't talk about the type
-    - packages, accounts and objects are identified by addresses
-    - addresses are 32 bytes long
-    - addresses are unique
-    - represented as hex strings (64 characters) prefixed with 0x
-    - addresses are case insensitive
-
-Links:
-    - address type
-
-
-- mention what an address is, because it identifies a package
-    - address is used for packages, objects, and accounts
-    - address is a 32-byte value
-    - address is written in hexadecimal notation
-    - don't describe the type yet
-    - focus on the concept of address on blockchain and on Sui in particular
-
- -->
-
-Address is a unique identifier of a location on the blockchain. It is used to identify
-[packages](./packages.md), [accounts](./what-is-an-account.md), and [objects](./object-storage.md).
-Address has a fixed size of 32 bytes and is usually represented as a hexadecimal string prefixed
-with `0x`. Addresses are case insensitive.
+地址是区块链上位置的唯一标识符。它用于标识[包](./packages.md)、[账户](./what-is-an-account.md)和[对象](./object-storage.md)。地址的固定大小为32字节，通常表示为以 `0x` 开头的十六进制字符串。地址在大小写敏感的情况下，不区分大小写。
 
 ```move
 0xe51ff5cd221a81c3d6e22b9e670ddf99004d71de4f769b0312b68c7c4872e2f1
 ```
 
-The address above is an example of a valid address. It is 64 characters long (32 bytes) and prefixed
-with `0x`.
+上面的地址示例是一个有效的地址。它长度为64个字符（32字节），并且以 `0x` 开头。
 
-Sui also has reserved addresses that are used to identify standard packages and objects. Reserved
-addresses are typically simple values that are easy to remember and type. For example, the address
-of the Standard Library is `0x1`. Addresses, shorter than 32 bytes, are padded with zeros to the
-left.
+Sui 还有一些预留地址，用于标识标准包和对象。预留地址通常是简单的值，易于记忆和输入。例如，标准库的地址是 `0x1`。少于32字节的地址，在左侧用零填充。
 
 ```move
 0x1 = 0x0000000000000000000000000000000000000000000000000000000000000001
 ```
 
-Here are some examples of reserved addresses:
+以下是一些预留地址的示例：
 
-- `0x1` - address of the Sui Standard Library (alias `std`)
-- `0x2` - address of the Sui Framework (alias `sui`)
-- `0x6` - address of the system `Clock` object
+- `0x1` - Sui 标准库的地址（别名 `std`）
+- `0x2` - Sui 框架的地址（别名 `sui`）
+- `0x6` - 系统 `Clock` 对象的地址
 
-> You can find all reserved addresses in the [Appendix B](../appendix/reserved-addresses.md).
+> 你可以在 [附录 B](../appendix/reserved-addresses.md) 中找到所有预留地址的详细信息。
 
-## Further reading
+## 进一步阅读
 
-- [Address type](../move-basics/address.md) in Move
+- [Move 中的地址类型](../move-basics/address.md)

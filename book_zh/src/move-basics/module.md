@@ -1,56 +1,32 @@
-# Module
+模块是 Move 中的代码组织基本单元。模块用于组织和隔离代码，模块的所有成员默认情况下对模块私有。在本节中，您将学习如何定义模块，声明其成员以及如何从其他模块访问它们。
 
-<!--
+## 模块声明
 
-Chapter: Base Syntax
-Goal: Introduce module keyword.
-Notes:
-    - modules are the base unit of code organization
-    - module members are private by default
-    - types internal to the module have special access rules
-    - only module can pack and unpack its types
+使用 `module` 关键字后跟包地址、模块名称和模块体在花括号 `{}` 内来声明模块。模块名称应采用 `snake_case` 形式，即所有小写字母，单词之间用下划线分隔。模块名称在包内必须是唯一的。
 
- -->
+通常，`sources/` 文件夹中的单个文件包含一个模块。文件名应与模块名称匹配 - 例如，`donut_shop` 模块应存储在 `donut_shop.move` 文件中。您可以在[Coding Conventions](../special-topics/coding-conventions.md)部分了解更多有关编码约定的信息。
 
-Module is the base unit of code organization in Move. Modules are used to group and isolate code,
-and all of the members of the module are private to the module by default. In this section you will
-learn how to define a module, how to declare its members and how to access them from other modules.
-
-## Module declaration
-
-Modules are declared using the `module` keyword followed by the package address, module name and the
-module body inside the curly braces `{}`. The module name should be in `snake_case` - all lowercase
-letters with underscores between words. Modules names must be unique in the package.
-
-Usually, a single file in the `sources/` folder contains a single module. The file name should match
-the module name - for example, a `donut_shop` module should be stored in the `donut_shop.move` file.
-You can read more about coding conventions in the
-[Coding Conventions](../special-topics/coding-conventions.md) section.
-
-```Move
+```move
 {{#include ../../../packages/samples/sources/move-basics/module.move:module}}
 ```
 
-Structs, functions, constants and imports all part of the module:
+模块的成员包括结构体、函数、常量和导入：
 
-- [Structs](./struct.md)
-- [Functions](./function.md)
-- [Constants](./constants.md)
-- [Imports](./importing-modules.md)
-- [Struct Methods](./struct-methods.md)
+- [结构体](./struct.md)
+- [函数](./function.md)
+- [常量](./constants.md)
+- [导入](./importing-modules.md)
+- [结构体方法](./struct-methods.md)
 
-## Address / Named address
+## 地址 / 命名地址
 
-Module address can be specified as both: an address _literal_ (does not require the `@` prefix) or a
-named address specified in the [Package Manifest](../concepts/manifest.md). In the example below,
-both are identical because there's a `book = "0x0"` record in the `[addresses]` section of the
-`Move.toml`.
+模块地址可以指定为地址_字面量_（不需要 `@` 前缀）或在[包清单](../concepts/manifest.md)中指定的命名地址。在下面的示例中，两者是相同的，因为在 `Move.toml` 的 `[addresses]` 部分有一个 `book = "0x0"` 记录。
 
-```Move
+```move
 {{#include ../../../packages/samples/sources/move-basics/module.move:address_literal}}
 ```
 
-Addresses section in the Move.toml:
+在 `Move.toml` 中的地址部分：
 
 ```toml
 # Move.toml
@@ -58,15 +34,14 @@ Addresses section in the Move.toml:
 book = "0x0"
 ```
 
-## Module members
+## 模块成员
 
-Module members are declared inside the module body. To illustrate that, let's define a simple module
-with a struct, a function and a constant:
+模块成员声明在模块体内部。为了说明这一点，让我们定义一个简单的模块，其中包含一个结构体、一个函数和一个常量：
 
-```Move
+```move
 {{#include ../../../packages/samples/sources/move-basics/module.move:members}}
 ```
 
-## Further reading
+## 进一步阅读
 
-- [Modules](/reference/modules.html) in the Move Reference.
+- 在 Move 参考文档中阅读有关[模块](/reference/modules.html)的更多信息。

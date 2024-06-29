@@ -1,36 +1,15 @@
-# Account
+理解账户在 Sui 中的重要性：
 
-<!--
+# 账户
 
-- user is an account
-    - account is identified by an address
-    - account is generated from a private key
-    - account can own objects
-    - account can send transactions
-    - every transaction has a sender
-    - sender is identified by an address
-    - sui cryptographic agility
-    - sui account types
-    - supported curves: ed25519, secp256k1, zklogin
+账户是识别用户的一种方式。账户由私钥生成，并通过地址来识别。账户可以拥有对象，并且可以发送交易。每个交易都有一个发送者，发送者通过[地址](./address.md)来识别。
 
- -->
+Sui 支持多种加密算法用于生成账户。支持的曲线有 ed25519、secp256k1，还有一种特殊的账户生成方式 - zklogin。Sui 的加密灵活性使得账户生成具有灵活性和多样性。
 
-An account is a way to identify a user. An account is generated from a private key, and is
-identified by an address. An account can own objects, and can send transactions. Every transaction
-has a sender, and the sender is identified by an [address](./address.md).
+## 进一步阅读
 
-Sui supports multiple cryptographic algorithms for account generation. The two supported curves are
-ed25519, secp256k1, and there is also a special way of generating an account - zklogin. The
-cryptographic agility - the unique feature of Sui - allows for flexibility in the account
-generation.
+- [Sui 中的加密技术](https://blog.sui.io/wallet-cryptography-specifications/) - 来自[Sui 博客](https://blog.sui.io)
+- [密钥和地址](https://docs.sui.io/concepts/cryptography/transaction-auth/keys-addresses) - 来自[Sui 文档](https://docs.sui.io)
+- [签名](https://docs.sui.io/concepts/cryptography/transaction-auth/signatures) - 来自[Sui 文档](https://docs.sui.io)
 
-<!-- The cryptographic agility allows for flexibility in the account generation -->
-
-## Further Reading
-
-- [Cryptography in Sui](https://blog.sui.io/wallet-cryptography-specifications/) in the
-  [Sui Blog](https://blog.sui.io)
-- [Keys and Addresses](https://docs.sui.io/concepts/cryptography/transaction-auth/keys-addresses) in
-  the [Sui Docs](https://docs.sui.io)
-- [Signatures](https://docs.sui.io/concepts/cryptography/transaction-auth/signatures) in the
-  [Sui Docs](https://docs.sui.io)
+如有其他问题或需要进一步了解，请随时询问！

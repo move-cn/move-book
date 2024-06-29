@@ -1,27 +1,21 @@
-# Abilities: Introduction
+# 能力：简介
 
-Move has a unique type system which allows customizing _type abilities_.
-[In the previous section](./struct.md), we introduced the `struct` definition and how to use it.
-However, the instances of the `Artist` and `Record` structs had to be unpacked for the code to
-compile. This is default behavior of a struct without _abilities_.
+Move 具有独特的类型系统，允许自定义 _类型能力_。
+[在前一节](./struct.md)中，我们介绍了`struct`定义及其用法。
+但是，`Artist`和`Record`结构体的实例在编译代码时必须被解包。这是没有 _能力_ 的结构体的默认行为。
 
-> Throughout the book you will see chapters with name `Ability: <name>`, where `<name>` is the name
-> of the ability. These chapters will cover the ability in detail, how it works, and how to use it
-> in Move.
+> 在本书中，你会看到名称为“Ability: <名称>”的章节，其中“<名称>”是能力的名称。这些章节将详细介绍该能力，它如何工作以及如何在 Move 中使用。
 
-## What are Abilities?
+## 什么是能力？
 
-Abilities are a way to allow certain behaviors for a type. They are a part of the struct declaration
-and define which behaviours are allowed for the instances of the struct.
+能力是一种允许类型具有特定行为的方式。它们是结构体声明的一部分，并定义了结构体实例允许的行为。
 
-## Abilities syntax
+## 能力语法
 
-Abilities are set in the struct definition using the `has` keyword followed by a list of abilities.
-The abilities are separated by commas. Move supports 4 abilities: `copy`, `drop`, `key`, and
-`store`, each of them is used to define a specific behaviour for the struct instances.
+使用`has`关键字后跟能力列表在结构体定义中设置能力。能力之间用逗号分隔。Move 支持四种能力：`copy`、`drop`、`key`和`store`，每种能力用于定义结构体实例的特定行为。
 
 ```move
-/// This struct has the `copy` and `drop` abilities.
+/// 这个结构体具有 `copy` 和 `drop` 能力。
 struct VeryAble has copy, drop {
     // field: Type1,
     // field2: Type2,
@@ -29,33 +23,23 @@ struct VeryAble has copy, drop {
 }
 ```
 
-## Overview
+## 概述
 
-A quick overview of the abilities:
+能力的快速概述：
 
-> All of the built-in types, except references, have `copy`, `drop` and `store` abilities.
-> References have `copy` and `drop`.
+> 除引用外，所有内置类型都具有`copy`、`drop`和`store`能力。引用具有`copy`和`drop`能力。
 
-- `copy` - allows the struct to be _copied_. Explained in the [Ability: Copy](./copy-ability.md)
-  chapter.
-- `drop` - allows the struct to be _dropped_ or _discarded_. Explained in the
-  [Ability: Drop](./drop-ability.md) chapter.
-- `key` - allows the struct to be used as a _key_ in a storage. Explained in the
-  [Ability: Key](./../storage/key-ability.md) chapter.
-- `store` - allows the struct to be _stored_ in structs with the _key_ ability. Explained in the
-  [Ability: Store](./../storage/store-ability.md) chapter.
+- `copy` - 允许结构体被 _复制_。详见[Ability: Copy](./copy-ability.md)章节。
+- `drop` - 允许结构体被 _丢弃_ 或 _舍弃_。详见[Ability: Drop](./drop-ability.md)章节。
+- `key` - 允许结构体用作存储中的 _键_。详见[Ability: Key](./../storage/key-ability.md)章节。
+- `store` - 允许结构体 _存储_ 在具有 _key_ 能力的结构体中。详见[Ability: Store](./../storage/store-ability.md)章节。
 
-While it is important to mention them here, we will go in detail about each ability in the following
-chapters and give a proper context on how to use them.
+虽然在这里提到它们很重要，但我们将在后续章节中详细介绍每种能力，并给出如何使用它们的适当上下文。
 
-## No abilities
+## 没有能力
 
-A struct without abilities cannot be discarded, or copied, or stored in the storage. We call such a
-struct a _Hot Potato_. It is a joke, but it is also a good way to remember that a struct without
-abilities is like a hot potato - it can only be passed around and requires special handling. Hot
-Potato is one of the most powerful patterns in Move, we go in detail about it in the
-[Hot Potato](./../programmability/hot-potato.md) chapter.
+没有能力的结构体不能被丢弃、复制或存储在存储中。我们称这种结构体为 _Hot Potato_。这是一个玩笑，但也是记住没有能力的结构体就像一个烫手山芋的好方法——它只能被传递，需要特殊处理。Hot Potato 是 Move 中最强大的模式之一，我们在[Hot Potato](./../programmability/hot-potato.md)章节中详细介绍了它。
 
-## Further reading
+## 延伸阅读
 
-- [Type Abilities](/reference/type-abilities.html) in the Move Reference.
+- Move参考中的[类型能力](/reference/type-abilities.html)。

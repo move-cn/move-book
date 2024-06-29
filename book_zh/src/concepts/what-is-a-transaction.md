@@ -1,46 +1,28 @@
-# Transaction
+# 交易
 
-Transaction is a fundamental concept in the blockchain world. It is a way to interact with a
-blockchain. Transactions are used to change the state of the blockchain, and they are the only way
-to do so. In Move, transactions are used to call functions in a package, deploy new packages, and
-upgrade existing ones.
+交易是区块链世界中的一个基本概念。它是与区块链进行交互的一种方式。交易用于改变区块链的状态，也是唯一能够实现这一目的的途径。在 Sui 中，交易被用来调用包中的函数、部署新的包以及升级现有的包。
 
-<!--
+## 交易结构
 
-- how user interacts with a program
-    - mention public functions
-    - give a concept of an entry / public function without getting into details
-    - mention that functions are called in transactions
-    - mention that transactions are sent by accounts
-    - every transaction specifies object it operates on
+> 每个交易都明确指定了其操作的对象！
 
- -->
+交易包括以下内容：
 
-## Transaction Structure
+- 发送者 - 签署交易的[账户](./what-is-an-account.md)；
+- 命令列表（或链） - 要执行的操作序列；
+- 命令输入 - 命令的参数：可以是 `pure` 类型（如数字或字符串），也可以是 `object` 类型（交易将要访问的对象）；
+- Gas 对象 - 用于支付交易费用的 `Coin` 对象；
+- Gas 价格和预算 - 交易的费用；
 
-> Every transaction explicitly specifies the objects it operates on!
+## 命令
 
-Transactions consist of:
+Sui 的交易可以包含多个命令。每个命令可以是一个内置命令（如发布一个包），或者是对已发布包中函数的调用。命令按照在交易中列出的顺序依次执行，并且可以使用前面命令的结果，形成一个链条。交易要么完全成功，要么完全失败。
 
-- a sender - the [account](./what-is-an-account.md) that _signs_ the transaction;
-- a list (or a chain) of commands - the operations to be executed;
-- command inputs - the arguments for the commands: either `pure` - simple values like numbers or
-  strings, or `object` - objects that the transaction will access;
-- a gas object - the `Coin` object used to pay for the transaction;
-- gas price and budget - the cost of the transaction;
-
-## Commands
-
-Sui transactions may consist of multiple commands. Each command is a single built-in command (like
-publishing a package) or a call to a function in an already published package. The commands are
-executed in the order they are listed in the transaction, and they can use the results of the
-previous commands, forming a chain. Transaction either succeeds or fails as a whole.
-
-Schematically, a transaction looks like this (in pseudo-code):
+交易的示意图（伪代码）如下：
 
 ```
 Inputs:
-- sender = 0xa11ce
+- 发送者 = 0xa11ce
 
 Commands:
 - payment = SplitCoins(Gas, [ 1000 ])
@@ -48,35 +30,25 @@ Commands:
 - TransferObjects(item, sender)
 ```
 
-In this example, the transaction consists of three commands:
+在这个示例中，交易包含三个命令：
 
-1. `SplitCoins` - a built-in command that splits a new coin from the passed object, in this case,
-   the `Gas` object;
-2. `MoveCall` - a command that calls a function `purchase` in a package `0xAAA`, module `market`
-   with the given arguments - the `payment` object;
-3. `TransferObjects` - a built-in command that transfers the object to the recipient.
+1. `SplitCoins` - 一个内置命令，从传递的对象（这里是 `Gas` 对象）中分离出一个新的币；
+2. `MoveCall` - 调用包 `0xAAA` 中模块 `market` 中函数 `purchase`，传递参数为 `payment` 对象；
+3. `TransferObjects` - 一个内置命令，将对象转移给接收者。
 
-<!--
-> There are multiple different implementations of transaction building, for example
--->
+## 交易效果
 
-## Transaction Effects
+交易效果是交易对区块链状态所做出的更改。具体来说，交易可以通过以下方式改变状态：
 
-Transaction effects are the changes that a transaction makes to the blockchain state. More
-specifically, a transaction can change the state in the following ways:
+- 使用 Gas 对象支付交易费用；
+- 创建、更新或删除对象；
+- 发出事件；
 
-- use the gas object to pay for the transaction;
-- create, update, or delete objects;
-- emit events;
+执行交易的结果包括不同的部分：
 
-The result of the executed transaction consists of different parts:
-
-- Transaction Digest - the hash of the transaction which is used to identify the transaction;
-- Transaction Data - the inputs, commands and gas object used in the transaction;
-- Transaction Effects - the status and the "effects" of the transaction, more specifically: the
-  status of the transaction, updates to objects and their new versions, the gas object used, the gas
-  cost of the transaction, and the events emitted by the transaction;
-- Events - the custom [events](./../programmability/events.md) emitted by the transaction;
-- Object Changes - the changes made to the objects, including the _change of ownership_;
-- Balance Changes - the changes made to the aggregate balances of the account involved in the
-  transaction;
+- 交易摘要 - 交易的哈希，用于标识交易；
+- 交易数据 - 交易中使用的输入、命令和 Gas 对象；
+- 交易效果 - 交易的状态和“效果”，具体包括：交易的状态、对象的更新及其新版本、使用的 Gas 对象、交易的 Gas 成本以及交易发出的事件；
+- 事件 - 交易发出的自定义[事件](./../programmability/events.md)；
+- 对象变更 - 对象的变更，包括所有权的变更；
+- 余额变更 - 参与交易账户的总余额变更；

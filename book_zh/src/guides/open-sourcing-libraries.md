@@ -1,29 +1,24 @@
-# Open Sourcing Libraries
+# 开源库
 
-Open sourcing libraries is a great way to contribute to the Move ecosystem. This guide will help you
-understand how to open source a library, how to write tests, and how to document your library.
+开源库是为 Move 生态系统做出贡献的绝佳方式。本指南将帮助你了解如何开源一个库，如何编写测试，以及如何为你的库编写文档。
 
 ## README
 
 TODO: readme
 
-## Named Addresses
+## 命名地址
 
 TODO: named address
 
-## Generating Documentation
+## 生成文档
 
 TODO: docgen
 
-## Adding Examples
+## 添加示例
 
-When publishing a package that is intended to be used (an NFT protocol or a library), it is
-important to showcase how this package can be used. This is where examples come in handy. There's no
-special functionality for examples in Move, however, there are some conventions that are used to
-mark examples. First of all, only sources are included into the package bytecode, so any code placed
-in a different directory will not be included, but will be tested!
+在发布一个旨在使用的包（如 NFT 协议或库）时，展示如何使用该包是非常重要的。这就是示例的作用。Move 中没有专门用于示例的功能，但有一些用于标记示例的惯例。首先，只有源代码会被包含在包的字节码中，因此放在其他目录中的代码不会被包含，但会被测试！
 
-This is why placing examples into a separate `examples/` directory is a good idea.
+这就是为什么将示例放在单独的 `examples/` 目录中是一个好主意。
 
 ```bash
 sources/
@@ -36,10 +31,12 @@ examples/
 Move.toml
 ```
 
-## Tags and Releases (Git)
+## 标签和发布（Git）
 
 TODO: tags and releases
 
-## Tricks to allow compatibility with closed source
+## 与闭源兼容的技巧
 
 TODO: compatibility via empty functions with signatures
+
+通过这个指南，你可以更好地为 Move 生态系统贡献你的开源库，并确保它们易于使用和维护。

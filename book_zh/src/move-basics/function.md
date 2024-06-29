@@ -1,76 +1,55 @@
-# Function
-
-Functions are the building blocks of Move programs. They are called from
-[user transactions](../concepts/user-interaction.md) and from other functions and group executable
-code into reusable units. Functions can take arguments and return a value. They are declared with
-the `fun` keyword at the module level. Just like any other module member, by default they're private
-and can only be accessed from within the module.
+函数是 Move 程序的基本构建块。它们可以从[用户交互](../concepts/user-interaction.md)中调用，也可以从其他函数中调用，并将可执行的代码组织成可重用的单元。函数可以接受参数并返回值。在模块级别，它们使用 `fun` 关键字声明。默认情况下，它们是私有的，只能在模块内部访问。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/function.move:math}}
 ```
 
-In this example, we define a function `add` that takes two arguments of type `u64` and returns their
-sum. The function is called from the `test_add` function, which is a test function located in the
-same module. In the test we compare the result of the `add` function with the expected value and
-abort the execution if the result is different.
+在这个示例中，我们定义了一个名为 `add` 的函数，它接受两个类型为 `u64` 的参数，并返回它们的和。该函数被从同一模块中的 `test_add` 函数调用，后者是一个测试函数。在测试中，我们将 `add` 函数的结果与期望值进行比较，如果结果不同，则终止执行。
 
-## Function declaration
+## 函数声明
 
-> There's a convention to call functions in Move with the `snake_case` naming convention. This means
-> that the function name should be all lowercase with words separated by underscores. For example,
-> `do_something`, `add`, `get_balance`, `is_authorized`, and so on.
+> 在 Move 中，有一个约定，即使用 `snake_case` 命名函数。这意味着函数名称应全部小写，并用下划线分隔单词。例如，`do_something`、`add`、`get_balance`、`is_authorized` 等等。
 
-A function is declared with the `fun` keyword followed by the function name (a valid Move
-identifier), a list of arguments in parentheses, and a return type. The function body is a block of
-code that contains a sequence of statements and expressions. The last expression in the function
-body is the return value of the function.
+函数使用 `fun` 关键字声明，后跟函数名称（有效的 Move 标识符），括号中是参数列表，以及返回类型。函数体是一段包含语句和表达式的代码块。函数体中的最后一个表达式是函数的返回值。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/function.move:return_nothing}}
 ```
 
-## Accessing functions
+## 访问函数
 
-Just like any other module member, functions can be imported and accessed via a path. The path
-consists of the module path and the function name separated by `::`. For example, if you have a
-function called `add` in the `math` module in the `book` package, the path to it will be
-`book::math::add`, or, if the module is imported, `math::add`.
+与任何其他模块成员一样，函数可以通过路径导入和访问。路径由模块路径和函数名称组成，用 `::` 分隔。例如，如果在 `book` 包的 `math` 模块中有一个名为 `add` 的函数，则其路径为 `book::math::add`；如果模块已导入，则为 `math::add`。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/function.move:use_math}}
 ```
 
-## Multiple return values
+## 多返回值
 
-Move functions can return multiple values, which is useful when you need to return more than one
-value from a function. The return type of the function is a tuple of types. The return value is a
-tuple of expressions.
+Move 函数可以返回多个值，这在需要从函数返回多个值时非常有用。函数的返回类型是类型的元组。返回值是表达式的元组。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/function.move:tuple_return}}
 ```
 
-Result of a function call with tuple return has to be unpacked into variables via `let (tuple)`
-syntax:
+具有元组返回的函数调用的结果必须通过 `let (tuple)` 语法解包到变量中：
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/function.move:tuple_return_imm}}
 ```
 
-If any of the declared values need to be declared as mutable, the `mut` keyword is placed before the
-variable name:
+如果声明的某些值需要声明为可变的，则在变量名之前放置 `mut` 关键字：
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/function.move:tuple_return_mut}}
 ```
 
-If some of the arguments are not used, they can be ignored with the `_` symbol:
+如果某些参数未被使用，则可以用 `_` 符号忽略它们：
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/function.move:tuple_return_ignore}}
 ```
 
-## Further reading
+## 进一步阅读
 
-- [Functions](/reference/functions.html) in the Move Reference.
+- [Functions](/reference/functions.html) 在 Move 参考文档中
