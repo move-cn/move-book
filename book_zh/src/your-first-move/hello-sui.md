@@ -1,36 +1,28 @@
-# Hello, Sui!
+# 你好，Sui！
 
-In the [previous section](./hello-world.md) we created a new package and demonstrated the basic flow
-of creating, building, and testing a Move package. In this section, we will write a simple
-application that uses the storage model and can be interacted with. To do this, we will create a
-simple todo list application.
+在[上一节](./hello-world.md)中，我们创建了一个新的包并演示了创建、构建和测试一个 Move 包的基本流程。在本节中，我们将编写一个简单的应用程序，该应用程序使用存储模型并可以进行交互。为此，我们将创建一个简单的待办事项列表应用程序。
 
-## Create a New Package
+## 创建一个新的包
 
-Following the same flow as in [Hello, World!](./hello-world.md), we will create a new package called
-`todo_list`.
+按照与[Hello, World!](./hello-world.md)相同的流程，我们将创建一个名为 `todo_list` 的新包。
 
 ```bash
 $ sui move new todo_list
 ```
 
-## Add the code
+## 添加代码
 
-To speed things up and focus on the application logic, we will provide the code for the todo list
-application. Replace the contents of the _sources/todo_list.move_ file with the following code:
+为了加快速度并专注于应用程序逻辑，我们将提供待办事项列表应用程序的代码。将 _sources/todo_list.move_ 文件的内容替换为以下代码：
 
-> Note: while the contents may seem overwhelming at first, we will break it down in the following
-> sections. Try to focus on what's at hand right now.
+> 注意：虽然内容一开始可能会显得有些复杂，我们将在接下来的部分逐步解释。现在请专注于手头的任务。
 
 ```move
 {{#include ../../../packages/todo_list/sources/todo_list.move:all}}
 ```
 
-## Build the package
+## 构建包
 
-To make sure that we did everything correctly, let's build the package by running the
-`sui move build` command. If everything is correct, you should see the output similar to the
-following:
+为了确保一切操作正确无误，请运行 `sui move build` 命令来构建包。如果一切顺利，你应该看到类似以下的输出：
 
 ```bash
 $ sui move build
@@ -40,26 +32,20 @@ INCLUDING DEPENDENCY MoveStdlib
 BUILDING todo_list
 ```
 
-If there are no errors following this output, you have successfully built the package. If there are
-errors, make sure that:
+如果没有错误，那么你已经成功构建了该包。如果有错误，请确保：
 
-- The code is copied correctly
-- The file name and the package name is correct
+- 代码复制正确
+- 文件名和包名正确
 
-There are not many other reasons for the code to fail at this stage. But if you are still having
-issues, try looking up the structure of the package in
-[this location](https://github.com/MystenLabs/move-book/tree/main/packages/todo_list).
+在这个阶段，代码失败的原因不多。但如果仍然遇到问题，请尝试查看包的结构，位置在 [这里](https://github.com/MystenLabs/move-book/tree/main/packages/todo_list)。
 
-## Set up an account
+## 设置账户
 
-To publish and interact with the package, we need to set up an account. For the sake of simplicity
-and demonstration purposes, we will use _sui devnet_ environment.
+为了发布和与包交互，我们需要设置一个账户。为了简单和演示的目的，我们将使用 _sui devnet_ 环境。
 
-> If you already have an account set up, you can skip this step.
+> 如果你已经设置了账户，请跳过此步骤。
 
-If you are doing it for the first time, you will need to create a new account. To do this, run the
-`sui client` command, then the CLI will prompt you with multiple questions. The answers are marked
-below with `>`:
+如果你是第一次设置账户，需要运行 `sui client` 命令，然后 CLI 将提示你回答多个问题。下面是答案示例，以 `>` 开头：
 
 ```bash
 $ sui client
@@ -71,35 +57,32 @@ Select key scheme to generate keypair (0 for ed25519, 1 for secp256k1, 2: for se
 > 0
 ```
 
-After you have answered the questions, the CLI will generate a new keypair and save it to the
-configuration file. You can now use this account to interact with the network.
+回答完问题后，CLI 将生成一个新的密钥对并保存到配置文件中。现在你可以使用这个账户与网络交互了。
 
-To check that we have the account set up correctly, run the `sui client active-address` command:
+要检查账户设置是否正确，请运行 `sui client active-address` 命令：
 
 ```bash
 $ sui client active-address
 0x....
 ```
 
-The command will output the address of your account, it starts with `0x` followed by 64 characters.
+该命令将输出你账户的地址，以 `0x` 开头，后面跟着64个字符。
 
-## Requesting Coins
+## 请求硬币
 
-In _devnet_ and _testnet_ environments, the CLI provides a way to request coins to your account, so
-you can interact with the network. To request coins, run the `sui client faucet` command:
+在 _devnet_ 和 _testnet_ 环境中，CLI 提供了一种方式来请求硬币到你的账户，以便你可以与网络进行交互。要请求硬币，请运行 `sui client faucet` 命令：
 
 ```bash
 $ sui client faucet
-Request successful. It can take up to 1 minute to get the coin. Run sui client gas to check your gas coins.
+请求成功。可能需要一分钟来获取硬币。运行 sui client gas 命令来检查你的 gas 硬币。
 ```
 
-After waiting a little bit, you can check that the Coin object was sent to your account by running
-the `sui client balance` command:
+稍等片刻后，你可以运行 `sui client balance` 命令来检查硬币是否已发送到你的账户：
 
 ```bash
 $ sui client balance
 ╭────────────────────────────────────────╮
-│ Balance of coins owned by this address │
+│ 该地址拥有的硬币余额                  │
 ├────────────────────────────────────────┤
 │ ╭──────────────────────────────────╮   │
 │ │ coin  balance (raw)  balance     │   │
@@ -109,9 +92,7 @@ $ sui client balance
 ╰────────────────────────────────────────╯
 ```
 
-Alternatively, you can query _objects_ owned by your account, by running the `sui client objects`
-command. The actual output will be different, because the object ID is unique, and so is digest, but
-the structure will be similar:
+或者，你可以通过运行 `sui client objects` 命令来查询你的账户拥有的对象。实际输出会有所不同，因为对象 ID 是唯一的，摘要也是唯一的，但结构类似：
 
 ```bash
 $ sui client objects
@@ -125,30 +106,25 @@ $ sui client objects
 ╰───────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-Now that we have the account set up and the coins in the account, we can interact with the network.
-We will start by publishing the package to the network.
+现在我们已经设置了账户并且账户中有了硬币，我们可以开始与网络进行交互。我们将从将包发布到网络开始。
 
-## Publish
+## 发布
 
-To publish the package to the network, we will use the `sui client publish` command. The command
-will automatically build the package and use its bytecode to publish in a single transaction.
+要将包发布到网络上，我们将使用 `sui client publish` 命令。该命令将自动构建包，并使用其字节码在单个事务中进行发布。
 
-> We are using the `--gas-budget` argument during publishing. It specifies how much gas we are
-> willing to spend on the transaction. We won't touch on this topic in this section, but it's
-> important to know that every transaction in Sui costs gas, and the gas is paid in SUI coins.
+> 在发布过程中，我们使用 `--gas-budget` 参数指定了事务的气体预算。本节不涉及详细讨论这个主题，但重要的是要知道，在 Sui 中，每个交易都需要支付气体费用，而气体费用是用 SUI 币支付的。
 
-The `gas-budget` is specified in _MISTs_. 1 SUI equals 10^9 MISTs. For the sake of demonstration, we
-will use 100,000,000 MISTs, which is 0.1 SUI.
+`gas-budget` 以 _MISTs_ 表示。1 SUI 等于 10^9 MISTs。为了演示，我们将使用 100,000,000 MISTs，相当于 0.1 SUI。
 
 ```bash
-# run this from the `todo_list` folder
+# 在 `todo_list` 文件夹中运行以下命令
 $ sui client publish --gas-budget 100000000
 
-# alternatively, you can specify path to the package
+# 或者，你可以指定包的路径
 $ sui client publish --gas-budget 100000000 todo_list
 ```
 
-The output of the publish command is rather lengthy, so we will show and explain it in parts.
+发布命令的输出相对较长，因此我们将分部分展示并解释它。
 
 ```bash
 $ sui client publish --gas-budget 100000000
@@ -156,22 +132,15 @@ UPDATING GIT DEPENDENCY https://github.com/MystenLabs/sui.git
 INCLUDING DEPENDENCY Sui
 INCLUDING DEPENDENCY MoveStdlib
 BUILDING todo_list
-Successfully verified dependencies on-chain against source.
-Transaction Digest: GpcDV6JjjGQMRwHpEz582qsd5MpCYgSwrDAq1JXcpFjW
+成功验证源码上链的依赖项。
+事务摘要: GpcDV6JjjGQMRwHpEz582qsd5MpCYgSwrDAq1JXcpFjW
 ```
 
-As you can see, when we run the `publish` command, the CLI first builds the package, then verifies
-the dependencies on-chain, and finally publishes the package. The output of the command is the
-transaction digest, which is a unique identifier of the transaction and can be used to query the
-transaction status.
+正如你所见，当我们运行 `publish` 命令时，CLI 首先构建包，然后验证链上的依赖项，最后发布包。命令的输出是事务摘要，这是交易的唯一标识符，可用于查询交易状态。
 
-### Transaction Data
+### 事务数据
 
-The section titled `TransactionData` contains the information about the transaction we just sent. It
-features fields like `sender`, which is your address, the `gas_budget` set with the `--gas-budget`
-argument, and the Coin we used for payment. It also prints the Commands that were run by the CLI. In
-this example, the commands `Publish` and `TransferObject` were run - the latter transfers a special
-object `UpgradeCap` to the sender.
+`TransactionData` 部分包含我们刚发送的交易信息。它包括字段如 `sender`（发送者地址）、使用 `--gas-budget` 参数设置的 `gas_budget`（气体预算）以及我们用于支付的币种。它还打印了 CLI 运行的命令。在本示例中，运行了 `Publish` 和 `TransferObject` 命令 - 后者将一个特殊对象 `UpgradeCap` 转移给了发送者。
 
 ```plaintext
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -218,10 +187,10 @@ object `UpgradeCap` to the sender.
 ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-### Transaction Effects
+### 交易影响
 
-Transaction Effects contains the status of the transaction, the changes that the transaction made to
-the state of the network and the objects involved in the transaction.
+交易影响部分包含了交易的状态、交易对网络状态所做的更改以及交易涉及的对象。
+
 
 ```plaintext
 ╭───────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -280,12 +249,9 @@ events, so the section is empty.
 │ No transaction block events │
 ╰─────────────────────────────╯
 ```
+### 对象变更
 
-### Object Changes
-
-These are the changes to _objects_ that transaction has made. In our case, we have _created_ a new
-`UpgradeCap` object which is a special object that allows the sender to upgrade the package in the
-future, _mutated_ the Gas object, and _published_ a new package. Packages are also objects on Sui.
+这部分记录了交易所作出的对象变更。在我们的例子中，我们创建了一个新的 `UpgradeCap` 对象，这是一个特殊对象，允许发送者在未来升级包。我们还改变了 Gas 对象，并且发布了一个新的包。在 Sui 中，包也是对象之一。
 
 ```plaintext
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -319,10 +285,9 @@ future, _mutated_ the Gas object, and _published_ a new package. Packages are al
 ╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-### Balance Changes
+### 余额变更
 
-This last section contains changes to SUI Coins, in our case, we have _spent_ around 0.015 SUI,
-which in MIST is 10,500,000. You can see it under the _amount_ field in the output.
+这一部分记录了对 SUI 代币的变动情况。在我们的案例中，我们花费了约 0.015 SUI，相当于 10,500,000 MIST。你可以在输出的 _amount_ 字段中看到这个数值。
 
 ```plaintext
 ╭───────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -336,54 +301,41 @@ which in MIST is 10,500,000. You can see it under the _amount_ field in the outp
 ╰───────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-### Alternative Output
+### 可选输出
 
-It is possible to specify the `--json` flag during publishing to get the output in JSON format. This
-is useful if you want to parse the output programmatically or store it for later use.
+把输出格式设置为 JSON 格式是可能的，只需在发布时加上 `--json` 标志即可。这对于想要以编程方式解析输出或稍后使用它的人来说非常有用。
 
 ```bash
 $ sui client publish --gas-budget 100000000 --json
 ```
+### 使用结果
 
-### Using the Results
+包成功发布到链上后，我们可以开始与之进行交互。为了做到这一点，我们需要找到包的地址（对象ID）。这个地址可以在 `Object Changes` 输出的 `Published Objects` 部分找到。每个包的地址都是唯一的，因此您需要从输出中复制它。
 
-After the package is published on chain, we can interact with it. To do this, we need to find the
-address (object ID) of the package. It's under the `Published Objects` section of the
-`Object Changes` output. The address is unique for each package, so you will need to copy it from
-the output.
+在这个示例中，地址是：
 
-In this example, the address is:
-
-```plaintext
+```
 0x468daa33dfcb3e17162bbc8928f6ec73744bb08d838d1b6eb94eac99269b29fe
 ```
 
-Now that we have the address, we can interact with the package. In the next section, we will show
-how to interact with the package by sending transactions.
+现在我们有了地址，接下来我们将展示如何通过发送交易与该包进行交互。
 
-## Sending Transactions
+### 发送交易
 
-To demonstrate the interaction with the `todo_list` package, we will send a transaction to create a
-new list and add an item to it. Transactions are sent via the `sui client ptb` command, it allows
-using the [Transaction Blocks](./../concepts/what-is-a-transaction.md) at full capacity. The command
-may look big and complex, but we go through it step by step.
+为了演示与`todo_list`包的交互，我们将发送一个交易来创建一个新的列表并向其中添加一个项目。交易通过`sui client ptb`命令发送，它允许充分利用[交易块](./../concepts/what-is-a-transaction.md)。这个命令可能看起来很庞大和复杂，但我们将逐步解释。
 
-### Prepare the Variables
+### 准备变量
 
-Before we construct the command, let's store the values we will use in the transaction. Replace the
-`0x4....` with the address of the package you have published. And `MY_ADDRESS` variable will be
-automatically set to your address from the CLI output.
+在构建命令之前，让我们存储将在交易中使用的值。将`0x4....`替换为您已发布的包的地址。`MY_ADDRESS`变量将自动从CLI输出中设置为您的地址。
 
 ```bash
 $ export PACKAGE_ID=0x468daa33dfcb3e17162bbc8928f6ec73744bb08d838d1b6eb94eac99269b29fe
 $ export MY_ADDRESS=$(sui client active-address)
 ```
 
-### Building the Transaction in CLI
+### 构建CLI中的交易
 
-Now to building an actual transaction. The transaction will consist of two parts: we will call the
-`new` function in the `todo_list` package to create a new list, and then we will transfer the list
-object to our account. The transaction will look like this:
+现在来构建一个实际的交易。该交易将由两部分组成：我们将调用`todo_list`包中的`new`函数来创建一个新的列表，然后将列表对象转移到我们的账户。交易将如下所示：
 
 ```bash
 $ sui client ptb \
@@ -393,11 +345,7 @@ $ sui client ptb \
 --assign list \
 --transfer-objects "[list]" sender
 ```
-
-In this command, we are using the `ptb` subcommand to build a transaction. Parameters that follow it
-define the actual commands and actions that the transaction will perform. The first two calls we
-make are utility calls to set the sender address to the command inputs and set the gas budget for
-the transaction.
+在这个命令中，我们使用`ptb`子命令来构建一个交易。随后的参数定义了交易将执行的实际命令和操作。我们首先进行的两个调用是实用函数调用，用于设置发送者地址为命令输入，并为交易设置gas预算。
 
 ```bash
 # sets the gas budget for the transaction
@@ -405,19 +353,14 @@ the transaction.
 # registers a variable "sender=@..."
 --assign sender @$MY_ADDRESS \n
 ```
-
-Then we perform the actual call to a function in the package. We use the `--move-call` followed by
-the package ID, the module name, and the function name. In this case, we are calling the `new`
-function in the `todo_list` package.
+接下来，我们执行对包中函数的实际调用。我们使用`--move-call`，紧接着是包ID、模块名和函数名。在这种情况下，我们调用的是`todo_list`包中的`new`函数。
 
 ```bash
 # calls the "new" function in the "todo_list" package under the $PACKAGE_ID address
 --move-call $PACKAGE_ID::todo_list::new
 ```
 
-The function that we defined actually returns a value, which we want need to store. We use the
-`--assign` command to give a name to the returned value. In this case, we are calling it `list`. And
-then we transfer the object to our account.
+我们定义的函数实际上返回一个值，我们需要将其存储起来。我们使用`--assign`命令为返回的值赋予一个名称。在这种情况下，我们将其命名为`list`。然后，我们将该对象转移给我们的账户。
 
 ```bash
 --move-call $PACKAGE_ID::todo_list::new \
@@ -426,13 +369,10 @@ then we transfer the object to our account.
 # transfers the object to the sender
 --transfer-objects "[list]" sender
 ```
-
-Once the command is constructed, you can run it in the terminal. If everything is correct, you
-should see the output similar to the one we had in previous sections. The output will contain the
-transaction digest, the transaction data, and the transaction effects.
+一旦命令构建完成，您可以在终端中运行它。如果一切正确，您应该看到类似于前面章节中的输出。输出将包含交易摘要、交易数据和交易效果。
 
 <details>
-<summary><a style="cursor:pointer">Spoiler: Full transaction output</a></summary>
+<summary><a style="cursor:pointer">剧透：完整的交易输出</a></summary>
 
 ```bash
 Transaction Digest: BJwYEnuuMzU4Y8cTwMoJbbQA6cLwPmwxvsRpSmvThoK8
@@ -555,9 +495,7 @@ Transaction Digest: BJwYEnuuMzU4Y8cTwMoJbbQA6cLwPmwxvsRpSmvThoK8
 
 </details>
 
-The section that we want to focus on is the "Object Changes". More specifically, the "Created
-Objects" part of it. It contains the object ID, the type and the version of the `TodoList` that you
-have created. We will use this object ID to interact with the list.
+我们要关注的部分是"Object Changes"（对象变化）部分，更具体地说是其中的"Created Objects"（创建的对象）部分。它包含了您创建的`TodoList`的对象ID、类型和版本信息。我们将使用这个对象ID来与列表进行交互。
 
 ```bash
 ╭───────────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -583,19 +521,15 @@ have created. We will use this object ID to interact with the list.
 │  └──                                                                                                  │
 ╰───────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
+在这个示例中，对象ID是`0x20e0bede16de8a728ab25e228816b9059b45ebea49c8ad384e044580b2d3e553`。而拥有者应该是您的账户地址。我们通过在交易的最后一个命令中将对象转移给发送者来实现这一点。
 
-In this example the object ID is
-`0x20e0bede16de8a728ab25e228816b9059b45ebea49c8ad384e044580b2d3e553`. And the owner should be your
-account address. We achieved this by transferring the object to the sender in the last command of
-the transaction.
-
-Another way to test that you have successfully created the list is to check the account objects.
+另一种测试您是否成功创建了列表的方法是检查账户对象。
 
 ```bash
 $ sui client objects
 ```
 
-It should have an object that looks similar to this:
+它应该有一个类似于以下内容的对象：
 
 ```plaintext
 ╭  ...                                                                                  ╮
@@ -608,21 +542,17 @@ It should have an object that looks similar to this:
 |  ...                                                                                  |
 ```
 
-### Passing Objects to Functions
+### 将对象传递给函数
 
-The TodoList that we created in the previous step is an object that you can interact with as its
-owner. You can call functions defined in the `todo_list` module on this object. To demonstrate this,
-we will add an item to the list. First, we will add just one item, and in the second transaction we
-will add 3 and remove another one.
+我们在上一步中创建的TodoList是一个可以作为其所有者进行交互的对象。您可以在该对象上调用`todo_list`模块中定义的函数。为了演示这一点，我们将向列表中添加一个项目。首先，我们只添加一个项目，然后在第二个交易中添加3个项目并删除另一个项目。
 
-Double check that you have variables set up [from the previous step](#prepare-the-variables), and
-then add one more variable for the list object.
+请再次检查您是否已经设置了[前一步骤中的变量](#准备变量)，然后为列表对象添加一个变量。
 
 ```bash
 $ export LIST_ID=0x20e0bede16de8a728ab25e228816b9059b45ebea49c8ad384e044580b2d3e553
 ```
 
-Now we can construct the transaction to add an item to the list. The command will look like this:
+现在我们可以构建一个交易，向列表中添加一个项目。命令将如下所示：
 
 ```bash
 $ sui client ptb \
@@ -630,18 +560,15 @@ $ sui client ptb \
 --move-call $PACKAGE_ID::todo_list::add @$LIST_ID "'Finish the Hello, Sui chapter'"
 ```
 
-In this command, we are calling the `add` function in the `todo_list` package. The function takes
-two arguments: the list object and the item to add. The item is a string, so we need to wrap it in
-single quotes. The command will add the item to the list.
+在这个命令中，我们调用了`todo_list`包中的`add`函数。该函数接受两个参数：列表对象和要添加的项目。项目是一个字符串，所以我们需要用单引号将其包裹起来。该命令将项目添加到列表中。
 
-If everything is correct, you should see the output similar to the one we had in previous sections.
-Now you can check the list object to see if the item was added.
+如果一切正确，您应该看到类似于前面章节中的输出。现在，您可以检查列表对象，看看项目是否已经被添加进去了。
 
 ```bash
 $ sui client object $LIST_ID
 ```
 
-The output should contain the item that you have added.
+输出应该包含您添加的项目。
 
 ```plaintext
 ╭───────────────┬───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -670,7 +597,7 @@ The output should contain the item that you have added.
 ╰───────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-A JSON representation of the object can be obtained by adding the `--json` flag to the command.
+可以通过在命令中添加`--json`标志来获取对象的JSON表示形式。
 
 ```bash
 $ sui client object $LIST_ID --json
@@ -701,11 +628,9 @@ $ sui client object $LIST_ID --json
 }
 ```
 
-### Chaining Commands
+### 链式命令
 
-You can chain multiple commands in a single transaction. This shows the power of Transaction Blocks!
-Using the same list object, we will add three more items and remove one. The command will look like
-this:
+链接多个命令可以在单个交易中执行。这展示了交易块的威力！使用相同的列表对象，我们将添加三个项目并删除一个项目。命令将如下所示：
 
 ```bash
 $ sui client ptb \
@@ -716,8 +641,7 @@ $ sui client ptb \
 --move-call $PACKAGE_ID::todo_list::remove @$LIST_ID 0
 ```
 
-If previous commands were successful, this one should not be any different. You can check the list
-object to see if the items were added and removed. The JSON representation is a bit more readable!
+如果之前的命令都成功执行了，这个命令也应该不会有问题。你可以检查列表对象，看看项目是否已被添加和删除。JSON 表示会更易读一些！
 
 ```bash
 sui client object $LIST_ID --json
@@ -752,13 +676,8 @@ sui client object $LIST_ID --json
 }
 ```
 
-Commands don't have to be in the same package or operate on the same object. Within a single
-transaction block, you can interact with multiple packages and objects. This is a powerful feature
-that allows you to build complex interactions on-chain!
+命令不必在同一个包中，也不必操作同一个对象。在单个交易块中，你可以与多个包和对象进行交互。这是一个强大的功能，可以让你在链上构建复杂的交互！
 
-## Conclusion
+## 总结
 
-In this guide, we have shown how to publish a package on the Move blockchain and interact with it
-using the Sui CLI. We have demonstrated how to create a new list object, add items to it, and remove
-them. We have also shown how to chain multiple commands in a single transaction block. This guide
-should give you a good starting point for building your own applications on the Sui blockchain!
+在本指南中，我们展示了如何在 Move 区块链上发布包并使用 Sui CLI 与其交互。我们演示了如何创建一个新的列表对象、添加项目以及删除项目。我们还展示了如何在单个交易块中链接多个命令。本指南应该能为你在 Sui 区块链上构建自己的应用程序提供一个良好的起点！

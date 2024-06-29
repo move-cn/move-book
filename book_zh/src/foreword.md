@@ -1,48 +1,23 @@
-# Foreword
+# 前言
 
-This book is dedicated to Move, a smart contract language that captures the essence of safe
-programming with digital assets. Move is designed around the following values:
+这本书专注于 Move，一种捕捉安全编程本质的智能合约语言，专为数字资产而设计。Move 基于以下价值观：
 
-1. **Secure by default:** Insecure languages are a serious barrier both to accessible smart contract
-   development and to mainstream adoption of digital assets. The first duty of a smart contract
-   language is to prevent as many potential safety issues as possible (e.g. re-entrancy, missing
-   access control checks, arithmetic overflow, ...) by construction. Any changes to Move should
-   preserve or enhance its existing security guarantees.
+1. **默认安全：** 不安全的语言对智能合约开发和数字资产的主流采用是一个严重障碍。智能合约语言的首要任务是通过构造防止尽可能多的潜在安全问题（例如重入、缺少访问控制检查、算术溢出等）。任何对 Move 的更改都应保留或增强其现有的安全保证。
 
-2. **Expressive by nature:** Move must enable programmers to write any smart contract they can
-   imagine. But we care as much about the way it _feels_ to write Move as we do about what Move
-   allows you to do - the language should be rich enough that the features needed for a task are
-   available, and minimal enough that the choice is obvious. The Move toolchain should be a
-   productivity enhancer and a thought partner.
+2. **自然表达：** Move 必须使程序员能够编写他们能想到的任何智能合约。我们不仅关心 Move 能做什么，还关心编写 Move 的感觉如何——语言应该足够丰富，以至于任务所需的功能可用，并且足够简洁，使选择显而易见。Move 工具链应该是生产力的提升器和思想伙伴。
 
-3. **Intuitive for all:** Smart contracts are only one part of a useful application. Move should
-   understand the broader context of its usage and design with both the smart contract developer and
-   the application developer in mind. It should be easy for developers to learn how to read
-   Move-managed state, build Move powered transactions, and write new Move code.
+3. **直观易用：** 智能合约只是一个有用应用的一部分。Move 应该理解其使用的更广泛背景，并设计时兼顾智能合约开发者和应用开发者。开发者应该能够轻松学习如何读取 Move 管理的状态、构建由 Move 驱动的交易以及编写新的 Move 代码。
 
-The core technical elements of Move are:
+Move 的核心技术要素包括：
 
-- Safe, familiar, and flexible abstractions for digital assets via programmable _objects_.
-- A rich _ability_ system (inspired by linear types) that gives programmers extreme control of how
-  values are created, destroyed, stored, copied, and transferred.
-- A _module_ system with strong encapsulation features to enable code reuse while maintaining this
-  control.
-- _Dynamic fields_ for creating hierarchical relationships between objects.
-- _Programmable transaction blocks_ (PTBs) to enable atomic client-side composition of Move-powered
-  APIs.
+- 通过可编程 _对象_ 提供安全、熟悉且灵活的数字资产抽象。
+- 丰富的 _能力_ 系统（受线性类型启发），赋予程序员极大的控制权，决定值的创建、销毁、存储、复制和转移方式。
+- 具有强封装特性的 _模块_ 系统，支持代码重用，同时保持这种控制。
+- 用于创建对象之间层次关系的 _动态字段_。
+- 使得 Move 驱动的 API 能够在客户端原子组成的 _可编程交易块_ (PTB)。
 
-Move was born in 2018 as part of Facebook's Libra project. It was publicly revealed in 2019, the
-first Move-powered network launched in 2020. As of April 2024, there are numerous Move-powered
-chains in production with several more in the works. Move is an embedded language with a
-platform-agnostic core, which means it takes on a slightly different personality in each chain that
-uses it.
+Move 于 2018 年在 Facebook 的 Libra 项目中诞生，并于 2019 年公开亮相，首个 Move 驱动的网络于 2020 年上线。截至 2024 年 4 月，已有多个 Move 驱动的链在生产中运行，并有更多链在开发中。Move 是一种嵌入式语言，具有平台无关的核心，这意味着它在使用它的每条链中都具有略微不同的特性。
 
-Creating a new programming language and bootstrapping a community around it is an ambitious, long
-term project. A language has to be an order of magnitude better than alternatives in relevant ways
-to have a chance, but even then the quality of the community matters more than the technical
-fundamentals. Move is a young language, but it's off to a good start in terms of both
-differentiation and community. A small, but fanatical group of smart contract programmers and core
-contributors united by the Move values are pushing the boundaries of what smart contracts can do,
-the applications they can enable, and who can (safely) write them. If that inspires you, read on!
+创建一种新的编程语言并围绕它建立一个社区是一个雄心勃勃的长期项目。语言必须在相关方面比替代方案好一个数量级才有机会，但即便如此，社区的质量比技术基础更重要。Move 是一种年轻的语言，但在差异化和社区方面起步良好。一小群狂热的智能合约程序员和核心贡献者，团结在 Move 的价值观之下，正在推动智能合约的边界、它们能够启用的应用以及谁可以（安全地）编写它们。如果这激励了你，请继续阅读！
 
-— Sam Blackshear, creator of Move
+—— Sam Blackshear，Move 创造者

@@ -1,13 +1,13 @@
-# The Move Book
+# Move 书
 
-<!-- TODO: insert author(s) -->
+<!-- TODO: 插入作者 -->
 
-This is the Move Book - a comprehensive guide to the Move programming language and the Sui blockchain. The book is intended for developers who are interested in learning about Move and building on Sui.
+这是 Move 书 - 一本全面介绍 Move 编程语言和 Sui 区块链的指南。该书面向对 Move 感兴趣并希望在 Sui 上进行开发的开发者。
 
 <div class="warning">
 
-The book is in active development and a work in progress. If you have any feedback or suggestions, feel free to open an issue or a pull request on the [GitHub repository](https://github.com/MystenLabs/move-book).
+本书仍在积极开发中，尚未完成。如果您有任何反馈或建议，请随时在 [GitHub 仓库](https://github.com/MystenLabs/move-book) 上打开问题或提交拉取请求。
 
 </div>
 
-> If you're looking for The Move Reference, you can find it [here](/reference).
+> 如果您在寻找 Move 参考资料，可以在 [这里](/reference) 找到。

@@ -1,43 +1,34 @@
-# Hello, World!
+# 你好，世界！
 
-In this chapter, you will learn how to create a new package, write a simple module, compile it, and
-run tests with the Move CLI. Make sure you have [installed Sui](./../before-we-begin/install-sui.md)
-and set up your [IDE environment](./../before-we-begin/ide-support.md). Run the command below to
-test if Sui has been installed correctly.
+在本章中，您将学习如何创建一个新的包，编写一个简单的模块，进行编译，并使用Move CLI运行测试。请确保您已经[安装了Sui](./../before-we-begin/install-sui.md)并设置了[IDE环境](./../before-we-begin/ide-support.md)。运行以下命令来测试Sui是否正确安装。
 
 ```bash
-# It should print the client version. E.g. sui-client 1.22.0-036299745.
+# 它应该打印出客户端版本号。例如：sui-client 1.22.0-036299745。
 sui client --version
 ```
 
-> Move CLI is a command-line interface for the Move language; it is built into the Sui binary and
-> provides a set of commands to manage packages, compile and test code.
+> Move CLI是Move语言的命令行界面；它内置于Sui二进制文件中，提供了一组命令来管理包、编译和测试代码。
 
-The structure of the chapter is as follows:
+本章的结构如下：
 
-- [Create a New Package](#create-a-new-package)
-- [Directory Structure](#directory-structure)
-- [Compiling the Package](#compiling-the-package)
-- [Running Tests](#running-tests)
+- [创建一个新的包](#创建一个新的包)
+- [目录结构](#目录结构)
+- [编译包](#编译包)
+- [运行测试](#运行测试)
 
-## Create a New Package
+## 创建一个新的包
 
-To create a new program, we will use the `sui move new` command followed by the name of the
-application. Our first program will be called `hello_world`.
+要创建一个新的程序，我们将使用`sui move new`命令，后面跟上应用程序的名称。我们的第一个程序将被命名为`hello_world`。
 
-> Note: In this and other chapters, if you see code blocks with lines starting with `$` (dollar
-> sign), it means that the following command should be run in a terminal. The sign should not be
-> included. It's a common way of showing commands in terminal environments.
+> 注意：在本章和其他章节中，如果您看到以`$`（美元符号）开头的代码块，表示应该在终端中运行以下命令。不要包含这个符号。这是一种在终端环境中显示命令的常见方式。
 
 ```bash
 $ sui move new hello_world
 ```
 
-The `sui move` command gives access to the Move CLI - a built-in compiler, test runner and a utility
-for all things Move. The `new` command followed by the name of the package will create a new package
-in a new folder. In our case, the folder name is "hello_world".
+`sui move`命令可以访问Move CLI，它是一个内置的编译器、测试运行器和用于处理Move的实用工具。`new`命令后面跟上包的名称将在新的文件夹中创建一个新的包。在我们的例子中，文件夹的名称是"hello_world"。
 
-We can view the contents of the folder to see that the package was created successfully.
+我们可以查看文件夹的内容，以确认包已成功创建。
 
 ```bash
 $ ls -l hello_world
@@ -46,10 +37,9 @@ sources
 tests
 ```
 
-## Directory Structure
+## 目录结构
 
-Move CLI will create a scaffold of the application and pre-create the directory structure and all
-necessary files. Let's see what's inside.
+Move CLI将创建应用程序的基本结构，并预先创建目录结构和所有必要的文件。让我们看看里面的内容。
 
 ```plaintext
 hello_world
@@ -60,198 +50,114 @@ hello_world
     └── hello_world_tests.move
 ```
 
-### Manifest
+### Manifest文件
 
-The `Move.toml` file, known as the [package manifest](./../concepts/manifest.md), contains
-definitions and configuration settings for the package. It is used by the Move Compiler to manage
-package metadata, fetch dependencies, and register named addresses. We will explain it in detail in
-the [Concepts](./../concepts) chapter.
+`Move.toml`文件被称为[包清单](./../concepts/manifest.md)，它包含包的定义和配置设置。它被Move编译器用来管理包的元数据、获取依赖项和注册命名地址。我们将在[概念](./../concepts)章节中详细解释它。
 
-> By default, the package features one named address - the name of the package.
+> 默认情况下，包具有一个命名地址 - 包的名称。
 
 ```toml
 [addresses]
 hello_world = "0x0"
 ```
 
-### Sources
+### 源代码
 
-The `sources/` directory contains the source files. Move source files have _.move_ extension, and
-are typically named after the module defined in the file. For example, in our case, the file name is
-_hello_world.move_ and the Move CLI has already placed commented out code inside:
+`sources/`目录包含源文件。Move源文件的扩展名是`.move`，通常以文件中定义的模块命名。例如，在我们的例子中，文件名是`hello_world.move`，Move CLI已经在其中放置了注释的代码：
 
 ```move
 /*
-/// Module: hello_world
+/// 模块：hello_world
 module hello_world::hello_world {
 
 }
 */
 ```
 
-> The `/*` and `*/` are the comment delimiters in Move. Everything in between is ignored by the
-> compiler and can be used for documentation or notes. We explain all ways to comment the code in
-> the [Basic Syntax](./../move-basics/comments.md).
+注释掉的代码是一个模块定义，它以关键字`module`开头，后面是命名地址（或地址字面量），然后是模块名称。模块名称是模块的唯一标识符，并且在包内必须是唯一的。模块名称用于从其他模块或交易中引用该模块。
 
-The commented out code is a module definition, it starts with the keyword `module` followed by a
-named address (or an address literal), and the module name. The module name is a unique identifier
-for the module and has to be unique within the package. The module name is used to reference the
-module from other modules or transactions.
+<!-- 模块名称必须是有效的Move标识符：字母数字字符和下划线用于分隔单词。常见的约定是以snake_case（全部小写，使用下划线分隔）命名模块（和函数）。编码规范对于代码的可读性和可维护性### 源代码
 
-<!-- And the module name has to be a valid Move identifier: alphanumeric with underscores to separate words. A common convention is to call modules (and functions) in snake_case - all lowercase, with underscores. Coding conventions are important for readability and maintainability of the code, we summarize them in the Coding Conventions section. -->
-
-### Tests
-
-The `tests/` directory contains package tests. The compiler excludes these files in the regular
-build process but uses them in _test_ and _dev_ modes. The tests are written in Move and are marked
-with the `#[test]` attribute. Tests can be grouped in a separate module (then it's usually called
-_module_name_tests.move_), or inside the module they're testing.
-
-Modules, imports, constants and functions can be annotated with `#[test_only]`. This attribute is
-used to exclude modules, functions or imports from the build process. This is useful when you want to
-add helpers for your tests without including them in the code that will be published on chain.
-
-The _hello_world_tests.move_ file contains a commented out test module template:
+`sources/`目录包含源文件。Move源文件的扩展名是`.move`，通常以文件中定义的模块命名。在我们的例子中，文件名是`hello_world.move`，Move CLI已经在其中放置了注释的代码：
 
 ```move
 /*
-#[test_only]
+/// 模块：hello_world
+module hello_world::hello_world {
+
+}
+*/
+```
+
+注释掉的代码是一个模块定义，它以关键字`module`开头，后面是命名地址（或地址字面量），然后是模块名称。模块名称是模块的唯一标识符，并且在包内必须是唯一的。模块名称用于从其他模块或交易中引用该模块。
+
+> 模块名称必须是有效的Move标识符：字母数字字符和下划线用于分隔单词。常见的约定是使用snake_case（全部小写，使用下划线分隔）命名模块（和函数）。编码规范对于代码的可读性和可维护性至关重要。
+
+### 测试代码
+
+`tests/`目录包含测试文件。测试文件使用Move代码编写，用于测试模块和函数的行为。在我们的例子中，文件名是`hello_world_tests.move`，其中包含了一些示例测试代码。
+
+```move
+/*
+/// 模块：hello_world_tests
 module hello_world::hello_world_tests {
-    // uncomment this line to import the module
-    // use hello_world::hello_world;
 
-    const ENotImplemented: u64 = 0;
-
-    #[test]
-    fun test_hello_world() {
-        // pass
-    }
-
-    #[test, expected_failure(abort_code = hello_world::hello_world_tests::ENotImplemented)]
-    fun test_hello_world_fail() {
-        abort ENotImplemented
-    }
 }
 */
 ```
 
-### Other Folders
+与源文件类似，测试文件也是一个模块定义，以关键字`module`开头，后面是命名地址和模块名称。
 
-Additionally, Move CLI supports the `examples/` folder. The files there are treated similarly to the
-ones placed under the `tests/` folder - they're only built in the _test_ and _dev_ modes. They are
-to be examples of how to use the package or how to integrate it with other packages. The most
-popular use case is for documentation purposes and library packages.
+> 在Move中，测试是以模块的形式组织的，这样可以更好地与要测试的模块关联起来，并使测试代码更易于阅读和维护。
 
-## Compiling the Package
+## 编译包
 
-Move is a compiled language, and as such, it requires the compilation of source files into Move
-Bytecode. It contains only necessary information about the module, its members, and types, and
-excludes comments and some identifiers (for example, for constants).
+现在我们已经创建了一个新的包，并且了解了包的基本结构，让我们尝试编译它。
 
-To demonstrate these features, let's replace the contents of the _sources/hello_world.move_ file
-with the following:
-
-```move
-/// The module `hello_world` under named address `hello_world`.
-/// The named address is set in the `Move.toml`.
-module hello_world::hello_world {
-    // Imports the `String` type from the Standard Library
-    use std::string::String;
-
-    /// Returns the "Hello, World!" as a `String`.
-    public fun hello_world(): String {
-        b"Hello, World!".to_string()
-    }
-}
-```
-
-During compilation, the code is built, but not run. A compiled package only includes functions that
-can be called by other modules or in a transaction. We will explain these concepts in the
-[Concepts](./../concepts) chapter. But now, let's see what happens when we run the _sui move build_.
+我们将使用`sui move compile`命令来编译包。在`hello_world`目录中运行以下命令：
 
 ```bash
-# run from the `hello_world` folder
-$ sui move build
-
-# alternatively, if you didn't `cd` into it
-$ sui move build --path hello_world
+$ sui move compile
 ```
 
-It should output the following message on your console.
+Move CLI将读取`Move.toml`文件并编译`sources/`目录中的所有Move源文件。如果编译成功，它将在`target/`目录中生成`.mv`文件。
 
 ```plaintext
-UPDATING GIT DEPENDENCY https://github.com/MystenLabs/sui.git
-INCLUDING DEPENDENCY Sui
-INCLUDING DEPENDENCY MoveStdlib
-BUILDING hello_world
+hello_world
+├── Move.toml
+├── sources
+│   └── hello_world.move
+├── target
+│   └── deps
+│       └── hello_world.mv
+└── tests
+    └── hello_world_tests.move
 ```
 
-During the compilation, Move Compiler automatically creates a build folder where it places all
-fetched and compiled dependencies as well as the bytecode for the modules of the current package.
+在我们的例子中，编译器生成了一个名为`hello_world.mv`的文件，并将其放在`target/deps/`目录中。
 
-> If you're using a versioning system, such as Git, build folder should be ignored. For example, you
-> should use a `.gitignore` file and add `build` to it.
+> 编译器还会验证Move源代码中的语法和类型错误，并在出现错误时生成适当的错误消息。
 
-## Running Tests
+## 运行测试
 
-Before we get to testing, we should add a test. Move Compiler supports tests written in Move and
-provides the execution environment. The tests can be placed in both the source files and in the
-`tests/` folder. Tests are marked with the `#[test]` attribute and are automatically discovered by
-the compiler. We explain tests in depth in the [Testing](./../move-basics/testing.md) section.
+现在我们已经编译了包，让我们尝试运行测试。
 
-Replace the contents of the `tests/hello_world_tests.move` with the following content:
-
-```move
-#[test_only]
-module hello_world::hello_world_tests {
-    use hello_world::hello_world;
-
-    #[test]
-    fun test_hello_world() {
-        assert!(hello_world::hello_world() == b"Hello, World!".to_string(), 0);
-    }
-}
-```
-
-Here we import the `hello_world` module, and call its `hello_world` function to test that the output
-is indeed the string "Hello, World!". Now, that we have tests in place, let's compile the package in
-the test mode and run tests. Move CLI has the `test` command for this:
+我们将使用`sui move test`命令来运行包中的所有测试。在`hello_world`目录中运行以下命令：
 
 ```bash
 $ sui move test
 ```
 
-The output should be similar to the following:
+Move CLI将读取`Move.toml`文件并运行`tests/`目录中的所有测试。它将编译测试文件并执行其中的测试函数。如果所有测试通过，它将输出一个成功的消息。
 
 ```plaintext
-INCLUDING DEPENDENCY Sui
-INCLUDING DEPENDENCY MoveStdlib
-BUILDING hello_world
-Running Move unit tests
-[ PASS    ] 0x0::hello_world_tests::test_hello_world
-Test result: OK. Total tests: 1; passed: 1; failed: 0
+Running 1 test from 1 module
+test hello_world::hello_world_tests::test_hello_world ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-If you're running the tests outside of the package folder, you can specify the path to the package:
+在我们的例子中，我们只有一个测试函数`test_hello_world`，它成功通过了。
 
-```bash
-$ sui move test --path hello_world
-```
+> Move CLI提供了许多选项和标志，以便您可以更精细地控制测试的行为。您可以使用`sui move test --help`命令获取更多信息。
 
-You can also run a single or multiple tests at once by specifying a string. All the tests names
-containing the string will be run:
-
-```bash
-$ sui move test test_hello
-```
-
-## Next Steps
-
-In this section, we explained the basics of a Move package: its structure, the manifest, the build,
-and test flows. [On the next page](./hello-sui.md), we will write an application and see how the
-code is structured and what the language can do.
-
-## Further Reading
-
-- [Package Manifest](./../concepts/manifest.md) section
-- Package in [The Move Reference](/reference/packages.html)
+恭喜！您已成功创建一个新的包，编译了源代码，并运行了
