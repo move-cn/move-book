@@ -1,117 +1,93 @@
-# Storage Functions
+以下是对英文文章的翻译：
 
-The module that defines main storage operations is `sui::transfer`. It is implicitly imported in all
-packages that depend on the [Sui Framework](./../programmability/sui-framework.md), so, like other
-implicitly imported modules (e.g. `std::option` or `std::vector`), it does not require adding a use
-statement.
+# 存储功能
 
-## Overview
+定义主要存储操作的模块是 `sui::transfer`。它在所有依赖[Sui 框架](./../programmability/sui-framework.md)的包中都是隐式导入的，因此，像其他隐式导入的模块（例如 `std::option` 或 `std::vector`）一样，不需要添加 `use` 声明。
 
-The `transfer` module provides functions to perform all three storage operations matching
-[ownership types](./../object/ownership.md) which we explained before:
+## 概述
 
-> On this page we will only talk about so-called _restricted_ storage operations, later we will
-> cover _public_ ones, after the `store` ability is introduced.
+`transfer` 模块提供了执行所有三种与[所有权类型](./../object/ownership.md)匹配的存储操作的函数，我们之前已经解释过：
 
-1. _Transfer_ - send an object to an address, put it into _account owned_ state;
-2. _Share_ - put an object into a _shared_ state, so it is available to everyone;
-3. _Freeze_ - put an object into _immutable_ state, so it becomes a public constant and can never
-   change.
+> 在本页面中，我们只讨论所谓的 _限制性_ 存储操作，稍后我们将介绍 _公共_ 操作，之后会引入 `store` 能力。
 
-The `transfer` module is a go-to for most of the storage operations, except a special case with
-[Dynamic Fields](./../programmability/dynamic-fields.md) awaits us in the next chapter.
+1. _Transfer_ - 将对象发送到地址，将其置于 _账户所有_ 状态;
+2. _Share_ - 将对象置于 _共享_ 状态，因此可供所有人访问;
+3. _Freeze_ - 将对象置于 _不可变_ 状态，因此成为公共常量，永远无法更改。
 
-## Ownership and References: A Quick Recap
+`transfer` 模块是大多数存储操作的首选，除了在下一章节中我们将讨论的 _动态字段_ 特殊情况。
 
-In the [Ownership and Scope](./../move-basics/ownership-and-scope.md) and
-[References](./../move-basics/references.md) chapters, we covered the basics of ownership and
-references in Move. It is important that you understand these concepts when using storage functions.
-Here is a quick recap of the most important points:
+## 所有权与引用：快速回顾
 
-- The _move_ semantics in Move means that the value is _moved_ from one scope to another. In other
-  words, if an instance of a type is passed to a function _by value_, it is _moved_ to the function
-  scope and can't be accessed in the caller scope anymore.
-- To maintain the ownership of the value, you can pass it _by reference_. Either by _immutable
-  reference_ `&T` or _mutable reference_ `&mut T`. Then the value is _borrowed_ and can be accessed
-  in the caller scope, however the owner stays the same.
+在[所有权与作用域](./../move-basics/ownership-and-scope.md)和[引用](./../move-basics/references.md)章节中，我们介绍了 Move 中所有权和引用的基础知识。当您使用存储函数时，理解这些概念非常重要。以下是最重要的几点回顾：
+
+- Move 语义意味着值从一个作用域 _移动_ 到另一个作用域。换句话说，如果通过按值传递类型的实例给函数，它会 _移动_ 到函数作用域，并且在调用者作用域中无法访问。
+- 要维护值的所有权，可以通过引用方式传递它。可以是 _不可变引用_ `&T` 或 _可变引用_ `&mut T`。然后该值被 _借用_，并且可以在调用者作用域中访问，但所有者保持不变。
 
 ```move
-/// Moved by value
-public fun take<T>(value: T) { /* value is moved here! */ abort 0 }
+/// 通过值移动
+public fun take<T>(value: T) { /* value 在此处被移动！ */ abort 0 }
 
-/// For immutable reference
-public fun borrow<T>(value: &T) { /* value is borrowed here! can be read */ abort 0 }
+/// 对于不可变引用
+public fun borrow<T>(value: &T) { /* 在此处借用 value 可以读取 */ abort 0 }
 
-/// For mutable reference
-public fun borrow_mut<T>(value: &mut T) { /* value is mutably borrowed here! */ abort 0 }
+/// 对于可变引用
+public fun borrow_mut<T>(value: &mut T) { /* 在此处可变借用 value */ abort 0 }
 ```
 
-<!-- TODO part on:
-    - object does not have an associated storage type
-    - the same type of object can be stored differently
-    - the objects must be specified in the transaction by their ID
+<!-- TODO 部分：
+    - 对象没有相关的存储类型
+    - 相同类型的对象可以以不同方式存储
+    - 必须在事务中通过它们的 ID 指定对象
  -->
 
-## Transfer
+## 转移
 
-The `transfer::transfer` function is a public function used to transfer an object to another
-address. Its signature is as follows, only accepts a type with the [`key` ability](./key-ability.md)
-and an [address](./../move-basics/address.md) of the recipient. Please, note that the object is
-passed into the function _by value_, therefore it is _moved_ to the function scope and then moved to
-the recipient address:
+`transfer::transfer` 函数是用于将对象转移到另一个地址的公共函数。其签名如下，只接受具有 [`key` 能力](./key-ability.md) 和收件人地址的类型。请注意，对象通过值传递到函数中，因此它被移动到函数作用域，然后移动到接收者地址：
 
 ```move
-// File: sui-framework/sources/transfer.move
+// 文件：sui-framework/sources/transfer.move
 public fun transfer<T: key>(obj: T, recipient: address);
 ```
 
-In the next example, you can see how it can be used in a module that defines and sends an object to
-the transaction sender.
+在下面的示例中，您可以看到如何在定义并发送对象到事务发送者的模块中使用它。
 
 ```move
 module book::transfer_to_sender {
 
-    /// A struct with `key` is an object. The first field is `id: UID`!
+    /// 具有 `key` 的结构体是一个对象。第一个字段是 `id: UID`！
     public struct AdminCap has key { id: UID }
 
-    /// `init` function is a special function that is called when the module
-    /// is published. It is a good place to create application objects.
+    /// `init` 函数是发布模块时调用的特殊函数。这是创建应用对象的好地方。
     fun init(ctx: &mut TxContext) {
-        // Create a new `AdminCap` object, in this scope.
+        // 在此作用域中创建一个新的 `AdminCap` 对象。
         let admin_cap = AdminCap { id: object::new(ctx) };
 
-        // Transfer the object to the transaction sender.
+        // 将对象转移到事务发送者。
         transfer::transfer(admin_cap, ctx.sender());
 
-        // admin_cap is gone! Can't be accessed anymore.
+        // admin_cap 已经消失！无法再访问它了。
     }
 
-    /// Transfers the `AdminCap` object to the `recipient`. Thus, the recipient
-    /// becomes the owner of the object, and only they can access it.
+    /// 将 `AdminCap` 对象转移到 `recipient`。因此，接收者成为对象的所有者，只有他们可以访问它。
     public fun transfer_admin_cap(cap: AdminCap, recipient: address) {
         transfer::transfer(cap, recipient);
     }
 }
 ```
 
-When the module is published, the `init` function will get called, and the `AdminCap` object which
-we created there will be _transferred_ to the transaction sender. The `ctx.sender()` function
-returns the sender address for the current transaction.
+当模块发布时，`init` 函数将被调用，并且我们在其中创建的 `AdminCap` 对象将被转移到事务发送者。`ctx.sender()` 函数返回当前事务的发送者地址。
 
-Once the `AdminCap` has been transferred to the sender, for example, to `0xa11ce`, the sender, and
-only the sender, will be able to access the object. The object is now _account owned_.
+一旦 `AdminCap` 被转移给发送者，例如 `0xa11ce`，发送者（仅发送者）将能够访问对象。对象现在是 _账户所有_ 的。
 
-> Account owned objects are a subject to _true ownership_ - only the account owner can access them.
-> This is a fundamental concept in the Sui storage model.
+> 账户所有的对象受 _真正的所有权_ 影响 - 只有账户所有者才能访问它们。这是 Sui 存储模型中的基本概念。
 
-Let's extend the example with a function that uses `AdminCap` to authorize a mint of a new object
-and its transfer to another address:
+让我们通过一个函数扩展示例，该函数使用 `AdminCap` 授权新对象的铸造并将其转移到另一个地址：
 
 ```move
-/// Some `Gift` object that the admin can `mint_and_transfer`.
+/// 一些 `Gift` 对象，管理员可以 `铸造和转移`。
 public struct Gift has key { id: UID }
 
-/// Creates a new `Gift` object and transfers it to the `recipient`.
+/// 创建一个新的 `Gift` 对象并将其转移到 `recipient`。
 public fun mint_and_transfer(
     _: &AdminCap, recipient: address, ctx: &mut TxContext
 ) {
@@ -120,185 +96,151 @@ public fun mint_and_transfer(
 }
 ```
 
-The `mint_and_transfer` function is a public function that "could" be called by anyone, but it
-requires an `AdminCap` object to be passed as the first argument by reference. Without it, the
-function will not be callable. This is a simple way to restrict access to privileged functions
-called _[Capability](./../programmability/capability.md)_. Because the `AdminCap` object is _account
-owned_, only `0xa11ce` will be able to call the `mint_and_transfer` function.
+`mint_and_transfer` 函数是一个公共函数，任何人都可以“可能”调用它，但是需要通过引用传递 `AdminCap` 对象作为第一个参数。如果没有它，函数将无法调用。这是限制访问特权功能的一种简单方式，称为 _[能力](./../programmability/capability.md)_。因为 `AdminCap` 对象是 _账户所有_ 的，只有 `0xa11ce` 才能调用 `mint_and_transfer` 函数。
 
-The `Gift`s sent to recipients will also be _account owned_, each gift being unique and owned
-exclusively by the recipient.
+发送给接收者的 `Gift` 将同样是 _账户所有_ 的，每个礼物都是独特的，且仅由接收者独占所有。
 
-A quick recap:
+快速总结：
 
-- `transfer` function is used to send an object to an address;
-- The object becomes _account owned_ and can only be accessed by the recipient;
-- Functions can be gated by requiring an object to be passed as an argument, creating a
-  _capability_.
+- `transfer` 函数用于将对象发送到地址；
+- 对象变为 _账户所有_，只有接收者可以访问；
+- 可以通过要求将对象作为参数传递来限制函数，从而创建 _能力_。
 
-## Freeze
+## 冻结
 
-The `transfer::freeze_object` function is public function used to put an object into an _immutable_
-state. Once an object is _frozen_, it can never be changed, and it can be accessed by anyone by
-immutable reference.
+`transfer::freeze_object` 函数是用于将对象置于 _不可变_ 状态的公共函数。一旦对象被 _冻结_，它永远无法更改，且可以通过不可变引用被任何人访问。
 
-The function signature is as follows, only accepts a type with the
-[`key` ability](./key-ability.md). Just like all other storage functions, it takes the object _by
-value_:
+该函数的签名如下，只接受具有 [`key` 能力](./key-ability.md) 的类型。与所有其他存储函数一样，它通过值接受对象：
 
 ```move
-// File: sui-framework/sources/transfer.move
+// 文件：sui-framework/sources/transfer.move
 public fun freeze_object<T: key>(obj: T);
 ```
 
-Let's expand on the previous example and add a function that allows the admin to create a `Config`
-object and freeze it:
+让我们扩展之前的示例，添加一个函数，允许管理员创建一个 `Config` 对象并将其冻结：
 
 ```move
-/// Some `Config` object that the admin can `create_and_freeze`.
+/// 一些管理员可以 `创建和冻结` 的 `Config` 对象。
 public struct Config has key {
     id: UID,
     message: String
 }
 
-/// Creates a new `Config` object and freezes it.
+/// 创建一个新的 `Config` 对象并将其冻结。
 public fun create_and_freeze(
     _: &AdminCap,
     message: String,
     ctx: &mut TxContext
 ) {
-    let config = Config {
+    let config = Config
+
+ {
         id: object::new(ctx),
         message
     };
 
-    // Freeze the object so it becomes immutable.
+    // 冻结对象，使其变为不可变。
     transfer::freeze_object(config);
 }
 
-/// Returns the message from the `Config` object.
-/// Can access the object by immutable reference!
+/// 返回 `Config` 对象中的消息。
+/// 可以通过不可变引用访问对象！
 public fun message(c: &Config): String { c.message }
 ```
 
-Config is an object that has a `message` field, and the `create_and_freeze` function creates a new
-`Config` and freezes it. Once the object is frozen, it can be accessed by anyone by immutable
-reference. The `message` function is a public function that returns the message from the `Config`
-object. Config is now publicly available by its ID, and the message can be read by anyone.
+Config 是一个具有 `message` 字段的对象，`create_and_freeze` 函数创建一个新的 `Config` 并将其冻结。一旦对象被冻结，可以通过不可变引用被任何人访问。`message` 函数是一个公共函数，返回 `Config` 对象中的消息。Config 现在通过其 ID 公开可用，任何人都可以读取消息。
 
-> Function definitions are not connected to the object's state. It is possible to define a function
-> that takes a mutable reference to an object that is used as frozen. However, it won't be callable
-> on a frozen object.
+> 函数定义与对象的状态无关。可以定义一个接受可变引用的函数用于冻结对象。但是，它无法在冻结对象上调用。
 
-The `message` function can be called on an immutable `Config` object, however, two functions below
-are not callable on a frozen object:
+`message` 函数可以在不可变的 `Config` 对象上调用，但是以下两个函数不能在冻结对象上调用：
 
 ```move
-// === Functions below can't be called on a frozen object! ===
+// === 以下函数不能在冻结对象上调用！ ===
 
-/// The function can be defined, but it won't be callable on a frozen object.
-/// Only immutable references are allowed.
+/// 该函数可以定义，但不能在冻结对象上调用。
+/// 仅允许不可变引用。
 public fun message_mut(c: &mut Config): &mut String { &mut c.message }
 
-/// Deletes the `Config` object, takes it by value.
-/// Can't be called on a frozen object!
+/// 删除 `Config` 对象，按值接受它。
+/// 不能在冻结对象上调用！
 public fun delete_config(c: Config) {
     let Config { id, message: _ } = c;
-    id.delete()
+    id.delete();
 }
 ```
 
-To summarize:
+总结：
 
-- `transfer::freeze_object` function is used to put an object into an _immutable_ state;
-- Once an object is _frozen_, it can never be changed, deleted or transferred, and it can be
-  accessed by anyone by immutable reference;
+- `transfer::freeze_object` 函数用于将对象置于 _不可变_ 状态；
+- 一旦对象被冻结，它永远无法更改、删除或转移，可以通过不可变引用被任何人访问；
 
-## Owned -> Frozen
+## 账户拥有 -> 冻结
 
-Since the `transfer::freeze_object` signature accepts any type with the `key` ability, it can take
-an object that was created in the same scope, but it can also take an object that was owned by an
-account. This means that the `freeze_object` function can be used to _freeze_ an object that was
-_transferred_ to the sender. For security concerns, we would not want to freeze the `AdminCap`
-object - it would be a security risk to allow access to it to anyone. However, we can freeze the
-`Gift` object that was minted and transferred to the recipient:
+由于 `transfer::freeze_object` 的签名接受任何具有 `key` 能力的类型，它可以接受在同一作用域中创建的对象，但也可以接受账户拥有的对象。这意味着 `freeze_object` 函数可以用来冻结转移给发送者的对象。出于安全考虑，我们不希望冻结 `AdminCap` 对象——允许任何人访问它是一个安全风险。然而，我们可以冻结铸造并转移给接收者的 `Gift` 对象：
 
-> Single Owner -> Immutable conversion is possible!
+> 单一所有者 -> 不可变转换是可能的！
 
 ```move
-/// Freezes the `Gift` object so it becomes immutable.
+/// 冻结 `Gift` 对象，使其变为不可变。
 public fun freeze_gift(gift: Gift) {
     transfer::freeze_object(gift);
 }
 ```
 
-## Share
+## 共享
 
-The `transfer::share_object` function is a public function used to put an object into a _shared_
-state. Once an object is _shared_, it can be accessed by anyone by a mutable reference (hence,
-immutable too). The function signature is as follows, only accepts a type with the
-[`key` ability](./key-ability.md):
+`transfer::share_object` 函数是用于将对象置于 _共享_ 状态的公共函数。一旦对象被 _共享_，它可以通过可变引用（当然，也可以通过不可变引用）被任何人访问。该函数的签名如下，只接受具有 [`key` 能力](./key-ability.md) 的类型：
 
 ```move
-// File: sui-framework/sources/transfer.move
+// 文件：sui-framework/sources/transfer.move
 public fun share_object<T: key>(obj: T);
 ```
 
-Once an object is _shared_, it is publicly available as a mutable reference.
+一旦对象被 _共享_，它可以通过可变引用公开访问。
 
-## Special Case: Shared Object Deletion
+## 特殊情况：共享对象删除
 
-While the shared object can't normally be taken by value, there is one special case where it can -
-if the function that takes it deletes the object. This is a special case in the Sui storage model,
-and it is used to allow the deletion of shared objects. To show how it works, we will create a
-function that creates and shares a Config object and then another one that deletes it:
+虽然共享对象通常不能按值获取，但有一种特殊情况可以——如果获取它的函数删除对象。这是 Sui 存储模型中的一个特殊情况，用于允许删除共享对象。为了展示它如何工作，我们将创建一个函数，创建并共享一个 Config 对象，然后再创建一个删除它的函数：
 
 ```move
-/// Creates a new `Config` object and shares it.
+/// 创建一个新的 `Config` 对象并共享它。
 public fun create_and_share(message: String, ctx: &mut TxContext) {
     let config = Config {
         id: object::new(ctx),
         message
     };
 
-    // Share the object so it becomes shared.
+    // 共享对象，使其变为共享。
     transfer::share_object(config);
 }
 ```
 
-The `create_and_share` function creates a new `Config` object and shares it. The object is now
-publicly available as a mutable reference. Let's create a function that deletes the shared object:
+`create_and_share` 函数创建一个新的 `Config` 对象并共享它。对象现在可以通过可变引用公开访问。让我们创建一个删除共享对象的函数：
 
 ```move
-/// Deletes the `Config` object, takes it by value.
-/// Can be called on a shared object!
+/// 删除 `Config` 对象，按值获取它。
+/// 可以在共享对象上调用！
 public fun delete_config(c: Config) {
     let Config { id, message: _ } = c;
-    id.delete()
+    id.delete();
 }
 ```
 
-The `delete_config` function takes the `Config` object by value and deletes it, and the Sui Verifier
-would allow this call. However, if the function returned the `Config` object back or attempted to
-`freeze` or `transfer` it, the Sui Verifier would reject the transaction.
+`delete_config` 函数按值获取 `Config` 对象并删除它，Sui 验证器会允许此调用。然而，如果函数返回 `Config` 对象或试图 `freeze` 或 `transfer` 它，Sui 验证器将拒绝事务。
 
 ```move
-// Won't work!
+// 不会成功！
 public fun transfer_shared(c: Config, to: address) {
     transfer::transfer(c, to);
 }
 ```
 
-To summarize:
+总结：
 
-- `share_object` function is used to put an object into a _shared_ state;
-- Once an object is _shared_, it can be accessed by anyone by a mutable reference;
-- Shared objects can be deleted, but they can't be transferred or frozen.
+- `share_object` 函数用于将对象置于 _共享_ 状态；
+- 一旦对象被共享，它可以通过可变引用被任何人访问；
+- 共享对象可以删除，但不能转移或冻结。
 
-## Next Steps
+## 后续步骤
 
-Now that you know main features of the `transfer` module, you can start building more complex
-applications on Sui that involve storage operations. In the next chapter, we will cover the
-[Store Ability](./store-ability.md) which allows storing data inside objects and relaxes transfer
-restrictions which we barely touched on here. And after that we will cover the
-[UID and ID](./uid-and-id.md) types which are the most important types in the Sui storage model.
+现在您已经了解了 `transfer` 模块的主要功能，您可以开始在 Sui 上构建更复杂的涉及存储操作的应用程序。在下一章中，我们将介绍 [存储能力](./store-ability.md)，它允许在对象内部存储数据，并放宽我们在这里触及的转移限制。之后，我们将介绍 Sui 存储模型中最重要的类型 [UID 和 ID](./uid-and-id.md)。
