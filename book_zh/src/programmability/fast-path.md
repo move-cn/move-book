@@ -1,39 +1,23 @@
-# Fast Path
+# 快速路径
 
-Due to the object model and the data organization model of Sui, some operations can be performed in
-a more efficient and parallelized way. This is called the **fast path**. Transaction that touches
-shared state requires consensus because it can be accessed by multiple parties at the same time.
-However, if the transaction only touches the private state (owned objects), there is no need for
-consensus. This is the fast path.
+由于 Sui 的对象模型和数据组织模型，某些操作可以以更高效和并行化的方式执行。这被称为**快速路径**。触及共享状态的事务需要共识，因为它可以被多方同时访问。然而，如果事务仅触及私有状态（拥有的对象），则不需要共识。这就是快速路径。
 
-We have a favorite example for this: a coffee machine and a coffee cup. The coffee machine placed in
-the office is a shared resource - everyone can use it, but there can be only one user at a time. The
-coffee cup, on the other hand, is a private resource - it belongs to a specific person, and only
-that person can use it. To make coffee, one needs to use the coffee machine and wait if there's
-someone else using it. However, once the coffee is made and poured into the cup, the person can take
-the cup and drink the coffee without waiting for anyone else.
+我们有一个常用的例子：咖啡机和咖啡杯。放置在办公室的咖啡机是一个共享资源 - 每个人都可以使用它，但一次只能有一个用户。另一方面，咖啡杯是一个私有资源 - 它属于特定的人，只有该人才能使用它。要冲咖啡，需要使用咖啡机，如果有其他人正在使用它，就需要等待。然而，一旦咖啡冲好并倒入杯子中，该人可以拿起杯子喝咖啡，而无需等待其他人。
 
-The same principle applies to Sui. If a transaction only touches the private state (the cup with
-coffee), it can be executed without consensus. If it touches the shared state (the coffee machine),
-it requires consensus. This is the fast path.
+同样的原理适用于 Sui。如果一个事务只触及私有状态（带有咖啡的杯子），它可以在没有共识的情况下执行。如果它触及共享状态（咖啡机），则需要共识。这就是快速路径。
 
-## Frozen objects
+## 冻结对象
 
-Consensus is only required for mutating the shared state. If the object is immutable, it is treated
-as a "constant" and can be accessed in parallel. Frozen objects can be used to share unchangeable
-data between multiple parties without requiring consensus.
+只有在修改共享状态时才需要共识。如果对象是不可变的，它被视为“常量”，可以并行访问。冻结对象可用于在多方之间共享不可更改的数据，而无需共识。
 
-## In practice
+## 实践中
 
 ```move
 {{#include ../../../packages/samples/sources/programmability/fast-path.move:main}}
 ```
 
-## Special case: Clock
+## 特殊情况：Clock
 
-The `Clock` object with the reserved address `0x6` is a special case of a shared object which cannot
-be passed by a mutable reference in a regular transaction. An attempt to do so will not succeed, and
-the transaction will be rejected. Because of this limitation, the `Clock` object can only be
-accessed immutably, which allows executing transactions in parallel without consensus.
+具有保留地址 `0x6` 的 `Clock` 对象是共享对象的特殊情况，在常规事务中无法通过可变引用传递。尝试这样做将失败，事务将被拒绝。由于这个限制，`Clock` 对象只能以不可变方式访问，这允许在没有共识的情况下并行执行事务。
 
 <!-- Add more on why and how -->

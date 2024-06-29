@@ -1,10 +1,5 @@
-# Advanced Programmability
+# 高级可编程性
 
-In previous chapters we've covered [the basics of Move](./../move-basics) and
-[Sui Storage Model](./../storage). Now it's time to dive deeper into the advanced
-topics of Sui programmability.
+在之前的章节中，我们介绍了[Move的基础知识](./../move-basics)和[Sui存储模型](./../storage)。现在是时候深入探讨Sui可编程性的高级主题了。
 
-This chapter introduces more complex concepts, practices and features of Move and Sui that are
-essential for building more sophisticated applications. It is intended for developers who are
-already familiar with the basics of Move and Sui, and are looking to expand their knowledge and
-skills.
+本章将介绍更复杂的概念、实践和特性，这些对于构建更复杂的应用程序至关重要。本章旨在帮助那些已经熟悉Move和Sui基础知识，并希望扩展他们的知识和技能的开发人员。

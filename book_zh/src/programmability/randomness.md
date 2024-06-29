@@ -1,51 +1,50 @@
-# Randomness
+# 随机性
 
 <!--
 
-- Every consensus commit a new random value is generated.
-- Beginning of an epoch, validators create a global random value.
-- One value is used to derive unique random value per transaction.
-- Pseudo-random generator from a seed that is created once per epoch.
+- 每个共识提交都会生成一个新的随机值。
+- 在一个纪元的开始，验证者会创建一个全局随机值。
+- 一个值用于根据每个交易派生唯一的随机值。
+- 通过一次纪元创建的种子生成伪随机生成器。
 
-Qs:
+问题：
 
-- How does it work with consensus / parallel execution / fast path? works like a Clock
-- Does it lose its unpredictability closer to the end of the epoch. no
-- What is the UID of the Random object? 0x8
-- 0x8 - Random - 8 is a lucky number
-- Do we protect &mut access to 0x8
-
----
-
-- RandomInner is updated.
-- Every consensus commit the value inside is updated
+- 在共识/并行执行/快速路径中如何工作？类似于时钟。
+- 随机性在纪元接近结束时是否失去了不可预测性？不会。
+- 随机对象的UID是什么？0x8。
+- 0x8 - 随机性 - 8是一个幸运数字。
+- 我们是否保护对0x8的&mut访问？
 
 ---
 
-- Developers call `new_generator` and pass in the global random object.
-- ...which creates the RandomGenerator from the global seed with a fresh object ID.
-- The RandomGenerator uses unknown unpredictable random bytes + fresh object UID from a transaction.
-
-- then they use `generate_bytes` or `generate_u64` or any other integer. Or a value in a range.
-- random shuffle of a vector.
-
-Notes: pretty dope utility!
+- RandomInner被更新。
+- 每个共识提交时内部的值都会被更新。
 
 ---
 
-- 8 ball is a random number generator.
+- 开发人员调用`new_generator`并传入全局随机对象。
+- ...然后使用全局种子从事务创建具有新对象ID的RandomGenerator。
+- RandomGenerator使用未知的、不可预测的随机字节和来自交易的新对象UID。
 
+- 然后他们使用`generate_bytes`或`generate_u64`或任何其他整数。或者一个范围内的值。
+- 随机重排一个向量。
 
-Difficulties:
+备注：非常酷的实用工具！
 
-- If you know the seed, then you can predict the random number.
-- Random should not be used in a public function - predictable.
-- Random failure is more expensive than a success scenario.
-    - one way out is to first calculate randomness and then do a separate expensive operation.
-    - they can set a limit to gas for failure scenarios, so the failure never happens.
+---
+
+- 8球是一个随机数生成器。
+
+困难：
+
+- 如果你知道种子，那么你可以预测随机数。
+- 随机数不应该在公共函数中使用 - 可预测的。
+- 随机失效比成功的情况更昂贵。
+    - 一种方法是先计算随机性，然后进行单独的昂贵操作。
+    - 他们可以为失败场景设置燃料上限，这样就不会发生失败。
     -
 
-> `public entry` -> `entry` call
-> there is a PTB attack on the Random object.
+> `public entry` -> `entry`调用
+> 对随机对象存在PTB攻击。
 
  -->

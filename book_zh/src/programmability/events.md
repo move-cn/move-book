@@ -1,47 +1,31 @@
-# Events
+# 事件
 
-Events are a way to notify off-chain listeners about on-chain events. They are used to emit
-additional information about the transaction that is not stored - and, hence, can't be accessed -
-on-chain. Events are emitted by the `sui::event` module located in the
-[Sui Framework](./sui-framework.md).
+事件是一种通知链下监听器关于链上事件的方式。它们用于发出关于交易的额外信息，这些信息不会存储在链上，因此无法在链上访问。事件由[Sui框架](./sui-framework.md)中的`sui::event`模块发出。
 
-> Any custom type with the [copy](./../move-basics/copy-ability.md) and
-> [drop](./../move-basics/drop-ability.md) abilities can be emitted as an event.
-> Sui Verifier requires the type to be internal to the module.
+> 任何具有[copy](./../move-basics/copy-ability.md)和[drop](./../move-basics/drop-ability.md)能力的自定义类型都可以作为事件发出。Sui Verifier要求类型是模块的内部类型。
 
 ```move
-// File: sui-framework/sources/event.move
+// 文件：sui-framework/sources/event.move
 module sui::event {
-    /// Emit a custom Move event, sending the data offchain.
+    /// 发出自定义的Move事件，将数据发送到链下。
     ///
-    /// Used for creating custom indexes and tracking onchain
-    /// activity in a way that suits a specific application the most.
+    /// 用于创建自定义索引并以最适合特定应用程序的方式跟踪链上活动。
     ///
-    /// The type `T` is the main way to index the event, and can contain
-    /// phantom parameters, eg `emit(MyEvent<phantom T>)`.
+    /// 类型 `T` 是索引事件的主要方式，可以包含幻象参数，例如 `emit(MyEvent<phantom T>)`。
     public native fun emit<T: copy + drop>(event: T);
 }
 ```
 
-## Emitting Events
+## 发出事件
 
-Events are emitted using the `emit` function in the `sui::event` module. The function takes a single
-argument - the event to be emitted. The event data is passed by value,
+事件使用`sui::event`模块中的`emit`函数发出。该函数接受一个参数——要发出的事件。事件数据以值传递。
 
 ```move
 {{#include ../../../packages/samples/sources/programmability/events.move:emit}}
 ```
 
-The Sui Verifier requires the type passed to the `emit` function to be _internal to the module_. So
-emitting a type from another module will result in a compilation error. Primitive types, although
-they match the _copy_ and _drop_ requirement, are not allowed to be emitted as events.
+Sui Verifier要求传递给`emit`函数的类型是_模块的内部类型_。因此，发出来自其他模块的类型将导致编译错误。尽管原始类型符合_copy_和_drop_要求，但它们不允许作为事件发出。
 
-## Event Structure
+## 事件结构
 
-Events are a part of the transaction result and are stored in the _transaction effects_. As such,
-they natively have the `sender` field which is the address who sent the transaction. So adding a
-"sender" field to the event is not necessary. Similarly, event metadata contains the timestamp. But
-it is important to note that the timestamp is relative to the node and may vary a little from node
-to node.
-
-<!-- ## Reliability -->
+事件是交易结果的一部分，存储在_交易效果_中。因此，它们本质上具有`sender`字段，即发送交易的地址。因此，添加“sender”字段到事件中是不必要的。同样，事件元数据包含时间戳，但需要注意的是时间戳相对于节点，可能会因节点不同而有所变化。

@@ -1,11 +1,8 @@
-# Transaction Context
+# 事务上下文
 
-Every transaction has the execution context. The context is a set of predefined variables that are
-available to the program during execution. For example, every transaction has a sender address, and
-the transaction context contains a variable that holds the sender address.
+每个事务都有执行上下文。上下文是在执行过程中程序可以访问的一组预定义变量。例如，每个事务都有一个发送者地址，事务上下文包含一个保存发送者地址的变量。
 
-The transaction context is available to the program through the `TxContext` struct. The struct is
-defined in the `sui::tx_context` module and contains the following fields:
+事务上下文可以通过`TxContext`结构体在程序中访问。该结构体定义在`sui::tx_context`模块中，包含以下字段：
 
 ```move
 // File: sui-framework/sources/tx_context.move
@@ -27,43 +24,32 @@ struct TxContext has drop {
 }
 ```
 
-Transaction context cannot be constructed manually or directly modified. It is created by the system
-and passed to the function as a reference in a transaction. Any function called in a
-[Transaction](./../concepts/what-is-a-transaction.md) has access to the context and can pass it into
-the nested calls.
+事务上下文不能手动构造或直接修改。它由系统创建，并作为引用传递给事务中的函数。在[Transaction](./../concepts/what-is-a-transaction.md)中调用的任何函数都可以访问上下文并将其传递给嵌套调用。
 
-> `TxContext` has to be the last argument in the function signature.
+> `TxContext`必须是函数签名中的最后一个参数。
 
-## Reading the Transaction Context
+## 读取事务上下文
 
-With only exception of the `ids_created`, all of the fields in the `TxContext` have getters. The
-getters are defined in the `sui::tx_context` module and are available to the program. The getters
-don't require `&mut` because they don't modify the context.
+除了`ids_created`字段外，`TxContext`中的所有字段都有对应的getter方法。这些getter方法在`sui::tx_context`模块中定义，并对程序可用。这些getter方法不需要`&mut`，因为它们不修改上下文。
 
 ```move
 {{#include ../../../packages/samples/sources/programmability/transaction-context.move:reading}}
 ```
 
-## Mutability
+## 可变性
 
-The `TxContext` is required to create new objects (or just `UID`s) in the system. New UIDs are
-derived from the transaction digest, and for the digest to be unique, there needs to be a changing
-parameter. Sui uses the `ids_created` field for that. Every time a new UID is created, the
-`ids_created` field is incremented by one. This way, the digest is always unique.
+`TxContext`用于在系统中创建新对象（或仅仅是`UID`）。新的UID是从事务摘要派生的，为了使摘要唯一，需要一个变化的参数。Sui使用`ids_created`字段来实现这一点。每次创建新的UID时，`ids_created`字段会增加一。这样，摘要始终是唯一的。
 
-Internally, it is represented as the `derive_id` function:
+在内部，它由`derive_id`函数表示：
 
 ```move
 // File: sui-framework/sources/tx_context.move
 native fun derive_id(tx_hash: vector<u8>, ids_created: u64): address;
 ```
 
-## Generating unique addresses
+## 生成唯一地址
 
-The underlying `derive_id` function can also be utilized in your program to generate unique
-addresses. The function itself is not exposed, but a wrapper function `fresh_object_address` is
-available in the `sui::tx_context` module. It may be useful if you need to generate a unique
-identifier in your program.
+底层的`derive_id`函数也可以在你的程序中用于生成唯一地址。该函数本身没有暴露出来，但在`sui::tx_context`模块中提供了一个包装函数`fresh_object_address`。如果你需要在程序中生成唯一标识符，它可能会很有用。
 
 ```move
 // File: sui-framework/sources/tx_context.move

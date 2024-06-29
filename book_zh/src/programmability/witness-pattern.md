@@ -1,97 +1,80 @@
-# Pattern: Witness
+# 模式：证明者
 
-Witness is a pattern of proving an existence by constructing a proof. In the context of programming,
-witness is a way to prove a certain property of a system by providing a value that can only be
-constructed if the property holds.
+证明者是通过构建证据来证明存在的一种模式。在编程的背景下，证明者是通过提供一个只有在属性成立时才能构建的值来证明系统的某个属性。
 
-## Witness in Move
+## 在 Move 中的证明者模式
 
-In the [Struct](./../move-basics/struct.md) section we have shown that a struct can only be
-created - or _packed_ - by the module defining it. Hence, in Move, a module proves ownership of the
-type by constructing it. This is one of the most important patterns in Move, and it is widely used
-for generic type instantiation and authorization.
+在 [结构体](./../move-basics/struct.md) 部分中，我们展示了结构体只能由定义它的模块创建或打包。因此，在 Move 中，模块通过构建类型来证明对其的所有权。这是 Move 中最重要的模式之一，广泛用于泛型类型的实例化和授权。
 
-Practically speaking, for the witness to be used, there has to be a function that expects a witness
-as an argument. In the example below it is the `new` function that expects a witness of the `T` type
-to create a `Instance<T>` instance.
+从实际角度来看，为了使用证明者，必须有一个期望证明者作为参数的函数。在下面的示例中，`new` 函数期望一个 `T` 类型的证明者来创建 `Instance<T>` 实例。
 
-> It is often the case that the witness struct is not stored, and for that the function may require
-> the [Drop](./../move-basics/drop-ability.md) ability for the type.
+> 通常情况下，证明者结构体不会被存储，因此函数可能需要该类型的 [Drop](./../move-basics/drop-ability.md) 能力。
 
 ```move
 module book::witness {
-    /// A struct that requires a witness to be created.
+    /// 需要证明者才能创建的结构体。
     public struct Instance<T> { t: T }
 
-    /// Create a new instance of `Instance<T>` with the provided T.
+    /// 使用提供的 T 创建 `Instance<T>` 的新实例。
     public fun new<T>(witness: T): Instance<T> {
         Instance { t: witness }
     }
 }
 ```
 
-The only way to construct an `Instance<T>` is to call the `new` function with an instance of the
-type `T`. This is a basic example of the witness pattern in Move. A module providing a witness often
-has a matching implementation, like the module `book::witness_source` below:
+构造 `Instance<T>` 的唯一方法是调用 `new` 函数，并提供类型 `T` 的一个实例。这是 Move 中证明者模式的基本示例。提供证明者的模块通常会有相应的实现，例如下面的 `book::witness_source` 模块：
 
 ```move
 module book::witness_source {
     use book::witness::{Self, Instance};
 
-    /// A struct used as a witness.
+    /// 作为证明者使用的结构体。
     public struct W {}
 
-    /// Create a new instance of `Instance<W>`.
+    /// 创建 `Instance<W>` 的新实例。
     public fun new_instance(): Instance<W> {
         witness::new(W {})
     }
 }
 ```
 
-The instance of the struct `W` is passed into the `new_instance` function to create an `Instance<W>`, thereby
-proving that the module `book::witness_source` owns the type `W`.
+将结构体 `W` 的实例传递给 `new_instance` 函数可以创建一个 `Instance<W>`，从而证明了模块 `book::witness_source` 拥有类型 `W`。
 
-## Instantiating a Generic Type
+## 实例化泛型类型
 
-Witness allows generic types to be instantiated with a concrete type. This is useful for inheriting
-associated behaviors from the type with an option to extend them, if the module provides the ability
-to do so.
+证明者允许使用具体类型实例化泛型类型。这对于从类型继承关联行为，并有选择地扩展这些行为（如果模块提供了这样的能力）非常有用。
 
 ```move
-// File: sui-framework/sources/balance.move
-/// A Supply of T. Used for minting and burning.
+// 文件：sui-framework/sources/balance.move
+/// 供应类型为 T。用于铸造和销毁。
 public struct Supply<phantom T> has key, store {
     id: UID,
     value: u64
 }
 
-/// Create a new supply for type T with the provided witness.
+/// 使用提供的证明者为类型 T 创建新的供应。
 public fun create_supply<T: drop>(_w: T): Supply<T> {
     Supply { value: 0 }
 }
 
-/// Get the `Supply` value.
+/// 获取 `Supply` 的值。
 public fun supply_value<T>(supply: &Supply<T>): u64 {
     supply.value
 }
 ```
 
-In the example above, which is borrowed from the `balance` module of the
-[Sui Framework](./sui-framework.md), the `Supply` a generic struct that can be constructed only by
-supplying a witness of the type `T`. The witness is taken by value and _discarded_ - hence the `T`
-must have the [drop](./../move-basics/drop-ability.md) ability.
+上面的示例来自于 [Sui Framework](./sui-framework.md) 的 `balance` 模块，其中 `Supply` 是一个泛型结构体，只能通过提供类型 `T` 的证明者来构建。证明者是按值获取并且被丢弃 - 因此 `T` 必须具有 [drop](./../move-basics/drop-ability.md) 能力。
 
-The instantiated `Supply<T>` can then be used to mint new `Balance<T>`'s, where `T` is the type of
-the supply.
+然后可以使用实例化的 `Supply<T>` 来铸造新的 `Balance<T>`，其中 `T` 是供应的类型。
 
 ```move
-// File: sui-framework/sources/balance.move
-/// Storable balance.
+// 文件：sui-framework/sources/balance.move
+/// 可存储的余额。
 struct Balance<phantom T> has store {
     value: u64
 }
 
-/// Increase supply by `value` and create a new `Balance<T>` with this value.
+/// 增加供应量 `value` 并创建具有此值的新 `Balance<T>`。
 public fun increase_supply<T>(self: &mut Supply<T>, value: u64): Balance<T> {
     assert!(value < (18446744073709551615u64 - self.value), EOverflow);
     self.value = self.value + value;
@@ -99,19 +82,16 @@ public fun increase_supply<T>(self: &mut Supply<T>, value: u64): Balance<T> {
 }
 ```
 
-## One Time Witness
+## 一次性证明者
 
-While a struct can be created any number of times, there are cases where a struct should be
-guaranteed to be created only once. For this purpose, Sui provides the "One-Time Witness" - a
-special witness that can only be used once. We explain it in more detail in the
-[next section](./one-time-witness.md).
+虽然结构体可以任意次数地创建，但有些情况下需要确保结构体只能创建一次。为此，Sui 提供了“一次性证明者” - 一种特殊的证明者，只能使用一次。我们将在[下一节](./one-time-witness.md)中详细解释。
 
-## Summary
+## 总结
 
-- Witness is a pattern of proving a certain property by constructing a proof.
-- In Move, a module proves ownership of a type by constructing it.
-- Witness is often used for generic type instantiation and authorization.
+- 证明者是通过构建证据来证明某个属性的模式。
+- 在 Move 中，通过构建类型来证明模块对其的所有权。
+- 证明者经常用于泛型类型的实例化和授权。
 
-## Next Steps
+## 下一步
 
-In the next section, we will learn about the [One Time Witness](./one-time-witness.md) pattern.
+在下一节中，我们将学习关于[一次性证明者](./one-time-witness.md)模式。
