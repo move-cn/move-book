@@ -1,54 +1,29 @@
-# Fast Path & Consensus
+## Sui Move 的快速通道与共识机制
 
-The Object Model allows for variable transaction execution paths, depending on the object's
-ownership type. The transaction execution path determines how the transaction is processed and
-validated by the network. In this section, we'll explore the different transaction execution paths
-in Sui and how they interact with the consensus mechanism.
+Sui Move 的对象模型允许根据对象的拥有权类型执行不同的交易路径。 交易执行路径决定了网络如何处理和验证交易。 在这一部分，我们将探讨 Sui 中不同的交易执行路径以及它们如何与共识机制交互。
 
-## Concurrency Challenge
+## 并发挑战
 
-At its core, blockchain technology faces a fundamental concurrency challenge: multiple parties may
-try to modify or access the same data simultaneously in a decentralized environment. This requires a
-system for sequencing and validating transactions to support the network's consistency. Sui
-addresses this challenge through a consensus mechanism, ensuring all nodes agree on the
-transactions' sequence and state.
+区块链技术的核心面临一个基本的并发挑战：在去中心化环境中，多个参与者可能会同时尝试修改或访问相同的数据。 这就需要一个对交易进行排序和验证的系统来支持网络的一致性。 Sui 通过共识机制来解决这一挑战，确保所有节点都对交易的顺序和状态达成一致。
 
-Consider a marketplace scenario where Alice and Bob simultaneously attempt to purchase the same
-asset. The network must resolve this conflict to prevent double-spending, ensuring that at most one
-transaction succeeds while the other is rightfully rejected.
+考虑一个市场场景，Alice 和 Bob 同时尝试购买相同的资产。 网络必须解决这个冲突以防止双重花费，确保至多一笔交易成功，另一笔交易被合理拒绝。
 
-## Fast Path
+## 快速通道
 
-However, not all transactions require the same level of validation and consensus. For example, if
-Alice wants to transfer an object that she owns to Bob, the network can process this transaction
-without sequencing it with respect to all other transactions in the network, as only Alice has the
-authority to access the object. This is known as the _fast path_ execution, where transactions
-accessing account-owned objects are processed quickly without the need for extensive consensus. No
-concurrent data access -> simpler challenge -> fast path.
+然而，并非所有的交易都需要相同的验证和共识级别。 例如，如果 Alice 想把一个她拥有的对象转移给 Bob，网络可以处理这个交易，而不必将其与网络中的所有其他交易进行排序，因为只有 Alice 有权访问这个对象。 这被称为 **快速通道** 执行，即访问账户拥有对象的交易可以快速处理，而无需复杂的共识过程。 没有并发数据访问 -> 挑战更简单 -> 快速通道。
 
-Another ownership model that allows for fast path execution is the _immutable state_. Since
-immutable objects cannot change, transactions involving them can be processed quickly without the
-need to sequence them.
+另一种允许快速通道执行的所有权模型是 **不可变状态**。 由于不可变对象不可改变，因此涉及它们的交易可以快速处理，而无需对它们进行排序。
 
-## Consensus Path
+## 共识路径
 
-Transactions that do access shared state - on Sui it is represented with shared objects - require
-sequencing to ensure that the state is updated and consistented across all nodes. This is known as
-the execution through _consensus_, where transactions accessing shared objects are subject to the
-agreement process to maintain network consistency.
+访问共享状态的交易 - 在 Sui 中用共享对象表示 - 需要排序，以确保状态在所有节点上被更新并保持一致。 这被称为通过 **共识** 执行，即访问共享对象的交易需要经过共识过程来维护网络的一致性。
 
-<!-- On Sui consensus is per-object - mention!!! -->
+## 被对象拥有的对象
 
-## Objects owned by Objects
+最后，重要的是提到被其他对象拥有的对象遵循与父对象相同的规则。 如果父对象是 **共享的**，则子对象也被传递共享。 如果父对象是不可变的，则子对象也是不可变的。
 
-Lastly, it is important to mention that objects owned by other objects are subject to the same rules
-as the parent object. If the parent object is _shared_, the child object is also transitively
-shared. If the parent object is immutable, the child object is also immutable.
+## 总结
 
-## Summary
-
-- **Fast Path:** Transactions involving account-owned objects or immutable shared state are
-  processed quickly without the need for extensive consensus.
-- **Consensus Path:** Transactions involving shared objects require sequencing and consensus to
-  ensure network integrity.
-- **Objects owned by Objects:** Child objects inherit the ownership model of the parent object.
+- **快速通道:** 涉及账户拥有对象或不可变共享状态的交易可以快速处理，而无需复杂的共识过程。
+- **共识路径:** 涉及共享对象的交易需要排序和共识来确保网络完整性。
+- **被对象拥有的对象:** 子对象继承父对象的拥有权模型。

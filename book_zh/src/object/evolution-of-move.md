@@ -1,27 +1,14 @@
-# Evolution of Move
+# Move的演进
 
-While Move was created to manage digital assets, its initial storage model was bulky and not
-well-suited for many use cases. For instance, if Alice wanted to transfer an asset X to Bob, Bob had
-to create a new "empty" resource, and then Alice could transfer asset X to Bob. This process was not
-intuitive and presented implementation challenges, partly due to the restrictive design of
-[Diem](https://www.diem.com/en-us). Another drawback of the original design was the lack of built-in
-support for a "transfer" operation, requiring every module to implement its own storage transfer
-logic. Additionally, managing heterogeneous collections of assets in a single account was
-particularly challenging.
+虽然Move被创建用于管理数字资产，但其最初的存储模型庞大且不适用于许多用例。例如，如果Alice想将资产X转让给Bob，Bob必须创建一个新的“空”资源，然后Alice才能将资产X转移到Bob那里。这个过程不直观，并且存在实现上的挑战，部分原因是由于[Diem](https://www.diem.com/en-us)的限制性设计。原始设计的另一个缺点是缺乏内置的“转让”操作支持，导致每个模块都需要实现自己的存储转让逻辑。此外，在单个账户中管理异构资产集合也是一项特别具有挑战性的任务。
 
-Sui addressed these challenges by redesigning the storage and ownership model of objects to more
-closely resemble real-world object interactions. With a native concept of ownership and _transfer_,
-Alice can directly transfer asset X to Bob. Furthermore, Bob can maintain a collection of different
-assets without any preparatory steps. These improvements laid the foundation for the Object Model in
-Sui.
+Sui通过重新设计对象的存储和所有权模型来解决这些问题，以更接近现实世界对象交互的方式进行。通过具有本地的所有权和“转让”概念，Alice可以直接将资产X转让给Bob。此外，Bob可以在没有任何准备步骤的情况下维护不同资产的集合。这些改进为Sui中的对象模型奠定了基础。
 
-## Summary
+## 总结
 
-- Move's initial storage model was not well-suited for managing digital assets, requiring complex
-  and restrictive transfer operations.
-- Sui introduced the Object Model, which provides a native concept of ownership, simplifying asset
-  management and enabling heterogeneous collections.
+- Move的初始存储模型不适合管理数字资产，需要复杂且受限制的转让操作。
+- Sui引入了对象模型，提供了本地的所有权概念，简化了资产管理并支持异构集合。
 
-## Further reading
+## 进一步阅读
 
-- [Why We Created Sui Move](https://blog.sui.io/why-we-created-sui-move/) by Sam Blackshear
+- [为什么我们创建了Sui Move](https://blog.sui.io/why-we-created-sui-move/)，作者：Sam Blackshear

@@ -1,54 +1,26 @@
-# Move - Language for Digital Assets
+# Move——数字资产的语言
 
-Smart-contract programming languages have historically focused on defining and managing digital
-assets. For example, the ERC-20 standard in Ethereum pioneered a set of standards to interact with
-digital currency tokens, establishing a blueprint for creating and managing digital currencies on
-the blockchain. Subsequently, the introduction of the ERC-721 standard marked a significant
-evolution, popularising the concept of non-fungible tokens (NFTs), which represent unique,
-indivisible assets. These standards laid the groundwork for the complex digital assets we see today.
+智能合约编程语言一直以来都专注于定义和管理数字资产。例如，Ethereum（以太坊）中的 ERC-20 标准开创了一套与数字货币代币互动的标准，为在区块链上创建和管理数字货币建立了蓝图。随后，ERC-721 标准的引入标志着一个重要的进化，普及了不可替代代币（NFTs）的概念，代表独特且不可分割的资产。这些标准为我们今天看到的复杂数字资产奠定了基础。
 
-<!-- ## Move and Digital Assets -->
+然而，Ethereum 的编程模型缺乏对资产的原生表示。换句话说，智能合约在外部表现得像一个资产，但语言本身并没有一种固有的方式来表示资产。Move 从一开始就致力于为资产提供一流的抽象，开辟了思考和编程资产的新途径。
 
-<!-- note: consider "native" -> "fine-grained" -->
+## 资产的关键属性
 
-However, Ethereum's programming model lacked a native representation of assets. In other words,
-externally, a Smart Contract behaved like an asset, but the language itself did not have a way to
-inherently represent assets. From the start, Move aimed to provide a first-class abstraction for
-assets, opening up new avenues for thinking about and programming assets.
+- **所有权：** 每个资产都与一个或多个所有者相关联，反映了现实世界中所有权的简单概念——就像你拥有一辆车一样，你也可以拥有一个数字资产。Move 强制执行所有权机制，一旦资产被“移动”，前任所有者将完全失去对其的控制。这种机制确保了所有权的明确和安全的变更。
 
-<!-- Move was initially created in 2018 as part of the Libra project. The language was designed to address shortcomings in existing smart contract languages, especially in handling assets and access control. The Move language aims to provide first-class abstractions for these concepts, improving the safety and productivity of smart contract programming. -->
+- **不可复制：** 在现实世界中，独特的物品不能被轻易复制。Move 将这一原则应用于数字资产，确保它们不能在程序中被任意复制。这一属性对于保持数字资产的稀缺性和独特性至关重要，类似于物理资产的内在价值。
 
-It is important to highlight which properties are essential for an asset:
+- **不可丢弃：** 就像你不能无意中丢失一所房子或一辆车一样，Move 确保在程序中没有资产可以被丢弃或遗失。相反，资产必须被明确地转移或销毁。这一属性保证了数字资产的谨慎处理，防止意外丢失，并确保在资产管理中的责任。
 
-- **Ownership:** Every asset is associated with an owner(s), mirroring the straightforward concept
-  of ownership in the physical world—just as you own a car, you can own a digital asset. Move
-  enforces ownership in such a way that once an asset is _moved_, the previous owner completely
-  loses any control over it. This mechanism ensures a clear and secure change of ownership.
+Move 在其设计中成功地封装了这些属性，成为一个理想的数字资产语言。
 
-- **Non-copyable:** In the real world, unique items cannot be duplicated effortlessly. Move applies
-  this principle to digital assets, ensuring they cannot be arbitrarily copied within the program.
-  This property is crucial for maintaining the scarcity and uniqueness of digital assets, mirroring
-  the intrinsic value of physical assets.
+## 总结
 
-- **Non-discardable:** Just as you cannot accidentally lose a house or a car without a trace, Move
-  ensures that no asset can be discarded or lost in a program. Instead, assets must be explicitly
-  transferred or destroyed. This property guarantees the deliberate handling of digital assets,
-  preventing accidental loss and ensuring accountability in asset management.
+- Move 旨在为数字资产提供一流的抽象，使开发者能够原生地创建和管理资产。
+- 数字资产的关键属性包括所有权、不可复制性和不可丢弃性，Move 在其设计中强制执行这些属性。
+- Move 的资产模型反映了现实世界的资产管理，确保了资产所有权和转移的安全性和责任性。
 
-Move managed to encapsulate these properties in its design, becoming an ideal language for digital
-assets.
+## 延伸阅读
 
-## Summary
-
-- Move was designed to provide a first-class abstraction for digital assets, enabling developers to
-  create and manage assets natively.
-- Essential properties of digital assets include ownership, non-copyability, and non-discardability,
-  which Move enforces in its design.
-- Move's asset model mirrors real-world asset management, ensuring secure and accountable asset
-  ownership and transfer.
-
-## Further reading
-
-- [Move: A Language With Programmable Resources (pdf)](https://developers.diem.com/papers/diem-move-a-language-with-programmable-resources/2019-06-18.pdf)
-  by Sam Blackshear, Evan Cheng, David L. Dill, Victor Gao, Ben Maurer, Todd Nowacki, Alistair Pott,
-  Shaz Qadeer, Rain, Dario Russi, Stephane Sezer, Tim Zakian, Runtian Zhou\*
+- [Move: A Language With Programmable Resources (pdf)](https://developers.diem.com/papers/diem-move-a-language-with-programmable-resources/2019-06-18.pdf) 
+  作者：Sam Blackshear、Evan Cheng、David L. Dill、Victor Gao、Ben Maurer、Todd Nowacki、Alistair Pott、Shaz Qadeer、Rain、Dario Russi、Stephane Sezer、Tim Zakian、Runtian Zhou
