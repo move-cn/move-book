@@ -32,11 +32,11 @@
 - [前言](foreword.md)
 <!-- - [Introduction](introduction.md) -->
 - [开始](before-we-begin/README.md)
-  - [安装Sui](before-we-begin/install-sui.md)
-  - [设置IDE](before-we-begin/ide-support.md)
+  - [安装 Sui](before-we-begin/install-sui.md)
+  - [设置 IDE](before-we-begin/ide-support.md)
   - [Move 2024](before-we-begin/move-2024.md)
-- [你好Move!](your-first-move/hello-world.md)
-- [你好Sui!](your-first-move/hello-sui.md)
+- [你好 Move !](your-first-move/hello-world.md)
+- [你好 Sui !](your-first-move/hello-sui.md)
 <!--
     - [Prepare Package]()
     - [Create Account]()
@@ -53,7 +53,7 @@
   - [地址](./concepts/address.md)
   - [账户](./concepts/what-is-an-account.md)
   - [交易](./concepts/what-is-a-transaction.md)
-- [Move基础](./move-basics/README.md)
+- [Move 基础](./move-basics/README.md)
   - [模块](./move-basics/module.md)
   - [注释](./move-basics/comments.md)
   - [基本类型](./move-basics/primitive-types.md)
@@ -109,7 +109,7 @@
   - [时间](./programmability/events.md)
   - [Balance & Coin]() <!-- ./programmability/balance-and-coin.md) -->
   - [Sui Framework](./programmability/sui-framework.md)
-  - [设计模式: 热土豆]() <!-- ./programmability/hot-potato.md) -->
+  - [设计模式: 烫手山芋]() <!-- ./programmability/hot-potato.md) -->
   - [设计模式: 请求]()
   - [设计模式: 对象能力]()
   - [升级]()<!-- (./programmability/package-upgrades.md) -->
@@ -137,4 +137,4 @@
 - [B - 内置地址](./appendix/reserved-addresses.md)
 - [C - 出版物](./appendix/publications.md)
 - [D - 贡献者](./appendix/contributing.md)
-- [E - 感谢](./appendix/acknowledgements.md)
+- [E - 致谢](./appendix/acknowledgements.md)
