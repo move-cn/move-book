@@ -28,10 +28,10 @@
 
 <!-- - [The Move Book](README.md) -->
 
-- [The Move Book](README.md)
-- [Foreword](foreword.md)
+- [关于本书](README.md)
+- [前言](foreword.md)
 <!-- - [Introduction](introduction.md) -->
-- [Before we begin](before-we-begin/README.md)
+- [开始](before-we-begin/README.md)
   - [安装Sui](before-we-begin/install-sui.md)
   - [设置IDE](before-we-begin/ide-support.md)
   - [Move 2024](before-we-begin/move-2024.md)
@@ -53,7 +53,7 @@
   - [地址](./concepts/address.md)
   - [账户](./concepts/what-is-an-account.md)
   - [交易](./concepts/what-is-a-transaction.md)
-- [Move Basics](./move-basics/README.md)
+- [Move基础](./move-basics/README.md)
   - [模块](./move-basics/module.md)
   - [注释](./move-basics/comments.md)
   - [基本类型](./move-basics/primitive-types.md)
@@ -79,21 +79,21 @@
   - [泛型](./move-basics/generics.md)
   - [类型反射](./move-basics/type-reflection.md)
   - [测试](./move-basics/testing.md)
-- [Object Model](./object/README.md) -pattern
-  - [Language for Digital Assets](./object/digital-assets.md)
-  - [Evolution of Move](./object/evolution-of-move.md)
+- [对象模型](./object/README.md) -pattern
+  - [数字资产语言](./object/digital-assets.md)
+  - [演进Move](./object/evolution-of-move.md)
   - [对象](./object/object-model.md)
   - [所有权](./object/ownership.md)
-  - [Fast Path & Consensus](./object/fast-path-and-consensus.md)
-- [Using Objects](./storage/README.md)
+  - [路径 & 共识](./object/fast-path-and-consensus.md)
+- [使用对象](./storage/README.md)
   - [能力: Key](./storage/key-ability.md)
-  - [Storage Functions](./storage/storage-functions.md)
+  - [存储方法](./storage/storage-functions.md)
     <!-- - [Prices and Rebates]() -->
   - [能力: Store](./storage/store-ability.md)
   - [UID and ID](./storage/uid-and-id.md)
   - [限制和转移](./storage/transfer-restrictions.md)
   - [Transfer to Object?]() <!-- (./storage/transfer-to-object.md) -->
-- [Advanced Programmability](./programmability/README.md)
+- [高级部分](./programmability/README.md)
   - [事务上下文](./programmability/transaction-context.md)
   - [模块初始化](./programmability/module-initializer.md)
   - [设计模式: 能力](./programmability/capability.md)
@@ -122,9 +122,9 @@
 # Guides
 
 - [2024合并指南](./guides/2024-migration-guide.md)
-- [Upgradability Practices](./guides/upgradeability-practices.md)
-- [Building against Limits](./guides/building-against-limits.md)
-- [Better error handling](./guides/better-error-handling.md)
+- [升级实践](./guides/upgradeability-practices.md)
+- [限制](./guides/building-against-limits.md)
+- [错误处理(./guides/better-error-handling.md)
 - [Open-sourcing Libraries]()
 - [Creating an NFT Collection]()
 - [Tests with Objects]()<!-- (./guides/testing.md) -->
@@ -133,8 +133,8 @@
 
 # Appendix
 
-- [A - Glossary](./appendix/glossary.md)
-- [B - Reserved Addresses](./appendix/reserved-addresses.md)
-- [C - Publications](./appendix/publications.md)
-- [D - Contributing](./appendix/contributing.md)
-- [E - Acknowledgements](./appendix/acknowledgements.md)
+- [A - 术语](./appendix/glossary.md)
+- [B - 内置地址](./appendix/reserved-addresses.md)
+- [C - 出版物](./appendix/publications.md)
+- [D - 贡献者](./appendix/contributing.md)
+- [E - 感谢](./appendix/acknowledgements.md)
