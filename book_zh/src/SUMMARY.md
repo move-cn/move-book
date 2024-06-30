@@ -124,7 +124,7 @@
 - [2024合并指南](./guides/2024-migration-guide.md)
 - [升级实践](./guides/upgradeability-practices.md)
 - [限制](./guides/building-against-limits.md)
-- [错误处理(./guides/better-error-handling.md)
+- [错误处理](./guides/better-error-handling.md)
 - [Open-sourcing Libraries]()
 - [Creating an NFT Collection]()
 - [Tests with Objects]()<!-- (./guides/testing.md) -->
