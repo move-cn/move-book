@@ -1,55 +1,49 @@
-# Ability: Store
+# 能力：Store
 
-Now that you have an understanding of top-level storage functions which are enabled by the
-[`key`](./key-ability.md) ability, we can talk about the last ability in the list - `store`.
+现在你已经了解了通过[`key`](./key-ability.md)能力启用的顶层存储函数，我们可以讨论列表中的最后一个能力 - `store`。
 
-## Definition
+## 定义
 
-The `store` is a special ability that allows a type to be _stored_ in objects. This ability is
-required for the type to be used as a field in a struct that has the `key` ability. Another way to
-put it is that the `store` ability allows the value to be _wrapped_ in an object.
+`store`是一种特殊的能力，允许将类型存储在对象中。该能力是字段可以在具有`key`能力的结构体中使用的必需条件。换句话说，`store`能力允许值被包装在对象中。
 
-> The `store` ability also relaxes restrictions on transfer operations. We talk about it more in the
-> [Restricted and Public Transfer](./transfer-restrictions.md) section.
+> `store`能力还放宽了转移操作的限制。我们在[受限和公共转移](./transfer-restrictions.md)部分中会详细讨论。
 
-## Example
+## 示例
 
-In previous sections we already used types with the `key` ability: all objects must have a `UID`
-field, which we used in examples; we also used the `Storable` type as a part of the `Config` struct.
-The `Config` type also has the `store` ability.
+在之前的章节中，我们已经使用了具有`key`能力的类型：所有对象必须有一个`UID`字段，我们在示例中使用了它；我们还将`Storable`类型作为`Config`结构体的一部分使用。`Config`类型也具有`store`能力。
 
 ```move
-/// This type has the `store` ability.
+/// 这个类型具有`store`能力。
 public struct Storable has store {}
 
-/// Config contains a `Storable` field which must have the `store` ability.
+/// Config 包含一个具有`store`能力的`Storable`字段。
 public struct Config has key, store {
     id: UID,
     stores: Storable,
 }
 
-/// MegaConfig contains a `Config` field which has the `store` ability.
+/// MegaConfig 包含一个具有`store`能力的`Config`字段。
 public struct MegaConfig has key {
     id: UID,
-    config: Config, // there it is!
+    config: Config, // 在这里！
 }
 ```
 
-## Types with the `store` Ability
+## 具有`store`能力的类型
 
-All native types (except for references) in Move have the `store` ability. This includes:
+在Move中，除了引用之外，所有原生类型都具有`store`能力。包括：
 
 - [bool](./../move-basics/primitive-types.md#booleans)
-- [unsigned integers](./../move-basics/primitive-types.md#integers)
+- [无符号整数](./../move-basics/primitive-types.md#integers)
 - [vector](./../move-basics/vector.md)
 - [address](./../move-basics/address.md)
 
-All of the types defined in the standard library have the `store` ability as well. This includes:
+标准库中定义的所有类型也具有`store`能力。包括：
 
 - [Option](./../move-basics/option.md)
 - [String](./../move-basics/string.md)
 - [TypeName](./../move-basics/type-reflection.md#typename)
 
-## Further reading
+## 进一步阅读
 
-- [Type Abilities](/reference/type-abilities.html) in the Move Reference.
+- Move参考中的[类型能力](/reference/type-abilities.html)。

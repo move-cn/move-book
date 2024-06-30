@@ -1,1 +1,1 @@
-# Authorization Patterns
+# 授权模式

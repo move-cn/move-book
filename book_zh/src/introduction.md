@@ -1,25 +1,25 @@
-# Introduction
+# 介绍
 
-Welcome to The Move Book, a book about Move language.
+欢迎来到《Move语言手册》（The Move Book），这是一本关于Move语言的书籍。
 
-> If you're looking for The Move Reference, it is available here: [The Move Reference](/reference). The reference focuses on the language itself, while this book is structured as a learning path, starting with the basics and moving on to more advanced topics. The link to reference is always available at the top of the page, similarly, there's a link to the book at the top of the reference page.
+> 如果您正在寻找《Move参考手册》，可以在这里找到：[Move参考手册](/reference)。参考手册侧重于语言本身，而本书则按照学习路径的结构，从基础知识开始，逐步深入到更高级的主题。页面顶部始终有指向参考手册的链接，同样，在参考手册页面顶部也有指向本书的链接。
 
 <!--
 
-## Who Move Is For?
+## Move适用人群？
 
 Move
 
-## Who This Book Is For
+## 本书适合人群
 
-## How To Use This Book
+## 如何使用本书
 
 
 
-This book is a comprehensive guide to the language and the platform, and it is intended for developers who want to learn how to write application in Move and build on Sui.
+本书是一本关于Move语言和Sui区块链平台的综合指南，旨在帮助开发人员学习如何使用Move编写应用程序并在Sui上构建。
 
  -->
 
-<!-- Author? -->
+<!-- 作者？ -->
 
-<!-- This is a book about the Move language and the Sui blockchain platform. It is a comprehensive guide to the language and the platform, and it is intended for developers who want to learn how to write application in Move and build on Sui. -->
+<!-- 这是一本关于Move语言和Sui区块链平台的书籍。它是一本关于语言和平台的综合指南，旨在帮助开发人员学习如何使用Move编写应用程序并在Sui上构建。 -->

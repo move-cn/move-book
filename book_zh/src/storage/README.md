@@ -1,8 +1,5 @@
-# Using Objects
+# 使用对象
 
-In the [Object Model](./../object) chapter we briefly explained the evolution of the Move language
-from an account-based model to an object-based model. In this chapter, we will dive deeper into the
-object model and explore how to use objects in your Sui applications. If you haven't read the
-[Object Model](./../object) chapter yet, we recommend you do so before continuing with this chapter.
+在[对象模型](./../object)章节中，我们简要介绍了Move语言从基于账户的模型演变为基于对象的模型。在本章中，我们将深入探讨对象模型，并探索如何在你的Sui应用程序中使用对象。如果你还没有阅读过[对象模型](./../object)章节，我们建议你在继续本章之前先阅读该章节。
 
-<!-- Mention what Sui Verifier is! Bytecode level verification. -->
+<!-- 提及Sui验证器是什么！字节码级别的验证。 -->

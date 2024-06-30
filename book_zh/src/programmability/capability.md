@@ -1,69 +1,46 @@
-# Pattern: Capability
+# 模式：能力（Capability）
 
-In programming, a _capability_ is a token that gives the owner the right to perform a specific
-action. It is a pattern that is used to control access to resources and operations. A simple example
-of a capability is a key to a door. If you have the key, you can open the door. If you don't have
-the key, you can't open the door. A more practical example is an Admin Capability which allows the
-owner to perform administrative operations, which regular users cannot.
+在编程中，**能力（capability）**是指授予所有者执行特定操作权利的令牌。它是一种用于控制对资源和操作的访问的模式。一个简单的能力示例是门的钥匙。如果你有钥匙，你就可以打开门；如果没有钥匙，你就不能打开门。一个更实际的例子是“管理员能力”，它允许所有者执行常规用户无法执行的管理操作。
 
-## Capability is an Object
+## 能力是一个对象
 
-In the [Sui Object Model](./../object/), capabilities are represented as objects.
-An owner of an object can pass this object to a function to prove that they have the right to
-perform a specific action. Due to strict typing, the function taking a capability as an argument can
-only be called with the correct capability.
+在[Sui对象模型](./../object/)中，能力被表示为对象。一个对象的所有者可以将该对象传递给函数，以证明他们有执行特定操作的权利。由于严格的类型检查，只能使用正确的能力调用接受能力作为参数的函数。
 
-> There's a convention to name capabilities with the `Cap` suffix, for example, `AdminCap` or
-> `KioskOwnerCap`.
+> 有一个约定，将能力命名为`Cap`后缀，例如`AdminCap`或`KioskOwnerCap`。
 
 ```move
 {{#include ../../../packages/samples/sources/programmability/capability.move:main}}
 ```
 
-## Using `init` for Admin Capability
+## 使用`init`创建管理员能力
 
-A very common practice is to create a single `AdminCap` object on package publish. This way, the
-application can have a setup phase where the admin account prepares the state of the application.
+一种常见的做法是在包发布时创建一个单独的`AdminCap`对象。这样，应用程序可以有一个设置阶段，管理员账户可以准备应用程序的状态。
 
 ```move
 {{#include ../../../packages/samples/sources/programmability/capability.move:admin_cap}}
 ```
 
-## Address check vs Capability
+## 地址检查与能力
 
-Utilizing objects as capabilities is a relatively new concept in blockchain programming. And in
-other smart-contract languages, authorization is often performed by checking the address of the
-sender. This pattern is still viable on Sui, however, overall recommendation is to use capabilities
-for better security, discoverability, and code organization.
+在区块链编程中，将对象用作能力是一个相对较新的概念。在其他智能合约语言中，授权通常是通过检查发送方地址来执行的。这种模式在Sui上仍然可行，但总体建议是使用能力以获得更好的安全性、可发现性和代码组织性。
 
-Let's look at how the `new` function that creates a user would look like if it was using the address
-check:
+让我们看一下如果使用地址检查的方式来实现创建用户的`new`函数会是什么样子：
 
 ```move
 {{#include ../../../packages/samples/sources/programmability/capability.move:with_address}}
 ```
 
-And now, let's see how the same function would look like with the capability:
+现在，让我们看看如果使用能力的方式来实现相同的函数会是什么样子：
 
 ```move
 {{#include ../../../packages/samples/sources/programmability/capability.move:with_capability}}
 ```
 
-Using capabilities has several advantages over the address check:
+与地址检查相比，使用能力具有以下几个优势：
 
-- Migration of admin rights is easier with capabilities due to them being objects. In case of
-  address, if the admin address changes, all the functions that check the address need to be
-  updated - hence, require a [package upgrade](./package-upgrades.md).
-- Function signatures are more descriptive with capabilities. It is clear that the `new` function
-  requires the `AdminCap` to be passed as an argument. And this function can't be called without it.
-- Object Capabilities don't require extra checks in the function body, and hence, decrease the
-  chance of a developer mistake.
-- An owned Capability also serves in discovery. The owner of the AdminCap can see the object in
-  their account (via a Wallet or Explorer), and know that they have the admin rights. This is less
-  transparent with the address check.
+- 对于能力来说，迁移管理员权限更加容易，因为它们是对象。如果使用地址，则如果管理员地址发生更改，所有检查地址的函数都需要更新，因此需要[升级包](./package-upgrades.md)。
+- 使用能力时，函数签名更具描述性。很明显，`new`函数需要传递`AdminCap`作为参数。而且，没有这个能力就无法调用该函数。
+- 对象能力不需要在函数体中进行额外的检查，因此减少了开发人员错误的机会。
+- 拥有的能力还可以用于发现。AdminCap的所有者可以在其账户中看到该对象（通过钱包或浏览器），并知道他们拥有管理员权限。使用地址检查就没有这么直观。
 
-However, the address approach has its own advantages. For example, if an address is multisig, and
-transaction building gets more complex, it might be easier to check the address. Also, if there's a
-central object of the application that is used in every function, it can store the admin address,
-and this would simplify migration. The central object approach is also valuable for revokable
-capabilities, where the admin can revoke the capability from the user.
+然而，地址方法也有其优势。例如，如果地址是多签名的，并且事务构建变得更复杂，使用地址检查可能更容易。此外，如果应用程序中有一个在每个函数中都使用的中央对象，它可以存储管理员地址，并简化迁移。中央对象的方法在可撤销的能力中也很有价值，管理员可以从用户那里收回能力。

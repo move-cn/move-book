@@ -1,70 +1,61 @@
-# Dynamic Collections
+# 动态集合
 
-[Sui Framework](./sui-framework.md) offers a variety of collection types that build on the
-[dynamic fields](./dynamic-fields.md) and [dynamic object fields](./dynamic-object-fields.md)
-concepts. These collections are designed to be a safer and more understandable way to store and
-manage dynamic fields and objects.
+[Sui 框架](./sui-framework.md)提供了多种集合类型，基于[动态字段](./dynamic-fields.md)和[动态对象字段](./dynamic-object-fields.md)的概念构建。这些集合类型旨在以更安全和更易理解的方式存储和管理动态字段和对象。
 
-For each collection type we will specify the primitive they use, and the specific features they
-offer.
+对于每种集合类型，我们将指定它们使用的基本类型和它们提供的特定功能。
 
-> Unlike dynamic (object) fields which operate on UID, collection types have their own type and
-> allow calling [associated functions](./../move-basics/struct-methods.md).
+> 与操作 UID 的动态（对象）字段不同，集合类型具有自己的类型，并允许调用[关联函数](./../move-basics/struct-methods.md)。
 
-## Common Concepts
+## 公共概念
 
-All of the collection types share the same set of methods, which are:
+所有集合类型共享相同的一组方法，包括：
 
-- `add` - adds a field to the collection
-- `remove` - removes a field from the collection
-- `borrow` - borrows a field from the collection
-- `borrow_mut` - borrows a mutable reference to a field from the collection
-- `contains` - checks if a field exists in the collection
-- `length` - returns the number of fields in the collection
-- `is_empty` - checks if the `length` is 0
+- `add` - 将字段添加到集合中
+- `remove` - 从集合中移除字段
+- `borrow` - 从集合中借用字段
+- `borrow_mut` - 从集合中借用可变引用字段
+- `contains` - 检查集合中是否存在字段
+- `length` - 返回集合中字段的数量
+- `is_empty` - 检查`length`是否为0
 
-All collection types support index syntax for `borrow` and `borrow_mut` methods. If you see square
-brackets in the examples, they are translated into `borrow` and `borrow_mut` calls.
+所有集合类型都支持对`borrow`和`borrow_mut`方法使用索引语法。如果在示例中看到方括号，它们将被转换为对`borrow`和`borrow_mut`的调用。
 
 ```move
 let hat: &Hat = &bag[b"key"];
 let hat_mut: &mut Hat = &mut bag[b"key"];
 
-// is equivalent to
+// 等同于
 let hat: &Hat = bag.borrow(b"key");
 let hat_mut: &mut Hat = bag.borrow_mut(b"key");
 ```
 
-In the examples we won't focus on these functions, but rather on the differences between the
-collection types.
+在示例中，我们不会专注于这些函数，而是关注集合类型之间的区别。
 
 ## Bag
 
-Bag, as the name suggests, acts as a "bag" of heterogeneous values. It is a simple, non-generic type
-that can store any data. Bag will never allow orphaned fields, as it tracks the number of fields and
-can't be destroyed if it's not empty.
+正如其名，Bag 表示一组异构值的“袋子”。它是一个简单的非泛型类型，可以存储任何数据。Bag 永远不会允许存在孤立的字段，因为它会跟踪字段的数量，如果不是空的，则不能销毁它。
 
 ```move
-// File: sui-framework/sources/bag.move
+// 文件：sui-framework/sources/bag.move
 public struct Bag has key, store {
-    /// the ID of this bag
+    /// 此 Bag 的 ID
     id: UID,
-    /// the number of key-value pairs in the bag
+    /// Bag 中键值对的数量
     size: u64,
 }
 ```
 
-Due to Bag storing any types, the extra methods it offers is:
+由于 Bag 存储任何类型，它提供了额外的方法：
 
-- `contains_with_type` - checks if a field exists with a specific type
+- `contains_with_type` - 检查是否存在特定类型的字段
 
-Used as a struct field:
+作为结构字段使用：
 
 ```move
 {{#include ../../../packages/samples/sources/programmability/dynamic-collections.move:bag_struct}}
 ```
 
-Using the Bag:
+使用 Bag：
 
 ```move
 {{#include ../../../packages/samples/sources/programmability/dynamic-collections.move:bag_usage}}
@@ -72,31 +63,29 @@ Using the Bag:
 
 ## ObjectBag
 
-Defined in the `sui::object_bag` module. Identical to [Bag](#bag), but uses
-[dynamic object fields](./dynamic-object-fields.md) internally. Can only store objects as values.
+在`sui::object_bag`模块中定义。与 [Bag](#bag) 相同，但在内部使用[动态对象字段](./dynamic-object-fields.md)。只能存储对象作为值。
 
 ## Table
 
-Table is a typed dynamic collection that has a fixed type for keys and values. It is defined in the
-`sui::table` module.
+Table 是一个具有固定键和值类型的类型化动态集合。它在`sui::table`模块中定义。
 
 ```move
-// File: sui-framework/sources/table.move
+// 文件：sui-framework/sources/table.move
 public struct Table<phantom K: copy + drop + store, phantom V: store> has key, store {
-    /// the ID of this table
+    /// 此 Table 的 ID
     id: UID,
-    /// the number of key-value pairs in the table
+    /// Table 中键值对的数量
     size: u64,
 }
 ```
 
-Used as a struct field:
+作为结构字段使用：
 
 ```move
 {{#include ../../../packages/samples/sources/programmability/dynamic-collections.move:table_struct}}
 ```
 
-Using the Table:
+使用 Table：
 
 ```move
 {{#include ../../../packages/samples/sources/programmability/dynamic-collections.move:table_usage}}
@@ -104,20 +93,19 @@ Using the Table:
 
 ## ObjectTable
 
-Defined in the `sui::object_table` module. Identical to [Table](#table), but uses
-[dynamic object fields](./dynamic-object-fields.md) internally. Can only store objects as values.
+在`sui::object_table`模块中定义。与 [Table](#table) 相同，但在内部使用[动态对象字段](./dynamic-object-fields.md)。只能存储对象作为值。
 
-## Summary
+## 概要
 
-- [Bag](#bag) - a simple collection that can store any type of data
-- [ObjectBag](#objectbag) - a collection that can store only objects
-- [Table](#table) - a typed dynamic collection that has a fixed type for keys and values
-- [ObjectTable](#objecttable) - same as Table, but can only store objects
+- [Bag](#bag) - 一个简单的集合，可以存储任何类型的数据
+- [ObjectBag](#objectbag) - 一个只能存储对象的集合
+- [Table](#table) - 一个具有固定键和值类型的类型化动态集合
+- [ObjectTable](#objecttable) - 与 Table 相同，但只能存储对象
 <!-- [Linked Table](#linkedtable) -->
 
 ## LinkedTable
 
-This section is coming soon!
+此部分即将推出！
 
 <!-- TODO! -->
 

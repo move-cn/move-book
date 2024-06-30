@@ -1,45 +1,27 @@
-# What is an Object?
+# 什么是对象？
 
-The Object Model in Sui can be viewed as a high-level abstraction representing digital assets as
-_objects_. These objects have their own type and associated behaviors, a unique identifier, and
-support native storage operations like _transfer_ and _share_. Designed to be intuitive and easy to
-use, the Object Model enables a wide range of use cases to be implemented with ease.
+Sui 的对象模型可以看作是一个高层次的抽象，将数字资产表示为“对象”。这些对象具有自己的类型和相关行为、唯一标识符，并支持诸如“转移”和“共享”等原生存储操作。设计直观且易于使用，对象模型使得实现各种用例变得轻而易举。
 
-Objects in Sui have the following properties:
+Sui 中的对象具有以下属性：
 
-- **Type:** Every object has a type, defining the structure and behavior of the object. Objects of
-  different types cannot be mixed or used interchangeably, ensuring objects are used correctly
-  according to their type system.
+- **类型：** 每个对象都有一个类型，定义了对象的结构和行为。不同类型的对象不能混合使用或互换使用，确保对象根据其类型系统正确使用。
 
-- **Unique ID:** Each object has a unique identifier, distinguishing it from other objects. This ID
-  is generated upon the object's creation and is immutable. It's used to track and identify objects
-  within the system.
+- **唯一ID：** 每个对象都有一个唯一标识符，区分它与其他对象。这一ID在对象创建时生成并且不可更改，用于在系统内跟踪和识别对象。
 
-<!-- Note: consider "shared across many entities" -->
+- **所有者：** 每个对象都与一个所有者相关联，所有者对对象具有控制权。Sui 上的所有权可以是专属于某个账户的、在网络中共享的或被冻结的，允许只读访问而不能修改或转移。在后续部分中，我们将详细讨论所有权。
 
-- **Owner:** Every object is associated with an owner, who has control over the object. Ownership on
-  Sui can be exclusive to an account, shared across the network, or frozen, allowing read-only
-  access without modification or transfer capabilities. We will discuss ownership in more detail in
-  the following sections.
+- **数据：** 对象封装其数据，简化了管理和操作。数据结构和操作由对象的类型定义。
 
-- **Data:** Objects encapsulate their data, simplifying management and manipulation. The data
-  structure and operations are defined by the object's type.
+- **版本：** 从账户到对象的过渡通过对象版本化实现。传统上，区块链使用“nonce”来防止重放攻击。在Sui中，对象的版本充当nonce，防止每个对象的重放攻击。
 
-- **Version:** The transition from accounts to objects is facilitated by object versioning.
-  Traditionally, blockchains use a _nonce_ to prevent replay attacks. In Sui, the object's version
-  acts as a nonce, preventing replay attacks for each object.
+- **摘要：** 每个对象都有一个摘要，它是对象数据的哈希值。摘要用于加密验证对象数据的完整性，确保数据未被篡改。摘要在对象创建时计算，并在对象数据更改时更新。
 
-- **Digest:** Every object has a digest, which is a hash of the object's data. The digest is used to
-  cryptographically verify the integrity of the object's data and ensures that it has not been
-  tampered with. The digest is calculated when the object is created and is updated whenever the
-  object's data changes.
+## 总结
 
-## Summary
+- Sui 中的对象是表示数字资产的高层次抽象。
+- 对象具有类型、唯一ID、所有者、数据、版本和摘要。
+- 对象模型简化了资产管理并支持广泛的用例。
 
-- Objects in Sui are high-level abstractions representing digital assets.
-- Objects have a type, unique ID, owner, data, version, and digest.
-- The Object Model simplifies asset management and enables a wide range of use cases.
+## 延伸阅读
 
-## Further reading
-
-- [Object Model](https://docs.sui.io/concepts/object-model) in Sui Documentation.
+- [对象模型](https://docs.sui.io/concepts/object-model) 在 Sui 文档中。
