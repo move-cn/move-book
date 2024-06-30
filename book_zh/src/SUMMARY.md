@@ -35,8 +35,8 @@
   - [安装Sui](before-we-begin/install-sui.md)
   - [设置IDE](before-we-begin/ide-support.md)
   - [Move 2024](before-we-begin/move-2024.md)
-- [Hello, World!](your-first-move/hello-world.md)
-- [Hello, Sui!](your-first-move/hello-sui.md)
+- [你好Move!](your-first-move/hello-world.md)
+- [你好Sui!](your-first-move/hello-sui.md)
 <!--
     - [Prepare Package]()
     - [Create Account]()
@@ -89,34 +89,34 @@
   - [能力: Key](./storage/key-ability.md)
   - [Storage Functions](./storage/storage-functions.md)
     <!-- - [Prices and Rebates]() -->
-  - [Ability: Store](./storage/store-ability.md)
+  - [能力: Store](./storage/store-ability.md)
   - [UID and ID](./storage/uid-and-id.md)
-  - [Restricted and Public Transfer](./storage/transfer-restrictions.md)
+  - [限制和转移](./storage/transfer-restrictions.md)
   - [Transfer to Object?]() <!-- (./storage/transfer-to-object.md) -->
 - [Advanced Programmability](./programmability/README.md)
-  - [Transaction Context](./programmability/transaction-context.md)
-  - [Module Initializer](./programmability/module-initializer.md)
-  - [Pattern: Capability](./programmability/capability.md)
-  - [Epoch and Time](./programmability/epoch-and-time.md)
-  - [Collections](./programmability/collections.md)
-  - [Dynamic Fields](./programmability/dynamic-fields.md)
-  - [Dynamic Object Fields](./programmability/dynamic-object-fields.md)
-  - [Dynamic Collections](./programmability/dynamic-collections.md)
-  - [Pattern: Witness](./programmability/witness-pattern.md)
-  - [One Time Witness](./programmability/one-time-witness.md)
+  - [事务上下文](./programmability/transaction-context.md)
+  - [模块初始化](./programmability/module-initializer.md)
+  - [设计模式: 能力](./programmability/capability.md)
+  - [周期和时间](./programmability/epoch-and-time.md)
+  - [集合](./programmability/collections.md)
+  - [动态字段](./programmability/dynamic-fields.md)
+  - [动态对象字段](./programmability/dynamic-object-fields.md)
+  - [动态集合](./programmability/dynamic-collections.md)
+  - [设计模式: 见证者](./programmability/witness-pattern.md)
+  - [一次性见证者](./programmability/one-time-witness.md)
   - [Publisher Authority](./programmability/publisher.md)
-  - [Display](./programmability/display.md) <!-- End Block: from Witness to Display -->
-  - [Events](./programmability/events.md)
+  - [展示](./programmability/display.md) <!-- End Block: from Witness to Display -->
+  - [时间](./programmability/events.md)
   - [Balance & Coin]() <!-- ./programmability/balance-and-coin.md) -->
   - [Sui Framework](./programmability/sui-framework.md)
-  - [Pattern: Hot Potato]() <!-- ./programmability/hot-potato.md) -->
-  - [Pattern: Request]()
-  - [Pattern: Object Capability]()
-  - [Package Upgrades]()<!-- (./programmability/package-upgrades.md) -->
-  - [Transaction Blocks]()<!-- (./programmability/transaction-blocks.md) -->
+  - [设计模式: 热土豆]() <!-- ./programmability/hot-potato.md) -->
+  - [设计模式: 请求]()
+  - [设计模式: 对象能力]()
+  - [升级]()<!-- (./programmability/package-upgrades.md) -->
+  - [交易块]()<!-- (./programmability/transaction-blocks.md) -->
   - [Authorization Patterns]()<!-- (./programmability/authorization-patterns.md) -->
-  - [Cryptography and Hashing]()<!-- (./programmability/cryptography-and-hashing.md) -->
-  - [Randomness]()<!-- (./programmability/randomness.md) -->
+  - [加密和哈希]()<!-- (./programmability/cryptography-and-hashing.md) -->
+  - [随机数]()<!-- (./programmability/randomness.md) -->
   - [BCS](./programmability/bcs.md)
 
 # Guides
@@ -129,7 +129,7 @@
 - [Creating an NFT Collection]()
 - [Tests with Objects]()<!-- (./guides/testing.md) -->
 <!-- - [Debugging]()(./guides/debugging.md) -->
-- [Coding Conventions](./guides/coding-conventions.md)
+- [代码规范](./guides/coding-conventions.md)
 
 # Appendix
 
