@@ -1,6 +1,6 @@
 # 地址
 
-地址是区块链上位置的唯一标识符。它用于标识[包](./packages.md)、[账户](./what-is-an-account.md)和[对象](./object-storage.md)。地址的固定大小为32字节，通常表示为以 `0x` 开头的十六进制字符串。地址在大小写敏感的情况下，不区分大小写。
+地址是区块链上位置的唯一标识符。它用于标识[包 (package)](./packages.md)、[账户 (account)](./what-is-an-account.md)和[对象 (object)](./object-storage.md)。地址的固定大小为32字节，通常表示为以 `0x` 开头的十六进制字符串。地址不区分大小写。
 
 ```move
 0xe51ff5cd221a81c3d6e22b9e670ddf99004d71de4f769b0312b68c7c4872e2f1

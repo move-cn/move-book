@@ -134,7 +134,7 @@
 # Appendix
 
 - [A - 术语](./appendix/glossary.md)
-- [B - 内置地址](./appendix/reserved-addresses.md)
+- [B - 预留地址](./appendix/reserved-addresses.md)
 - [C - 出版物](./appendix/publications.md)
 - [D - 贡献者](./appendix/contributing.md)
 - [E - 致谢](./appendix/acknowledgements.md)

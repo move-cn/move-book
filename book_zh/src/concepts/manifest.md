@@ -1,4 +1,4 @@
-# 包清单
+# Manifest
 
 `Move.toml` 是描述 [包](./packages.md) 及其依赖关系的清单文件，采用 [TOML](https://toml.io/en/) 格式，包含多个部分，其中最重要的是 `[package]`、`[dependencies]` 和 `[addresses]`。
 
@@ -89,4 +89,4 @@ local = "../my-package"
 
 ## 进一步阅读
 
-- 在 Move 参考中的 [Packages](/reference/packages.html) 页面
+- Move Reference 中的 [Packages](/reference/packages.html) 章节
