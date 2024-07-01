@@ -32,7 +32,7 @@ INCLUDING DEPENDENCY MoveStdlib
 BUILDING todo_list
 ```
 
-如果没有错误，那么你已经成功构建了该包。如果有错误，请确保：
+如果没有错误，那么说明你已经成功构建了该包。如果有错误，请确保：
 
 - 代码复制正确
 - 文件名和包名正确
@@ -74,7 +74,7 @@ $ sui client active-address
 
 ```bash
 $ sui client faucet
-请求成功。可能需要一分钟来获取硬币。运行 sui client gas 命令来检查你的 gas 硬币。
+Request successful. It can take up to 1 minute to get the coin. Run sui client gas to check your gas coins.
 ```
 
 稍等片刻后，你可以运行 `sui client balance` 命令来检查硬币是否已发送到你的账户：
@@ -82,7 +82,7 @@ $ sui client faucet
 ```bash
 $ sui client balance
 ╭────────────────────────────────────────╮
-│ 该地址拥有的硬币余额                  │
+│ Balance of coins owned by this address │
 ├────────────────────────────────────────┤
 │ ╭──────────────────────────────────╮   │
 │ │ coin  balance (raw)  balance     │   │
@@ -112,7 +112,7 @@ $ sui client objects
 
 要将包发布到网络上，我们将使用 `sui client publish` 命令。该命令将自动构建包，并使用其字节码在单个事务中进行发布。
 
-> 在发布过程中，我们使用 `--gas-budget` 参数指定了事务的气体预算。本节不涉及详细讨论这个主题，但重要的是要知道，在 Sui 中，每个交易都需要支付气体费用，而气体费用是用 SUI 币支付的。
+> 在发布过程中，我们使用 `--gas-budget` 参数指定了事务的 gas 预算。本节不涉及详细讨论这个主题，但重要的是要知道，在 Sui 中，每个交易都需要支付 gas 费用，而 gas 费用是用 SUI 币支付的。
 
 `gas-budget` 以 _MISTs_ 表示。1 SUI 等于 10^9 MISTs。为了演示，我们将使用 100,000,000 MISTs，相当于 0.1 SUI。
 
@@ -132,15 +132,15 @@ UPDATING GIT DEPENDENCY https://github.com/MystenLabs/sui.git
 INCLUDING DEPENDENCY Sui
 INCLUDING DEPENDENCY MoveStdlib
 BUILDING todo_list
-成功验证源码上链的依赖项。
-事务摘要: GpcDV6JjjGQMRwHpEz582qsd5MpCYgSwrDAq1JXcpFjW
+Successfully verified dependencies on-chain against source.
+Transaction Digest: GpcDV6JjjGQMRwHpEz582qsd5MpCYgSwrDAq1JXcpFjW
 ```
 
 正如你所见，当我们运行 `publish` 命令时，CLI 首先构建包，然后验证链上的依赖项，最后发布包。命令的输出是事务摘要，这是交易的唯一标识符，可用于查询交易状态。
 
-### 事务数据
+### 事务数据 (Transaction Data)
 
-`TransactionData` 部分包含我们刚发送的交易信息。它包括字段如 `sender`（发送者地址）、使用 `--gas-budget` 参数设置的 `gas_budget`（气体预算）以及我们用于支付的币种。它还打印了 CLI 运行的命令。在本示例中，运行了 `Publish` 和 `TransferObject` 命令 - 后者将一个特殊对象 `UpgradeCap` 转移给了发送者。
+`TransactionData` 部分包含我们刚发送的交易信息。它包括字段如 `sender`（发送者地址）、使用 `--gas-budget` 参数设置的 `gas_budget`（gas 预算）以及我们用于支付的币种。它还打印了 CLI 运行的命令。在本示例中，运行了 `Publish` 和 `TransferObject` 命令 - 后者将一个特殊对象 `UpgradeCap` 转移给了发送者。
 
 ```plaintext
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -187,7 +187,7 @@ BUILDING todo_list
 ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-### 交易影响
+### 交易影响 (Transaction Effects)
 
 交易影响部分包含了交易的状态、交易对网络状态所做的更改以及交易涉及的对象。
 
@@ -239,17 +239,17 @@ BUILDING todo_list
 ╰───────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-### Events
+### 事件 (Events)
 
-If there were any _events_ emitted, you would see them in this section. Our package does not use
-events, so the section is empty.
+如果有任何 _事件_ 被触发，你将会在这个部分看到它们。由于我们的包没有使用事件，所以这个部分为空。
 
 ```plaintext
 ╭─────────────────────────────╮
 │ No transaction block events │
 ╰─────────────────────────────╯
 ```
-### 对象变更
+
+### 对象变更 (Object Changes)
 
 这部分记录了交易所作出的对象变更。在我们的例子中，我们创建了一个新的 `UpgradeCap` 对象，这是一个特殊对象，允许发送者在未来升级包。我们还改变了 Gas 对象，并且发布了一个新的包。在 Sui 中，包也是对象之一。
 
@@ -285,7 +285,7 @@ events, so the section is empty.
 ╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-### 余额变更
+### 余额变更 (Balance Changes)
 
 这一部分记录了对 SUI 代币的变动情况。在我们的案例中，我们花费了约 0.015 SUI，相当于 10,500,000 MIST。你可以在输出的 _amount_ 字段中看到这个数值。
 
@@ -303,14 +303,15 @@ events, so the section is empty.
 
 ### 可选输出
 
-把输出格式设置为 JSON 格式是可能的，只需在发布时加上 `--json` 标志即可。这对于想要以编程方式解析输出或稍后使用它的人来说非常有用。
+只需在发布时加上 `--json` 标志即可将输出格式设置为 JSON 格式。这对于想要以编程方式解析输出或稍后使用它的人来说非常有用。
 
 ```bash
 $ sui client publish --gas-budget 100000000 --json
 ```
+
 ### 使用结果
 
-包成功发布到链上后，我们可以开始与之进行交互。为了做到这一点，我们需要找到包的地址（对象ID）。这个地址可以在 `Object Changes` 输出的 `Published Objects` 部分找到。每个包的地址都是唯一的，因此您需要从输出中复制它。
+当包成功发布到链上之后，我们可以开始与之进行交互。为了做到这一点，我们需要找到包的地址（对象ID）。这个地址可以在 `Object Changes` 输出的 `Published Objects` 部分找到。每个包的地址都是唯一的，因此您需要从输出中复制它。
 
 在这个示例中，地址是：
 
@@ -495,7 +496,7 @@ Transaction Digest: BJwYEnuuMzU4Y8cTwMoJbbQA6cLwPmwxvsRpSmvThoK8
 
 </details>
 
-我们要关注的部分是"Object Changes"（对象变化）部分，更具体地说是其中的"Created Objects"（创建的对象）部分。它包含了您创建的`TodoList`的对象ID、类型和版本信息。我们将使用这个对象ID来与列表进行交互。
+我们要关注的部分是"Object Changes"（对象变化）部分，更具体地说是其中的"Created Objects"（创建的对象）部分。它包含了您创建的 `TodoList` 的对象 ID、类型和版本信息。我们将使用这个对象 ID 来与对应列表进行交互。
 
 ```bash
 ╭───────────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -521,7 +522,7 @@ Transaction Digest: BJwYEnuuMzU4Y8cTwMoJbbQA6cLwPmwxvsRpSmvThoK8
 │  └──                                                                                                  │
 ╰───────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
-在这个示例中，对象ID是`0x20e0bede16de8a728ab25e228816b9059b45ebea49c8ad384e044580b2d3e553`。而拥有者应该是您的账户地址。我们通过在交易的最后一个命令中将对象转移给发送者来实现这一点。
+在这个示例中，对象 ID 是`0x20e0bede16de8a728ab25e228816b9059b45ebea49c8ad384e044580b2d3e553`。而拥有者应该是您的账户地址。我们通过在交易的最后一个命令中将对象转移给发送者来实现这一点。
 
 另一种测试您是否成功创建了列表的方法是检查账户对象。
 
@@ -560,7 +561,7 @@ $ sui client ptb \
 --move-call $PACKAGE_ID::todo_list::add @$LIST_ID "'Finish the Hello, Sui chapter'"
 ```
 
-在这个命令中，我们调用了`todo_list`包中的`add`函数。该函数接受两个参数：列表对象和要添加的项目。项目是一个字符串，所以我们需要用单引号将其包裹起来。该命令将项目添加到列表中。
+在这个命令中，我们调用了 `todo_list` 包中的 `add` 函数。该函数接受两个参数：列表对象和要添加的项目。项目是一个字符串，所以我们需要用单引号将其包裹起来。该命令将项目添加到列表中。
 
 如果一切正确，您应该看到类似于前面章节中的输出。现在，您可以检查列表对象，看看项目是否已经被添加进去了。
 
@@ -641,7 +642,7 @@ $ sui client ptb \
 --move-call $PACKAGE_ID::todo_list::remove @$LIST_ID 0
 ```
 
-如果之前的命令都成功执行了，这个命令也应该不会有问题。你可以检查列表对象，看看项目是否已被添加和删除。JSON 表示会更易读一些！
+如果之前的命令都成功执行了，这个命令也应该不会有问题。你可以检查列表对象，看看项目是否已被添加和删除。JSON 格式会更易读一些！
 
 ```bash
 sui client object $LIST_ID --json
