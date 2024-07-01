@@ -1,4 +1,4 @@
-# Move 书
+# The Move Book - 中文版
 
 <!-- TODO: 插入作者 -->
 
@@ -11,3 +11,8 @@
 </div>
 
 > 如果您在寻找 Move 参考资料，可以在 [这里](/reference) 找到。
+
+相关链接：
+- 原书链接：[The Move Book](https://move-book.com/)
+- 原书仓库：[move-book](https://github.com/MystenLabs/move-book)
+- 中文版仓库： [move-book cn](https://github.com/move-cn/move-book)

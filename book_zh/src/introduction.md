@@ -1,6 +1,8 @@
 # 介绍
 
-欢迎来到《Move语言手册》（The Move Book），这是一本关于Move语言的书籍。
+欢迎来到 The Move Book - 中文版，这是一本关于 Move 语言的书籍。
+
+原书链接：[The Move Book](https://move-book.com/index.html)
 
 > 如果您正在寻找《Move参考手册》，可以在这里找到：[Move参考手册](/reference)。参考手册侧重于语言本身，而本书则按照学习路径的结构，从基础知识开始，逐步深入到更高级的主题。页面顶部始终有指向参考手册的链接，同样，在参考手册页面顶部也有指向本书的链接。
 
