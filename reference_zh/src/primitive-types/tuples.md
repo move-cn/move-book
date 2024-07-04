@@ -1,61 +1,43 @@
-# Tuples and Unit
+# 元组与单位类型
 
-Move does not fully support tuples as one might expect coming from another language with them as a
-[first-class value](https://en.wikipedia.org/wiki/First-class_citizen). However, in order to support
-multiple return values, Move has tuple-like expressions. These expressions do not result in a
-concrete value at runtime (there are no tuples in the bytecode), and as a result they are very
-limited:
+Move 并未完全支持元组，这与其他将元组作为[一等公民](https://en.wikipedia.org/wiki/First-class_citizen)的语言有所不同。然而，为了支持多返回值，Move 提供了类似元组的表达式。这些表达式在运行时不会生成具体的值（字节码中不存在元组），因此它们有很大的局限性：
 
-- They can only appear in expressions (usually in the return position for a function).
-- They cannot be bound to local variables.
-- They cannot be bound to local variables.
-- They cannot be stored in structs.
-- Tuple types cannot be used to instantiate generics.
+- 只能出现在表达式中（通常在函数的返回位置）。
+- 不能绑定到局部变量。
+- 不能存储在结构体中。
+- 元组类型不能用于实例化泛型。
 
-Similarly, [unit `()`](https://en.wikipedia.org/wiki/Unit_type) is a type created by the Move source
-language in order to be expression based. The unit value `()` does not result in any runtime value.
-We can consider unit`()` to be an empty tuple, and any restrictions that apply to tuples also apply
-to unit.
+类似地，[unit `()`](https://en.wikipedia.org/wiki/Unit_type) 类型是 Move 源语言为了基于表达式的设计而创建的。单位值 `()` 在运行时不会产生任何值。可以将单位 `()` 视为一个空元组，适用于所有对元组的限制。
 
-It might feel weird to have tuples in the language at all given these restrictions. But one of the
-most common use cases for tuples in other languages is for functions to allow functions to return
-multiple values. Some languages work around this by forcing the users to write structs that contain
-the multiple return values. However in Move, you cannot put references inside of
-[structs](../structs.md). This required Move to support multiple return values. These multiple
-return values are all pushed on the stack at the bytecode level. At the source level, these multiple
-return values are represented using tuples.
+考虑到这些限制，在语言中使用元组可能会感到奇怪。但在其他语言中，元组最常见的用例之一是允许函数返回多个值。一些语言通过强迫用户编写包含多个返回值的结构体来解决这个问题。然而，在 Move 中，你不能在[结构体](../structs.md)中放置引用。这要求 Move 支持多返回值。在字节码层面，这些多返回值全部压入堆栈。在源代码层面，这些多返回值使用元组表示。
 
-## Literals
+## 字面量
 
-Tuples are created by a comma separated list of expressions inside of parentheses.
+元组通过在括号内使用逗号分隔的表达式列表创建。
 
-| Syntax          | Type                                                                         | Description                                                  |
-| --------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `()`            | `(): ()`                                                                     | Unit, the empty tuple, or the tuple of arity 0               |
-| `(e1, ..., en)` | `(e1, ..., en): (T1, ..., Tn)` where `e_i: Ti` s.t. `0 < i <= n` and `n > 0` | A `n`-tuple, a tuple of arity `n`, a tuple with `n` elements |
+| 语法           | 类型                                                                           | 描述                                        |
+| -------------- | ----------------------------------------------------------------------------- | ------------------------------------------- |
+| `()`           | `(): ()`                                                                      | 单位类型，空元组，或 0 元素的元组            |
+| `(e1, ..., en)`| `(e1, ..., en): (T1, ..., Tn)` 其中 `e_i: Ti` 满足 `0 < i <= n` 且 `n > 0`    | `n` 元组，`n` 元素的元组，包含 `n` 个元素   |
 
-Note that `(e)` does not have type `(e): (t)`, in other words there is no tuple with one element. If
-there is only a single element inside of the parentheses, the parentheses are only used for
-disambiguation and do not carry any other special meaning.
+注意 `(e)` 并没有类型 `(e): (t)`，换句话说，不存在单元素元组。如果括号内只有一个元素，则括号仅用于消除歧义，没有其他特殊含义。
 
-Sometimes, tuples with two elements are called "pairs" and tuples with three elements are called
-"triples."
+有时，包含两个元素的元组称为"对"，包含三个元素的元组称为"三元组"。
 
-### Examples
+### 示例
 
 ```move
 module 0x42::example {
-    // all 3 of these functions are equivalent
+    // 以下三个函数是等价的
 
-    // when no return type is provided, it is assumed to be `()`
+    // 当没有提供返回类型时，假定为 `()`
     fun returns_unit_1() { }
 
-    // there is an implicit () value in empty expression blocks
+    // 空表达式块中有一个隐式的 () 值
     fun returns_unit_2(): () { }
 
-    // explicit version of `returns_unit_1` and `returns_unit_2`
+    // 显式版本的 `returns_unit_1` 和 `returns_unit_2`
     fun returns_unit_3(): () { () }
-
 
     fun returns_3_values(): (u64, bool, address) {
         (0, false, @0x42)
@@ -66,19 +48,19 @@ module 0x42::example {
 }
 ```
 
-## Operations
+## 操作
 
-The only operation that can be done on tuples currently is destructuring.
+目前，对元组唯一可以执行的操作是解构。
 
-### Destructuring
+### 解构
 
-For tuples of any size, they can be destructured in either a `let` binding or in an assignment.
+对于任何大小的元组，都可以在 `let` 绑定或赋值中解构。
 
-For example:
+例如：
 
 ```move
 module 0x42::example {
-    // all 3 of these functions are equivalent
+    // 以下三个函数是等价的
     fun returns_unit() {}
     fun returns_2_values(): (bool, bool) { (true, false) }
     fun returns_4_values(x: &u64): (&u64, u8, u128, vector<u8>) { (x, 0, 1, b"foobar") }
@@ -105,36 +87,31 @@ module 0x42::example {
 }
 ```
 
-For more details, see [Move Variables](../variables.md).
+更多详情请参见 [Move 变量](../variables.md)。
 
-## Subtyping
+## 子类型
 
-Along with references, tuples are the only types that have
-[subtyping](https://en.wikipedia.org/wiki/Subtyping) in Move. Tuples have subtyping only in the
-sense that subtype with references (in a covariant way).
+与引用一样，元组是 Move 中唯一具有[子类型](https://en.wikipedia.org/wiki/Subtyping)的类型。元组的子类型仅在引用中的协变方式存在。
 
-For example:
+例如：
 
 ```move
 let x: &u64 = &0;
 let y: &mut u64 = &mut 1;
 
-// (&u64, &mut u64) is a subtype of (&u64, &u64)
-// since &mut u64 is a subtype of &u64
+// (&u64, &mut u64) 是 (&u64, &u64) 的子类型
+// 因为 &mut u64 是 &u64 的子类型
 let (a, b): (&u64, &u64) = (x, y);
 
-// (&mut u64, &mut u64) is a subtype of (&u64, &u64)
-// since &mut u64 is a subtype of &u64
+// (&mut u64, &mut u64) 是 (&u64, &u64) 的子类型
+// 因为 &mut u64 是 &u64 的子类型
 let (c, d): (&u64, &u64) = (y, y);
 
-// ERROR! (&u64, &mut u64) is NOT a subtype of (&mut u64, &mut u64)
-// since &u64 is NOT a subtype of &mut u64
+// 错误! (&u64, &mut u64) 不是 (&mut u64, &mut u64) 的子类型
+// 因为 &u64 不是 &mut u64 的子类型
 let (e, f): (&mut u64, &mut u64) = (x, y);
 ```
 
-## Ownership
+## 所有权
 
-As mentioned above, tuple values don't really exist at runtime. And currently they cannot be stored
-into local variables because of this (but it is likely that this feature will come at some point in
-the future). As such, tuples can only be moved currently, as copying them would require putting them
-into a local variable first.
+如前所述，元组值在运行时并不真正存在。目前它们不能存储到局部变量中（但未来可能会添加此功能）。因此，元组只能移动，不能复制，因为复制它们需要首先将其放入局部变量中。

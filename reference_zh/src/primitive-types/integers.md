@@ -1,33 +1,28 @@
-# Integers
+# 整数类型
 
-Move supports six unsigned integer types: `u8`, `u16`, `u32`, `u64`, `u128`, and `u256`. Values of
-these types range from 0 to a maximum that depends on the size of the type.
+Move 语言支持六种无符号整数类型：`u8`、`u16`、`u32`、`u64`、`u128` 和 `u256`。这些类型的值范围从 0 到根据类型大小决定的最大值。
 
-| Type                             | Value Range              |
-| -------------------------------- | ------------------------ |
-| Unsigned 8-bit integer, `u8`     | 0 to 2<sup>8</sup> - 1   |
-| Unsigned 16-bit integer, `u16`   | 0 to 2<sup>16</sup> - 1  |
-| Unsigned 32-bit integer, `u32`   | 0 to 2<sup>32</sup> - 1  |
-| Unsigned 64-bit integer, `u64`   | 0 to 2<sup>64</sup> - 1  |
-| Unsigned 128-bit integer, `u128` | 0 to 2<sup>128</sup> - 1 |
-| Unsigned 256-bit integer, `u256` | 0 to 2<sup>256</sup> - 1 |
+| 类型                        | 值范围                         |
+| --------------------------- | ------------------------------ |
+| 无符号 8 位整数，`u8`       | 0 到 2<sup>8</sup> - 1         |
+| 无符号 16 位整数，`u16`     | 0 到 2<sup>16</sup> - 1        |
+| 无符号 32 位整数，`u32`     | 0 到 2<sup>32</sup> - 1        |
+| 无符号 64 位整数，`u64`     | 0 到 2<sup>64</sup> - 1        |
+| 无符号 128 位整数，`u128`   | 0 到 2<sup>128</sup> - 1       |
+| 无符号 256 位整数，`u256`   | 0 到 2<sup>256</sup> - 1       |
 
-## Literals
+## 字面值
 
-Literal values for these types are specified either as a sequence of digits (e.g.,`112`) or as hex
-literals, e.g., `0xFF`. The type of the literal can optionally be added as a suffix, e.g., `112u8`.
-If the type is not specified, the compiler will try to infer the type from the context where the
-literal is used. If the type cannot be inferred, it is assumed to be `u64`.
+这些类型的字面值可以用数字序列表示（例如 `112`）或十六进制表示（例如 `0xFF`）。可以选择性地在字面值后加上类型后缀（例如 `112u8`）。如果未指定类型，编译器会尝试从字面值所在的上下文推断类型。如果无法推断，则默认假设为 `u64`。
 
-Number literals can be separated by underscores for grouping and readability. (e.g.,`1_234_5678`,
-`1_000u128`, `0xAB_CD_12_35`).
+数字字面值可以用下划线分隔以增强可读性（例如 `1_234_5678`、`1_000u128`、`0xAB_CD_12_35`）。
 
-If a literal is too large for its specified (or inferred) size range, an error is reported.
+如果字面值超出了指定（或推断）类型的范围，会报告错误。
 
-### Examples
+### 示例
 
 ```move
-// literals with explicit annotations;
+// 带显式注释的字面值
 let explicit_u8 = 1u8;
 let explicit_u16 = 1u16;
 let explicit_u32 = 1u32;
@@ -36,7 +31,7 @@ let explicit_u128 = 3u128;
 let explicit_u256 = 1u256;
 let explicit_u64_underscored = 154_322_973u64;
 
-// literals with simple inference
+// 简单推断的字面值
 let simple_u8: u8 = 1;
 let simple_u16: u16 = 1;
 let simple_u32: u32 = 1;
@@ -44,21 +39,21 @@ let simple_u64: u64 = 2;
 let simple_u128: u128 = 3;
 let simple_u256: u256 = 1;
 
-// literals with more complex inference
-let complex_u8 = 1; // inferred: u8
-// right hand argument to shift must be u8
+// 复杂推断的字面值
+let complex_u8 = 1; // 推断为 u8
+// 右侧的移位参数必须是 u8
 let _unused = 10 << complex_u8;
 
 let x: u8 = 38;
-let complex_u8 = 2; // inferred: u8
-// arguments to `+` must have the same type
+let complex_u8 = 2; // 推断为 u8
+// `+` 的参数必须是相同类型
 let _unused = x + complex_u8;
 
-let complex_u128 = 133_876; // inferred: u128
-// inferred from function argument type
+let complex_u128 = 133_876; // 推断为 u128
+// 从函数参数类型推断
 function_that_takes_u128(complex_u128);
 
-// literals can be written in hex
+// 字面值可以用十六进制表示
 let hex_u8: u8 = 0x1;
 let hex_u16: u16 = 0x1BAE;
 let hex_u32: u32 = 0xDEAD80;
@@ -67,100 +62,84 @@ let hex_u128: u128 = 0xDEADBEEF;
 let hex_u256: u256 = 0x1123_456A_BCDE_F;
 ```
 
-## Operations
+## 操作
 
-### Arithmetic
+### 算术运算
 
-Each of these types supports the same set of checked arithmetic operations. For all of these
-operations, both arguments (the left and right side operands) _must_ be of the same type. If you
-need to operate over values of different types, you will need to first perform a [cast](#casting).
-Similarly, if you expect the result of the operation to be too large for the integer type, perform a
-[cast](#casting) to a larger size before performing the operation.
+每种整数类型都支持相同的检查算术运算。对于所有这些运算，两个操作数（左侧和右侧操作数）_必须_ 是相同类型。如果需要对不同类型的值进行操作，必须先进行[类型转换](#casting)。同样，如果预期运算结果会超出整数类型的范围，需在运算前进行[类型转换](#casting)到更大类型。
 
-All arithmetic operations abort instead of behaving in a way that mathematical integers would not
-(e.g., overflow, underflow, divide-by-zero).
+所有算术运算在发生溢出、下溢或除以零等数学错误时会中止。
 
-| Syntax | Operation           | Aborts If                                |
-| ------ | ------------------- | ---------------------------------------- |
-| `+`    | addition            | Result is too large for the integer type |
-| `-`    | subtraction         | Result is less than zero                 |
-| `*`    | multiplication      | Result is too large for the integer type |
-| `%`    | modular division    | The divisor is `0`                       |
-| `/`    | truncating division | The divisor is `0`                       |
+| 语法 | 操作      | 中止条件                      |
+| ---- | --------- | ----------------------------- |
+| `+`  | 加法      | 结果超出整数类型的最大范围    |
+| `-`  | 减法      | 结果小于零                    |
+| `*`  | 乘法      | 结果超出整数类型的最大范围    |
+| `%`  | 模除法    | 除数为 `0`                    |
+| `/`  | 截断除法  | 除数为 `0`                    |
 
-### Bitwise
+### 位运算
 
-The integer types support the following bitwise operations that treat each number as a series of
-individual bits, either 0 or 1, instead of as numerical integer values.
+整数类型支持以下位运算，这些运算将每个数字视为一系列的 0 或 1 位，而不是数值。
 
-Bitwise operations do not abort.
+位运算不会中止。
 
-| Syntax              | Operation   | Description                                           |
-| ------------------- | ----------- | ----------------------------------------------------- |
-| `&`                 | bitwise and | Performs a boolean and for each bit pairwise          |
-| <code>&#124;</code> | bitwise or  | Performs a boolean or for each bit pairwise           |
-| `^`                 | bitwise xor | Performs a boolean exclusive or for each bit pairwise |
+| 语法                | 操作          | 描述                             |
+| ------------------- | ------------- | -------------------------------- |
+| `&`                 | 位与          | 对每个位进行逐位的布尔与运算    |
+| <code>&#124;</code> | 位或          | 对每个位进行逐位的布尔或运算    |
+| `^`                 | 位异或        | 对每个位进行逐位的布尔异或运算  |
 
-### Bit Shifts
+### 位移运算
 
-Similar to the bitwise operations, each integer type supports bit shifts. But unlike the other
-operations, the righthand side operand (how many bits to shift by) must _always_ be a `u8` and need
-not match the left side operand (the number you are shifting).
+与位运算类似，每种整数类型支持位移运算。但与其他运算不同，右侧操作数（要移位的位数）必须_始终_为 `u8` 类型，不必与左侧操作数（要移位的数字）类型匹配。
 
-Bit shifts can abort if the number of bits to shift by is greater than or equal to `8`, `16`, `32`,
-`64`, `128` or `256` for `u8`, `u16`, `u32`, `u64`, `u128` and `u256` respectively.
+如果移位位数大于或等于 `8`、`16`、`32`、`64`、`128` 或 `256`（对于 `u8`、`u16`、`u32`、`u64`、`u128` 和 `u256`），位移运算会中止。
 
-| Syntax | Operation   | Aborts if                                                               |
-| ------ | ----------- | ----------------------------------------------------------------------- |
-| `<<`   | shift left  | Number of bits to shift by is greater than the size of the integer type |
-| `>>`   | shift right | Number of bits to shift by is greater than the size of the integer type |
+| 语法 | 操作       | 中止条件                                                |
+| ---- | ---------- | ------------------------------------------------------- |
+| `<<` | 左移       | 移位位数大于整数类型的位数                              |
+| `>>` | 右移       | 移位位数大于整数类型的位数                              |
 
-### Comparisons
+### 比较运算
 
-Integer types are the _only_ types in Move that can use the comparison operators. Both arguments
-need to be of the same type. If you need to compare integers of different types, you must
-[cast](#casting) one of them first.
+整数类型是 Move 语言中唯一可以使用比较运算符的类型。两个操作数需要是相同类型。如果需要比较不同类型的整数，必须先进行[类型转换](#casting)。
 
-Comparison operations do not abort.
+比较运算不会中止。
 
-| Syntax | Operation                |
-| ------ | ------------------------ |
-| `<`    | less than                |
-| `>`    | greater than             |
-| `<=`   | less than or equal to    |
-| `>=`   | greater than or equal to |
+| 语法 | 操作       |
+| ---- | ---------- |
+| `<`  | 小于       |
+| `>`  | 大于       |
+| `<=` | 小于等于   |
+| `>=` | 大于等于   |
 
-### Equality
+### 相等运算
 
-Like all types with [`drop`](../abilities.md), all integer types support the
-["equal"](../equality.md) and ["not equal"](../equality.md) operations. Both arguments need to be of
-the same type. If you need to compare integers of different types, you must [cast](#casting) one of
-them first.
+与所有具有 [`drop`](../abilities.md) 能力的类型一样，所有整数类型都支持 ["相等"](../equality.md) 和 ["不相等"](../equality.md) 运算。两个操作数需要是相同类型。如果需要比较不同类型的整数，必须先进行[类型转换](#casting)。
 
-Equality operations do not abort.
+相等运算不会中止。
 
-| Syntax | Operation |
-| ------ | --------- |
-| `==`   | equal     |
-| `!=`   | not equal |
+| 语法 | 操作 |
+| ---- | ---- |
+| `==` | 相等 |
+| `!=` | 不相等 |
 
-For more details see the section on [equality](../equality.md)
+更多细节请参见[相等](../equality.md)部分。
 
-## Casting
+## 类型转换
 
-Integer types of one size can be cast to integer types of another size. Integers are the only types
-in Move that support casting.
+一种整数类型可以转换为另一种整数类型。整数是 Move 语言中唯一支持类型转换的类型。
 
-Casts _do not_ truncate. Casting aborts if the result is too large for the specified type.
+类型转换_不会_截断。如果结果超出指定类型的范围，转换会中止。
 
-| Syntax     | Operation                                            | Aborts if                              |
-| ---------- | ---------------------------------------------------- | -------------------------------------- |
-| `(e as T)` | Cast integer expression `e` into an integer type `T` | `e` is too large to represent as a `T` |
+| 语法       | 操作                           | 中止条件                      |
+| ---------- | ----------------------------- | ----------------------------- |
+| `(e as T)` | 将整数表达式 `e` 转换为整数类型 `T` | `e` 超出 `T` 的表示范围       |
 
-Here, the type of `e` must be `8`, `16`, `32`, `64`, `128` or `256` and `T` must be `u8`, `u16`,
-`u32`, `u64`, `u128`, or `u256`.
+在这里，`e` 的类型必须是 `8`、`16`、`32`、`64`、`128` 或 `256`，`T` 必须是 `u8`、`u16`、`u32`、`u64`、`u128` 或 `u256`。
 
-For example:
+例如：
 
 - `(x as u8)`
 - `(y as u16)`
@@ -169,8 +148,6 @@ For example:
 - `(1 + 3 as u128)`
 - `(4/2 + 12345 as u256)`
 
-## Ownership
+## 所有权
 
-As with the other scalar values built-in to the language, integer values are implicitly copyable,
-meaning they can be copied without an explicit instruction such as
-[`copy`](../variables.md#move-and-copy).
+与语言中其他标量值一样，整数值是隐式可复制的，这意味着它们可以在不需要显式指令（如 [`copy`](../variables.md#move-and-copy)）的情况下进行复制。

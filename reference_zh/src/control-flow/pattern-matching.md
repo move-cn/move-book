@@ -1,15 +1,10 @@
-# Pattern Matching
+# 模式匹配
 
-A `match` expression is a powerful control structure that allows you to compare a value against a
-series of patterns and then execute code based on which pattern matches first. Patterns can be
-anything from simple literals to complex, nested struct and enum definitions. As opposed to `if`
-expressions, which change control flow based on a `bool`-typed test expression, a `match` expression
-operates over a value of any type and selects one of many arms.
+`match` 表达式是一种强大的控制结构，允许你将一个值与一系列模式进行比较，然后根据首先匹配的模式执行代码。模式可以是简单的字面量，也可以是复杂的、嵌套的结构体和枚举定义。与基于 `bool` 类型测试表达式的 `if` 表达式不同，`match` 表达式操作任何类型的值并选择多个分支之一。
 
-A `match` expression can match Move values as well as mutable or immutable references, binding
-sub-patterns accordingly.
+`match` 表达式可以匹配 Move 值以及可变或不可变引用，并相应地绑定子模式。
 
-For example:
+例如：
 
 ```move
 fun run(x: u64): u64 {
@@ -20,19 +15,17 @@ fun run(x: u64): u64 {
     }
 }
 
-run(1); // returns 2
-run(2); // returns 3
-run(3); // returns 3
-run(0); // returns 0
+run(1); // 返回 2
+run(2); // 返回 3
+run(3); // 返回 3
+run(0); // 返回 0
 ```
 
-## `match` Syntax
+## `match` 语法
 
-A `match` takes an expression and a non-empty series of _match arms_ delimited by commas.
+`match` 包含一个表达式和一个非空的 _match 分支_ 列表，用逗号分隔。
 
-Each match arm consists of a pattern (`p`), an optional guard (`if (g)` where `g` is an expression
-of type `bool`), an arrow (`=>`), and an arm expression (`e`) to execute when the pattern matches.
-For example,
+每个 match 分支由一个模式 (`p`)、一个可选的守卫 (`if (g)`，其中 `g` 是一个 `bool` 类型的表达式)、一个箭头 (`=>`) 和一个分支表达式 (`e`) 组成，当模式匹配时执行。例如，
 
 ```move
 match (expression) {
@@ -42,97 +35,91 @@ match (expression) {
 }
 ```
 
-Match arms are checked in order from top to bottom, and the first pattern that matches (with a guard
-expression, if present, that evaluates to `true`) will be executed.
+match 分支按顺序从上到下检查，第一个匹配的模式（如果存在，则匹配的守卫表达式为 `true`）将被执行。
 
-Note that the series of match arms within a `match` must be exhaustive, meaning that every possible
-value of the type being matched must be covered by one of the patterns in the `match`. If the series
-of match arms is not exhaustive, the compiler will raise an error.
+请注意，`match` 中的分支必须是穷尽的，意味着匹配的类型的每一个可能的值都必须由 `match` 中的一个模式覆盖。如果分支不穷尽，编译器将抛出错误。
 
-## Pattern Syntax
+## 模式语法
 
-A pattern is matched by a value if the value is equal to the pattern, and where variables and
-wildcards (e.g., `x`, `y`, `_`, or `..`) are "equal" to anything.
+一个模式与一个值匹配，如果该值等于模式，其中变量和通配符（例如 `x`、`y`、`_` 或 `..`）与任何值“相等”。
 
-Patterns are used to match values. Patterns can be
+模式用于匹配值。模式可以是：
 
-| Pattern              | Description                                                            |
-| -------------------- | ---------------------------------------------------------------------- |
-| Literal              | A literal value, such as `1`, `true`, `@0x1`                           |
-| Constant             | A constant value, e.g., `MyConstant`                                   |
-| Variable             | A variable, e.g., `x`, `y`, `z`                                        |
-| Wildcard             | A wildcard, e.g., `_`                                                  |
-| Constructor          | A constructor pattern, e.g., `MyStruct { x, y }`, `MyEnum::Variant(x)` |
-| At-pattern           | An at-pattern, e.g., `x @ MyEnum::Variant(..)`                         |
-| Or-pattern           | An or-pattern, e.g., `MyEnum::Variant(..) \| MyEnum::OtherVariant(..)` |
-| Multi-arity wildcard | A multi-arity wildcard, e.g., `MyEnum::Variant(..)`                    |
-| Mutable-binding      | A mutable-binding pattern, e.g., `mut x`                               |
+| 模式              | 描述                                                                |
+| ----------------- | ------------------------------------------------------------------- |
+| 字面量            | 字面量值，例如 `1`、`true`、`@0x1`                                  |
+| 常量              | 常量值，例如 `MyConstant`                                           |
+| 变量              | 变量，例如 `x`、`y`、`z`                                            |
+| 通配符            | 通配符，例如 `_`                                                    |
+| 构造器            | 构造器模式，例如 `MyStruct { x, y }`、`MyEnum::Variant(x)`           |
+| @ 模式            | at 模式，例如 `x @ MyEnum::Variant(..)`                             |
+| 或模式            | 或模式，例如 `MyEnum::Variant(..) \| MyEnum::OtherVariant(..)`       |
+| 多元通配符        | 多元通配符，例如 `MyEnum::Variant(..)`                              |
+| 可变绑定          | 可变绑定模式，例如 `mut x`                                          |
 
-Patterns in Move have the following grammar:
+Move 中的模式具有以下语法：
 
 ```bnf
 pattern = <literal>
         | <constant>
         | <variable>
         | _
-        | C { <variable> : inner-pattern ["," <variable> : inner-pattern]* } // where C is a struct or enum variant
-        | C ( inner-pattern ["," inner-pattern]* ... )                       // where C is a struct or enum variant
-        | C                                                                  // where C is an enum variant
+        | C { <variable> : inner-pattern ["," <variable> : inner-pattern]* } // C 是结构体或枚举变体
+        | C ( inner-pattern ["," inner-pattern]* ... )                       // C 是结构体或枚举变体
+        | C                                                                  // C 是枚举变体
         | <variable> @ top-level-pattern
         | pattern | pattern
         | mut <variable>
 inner-pattern = pattern
-              | ..     // multi-arity wildcard
+              | ..     // 多元通配符
 ```
 
-Some examples of patterns are:
+一些模式示例：
 
 ```move
-// literal pattern
+// 字面量模式
 1
 
-// constant pattern
+// 常量模式
 MyConstant
 
-// variable pattern
+// 变量模式
 x
 
-// wildcard pattern
+// 通配符模式
 _
 
-// constructor pattern that matches `MyEnum::Variant` with the fields `1` and `true`
+// 构造器模式，匹配 `MyEnum::Variant`，字段为 `1` 和 `true`
 MyEnum::Variant(1, true)
 
-// constructor pattern that matches `MyEnum::Variant` with the fields `1` and binds the second field's value to `x`
+// 构造器模式，匹配 `MyEnum::Variant`，字段为 `1` 并将第二个字段的值绑定到 `x`
 MyEnum::Variant(1, x)
 
-// multi-arity wildcard pattern that matches multiple fields within the `MyEnum::Variant` variant
+// 多元通配符模式，匹配 `MyEnum::Variant` 变体中的多个字段
 MyEnum::Variant(..)
 
-// constructor pattern that matches the `x` field of `MyStruct` and binds the `y` field to `other_variable`
+// 构造器模式，匹配 `MyStruct` 的 `x` 字段并将 `y` 字段绑定到 `other_variable`
 MyStruct { x, y: other_variable }
 
-// at-pattern that matches `MyEnum::Variant` and binds the entire value to `x`
+// at 模式，匹配 `MyEnum::Variant` 并将整个值绑定到 `x`
 x @ MyEnum::Variant(..)
 
-// or-pattern that matches either `MyEnum::Variant` or `MyEnum::OtherVariant`
+// 或模式，匹配 `MyEnum::Variant` 或 `MyEnum::OtherVariant`
 MyEnum::Variant(..) | MyEnum::OtherVariant(..)
 
-// same as the above or-pattern, but with explicit wildcards
+// 与上述或模式相同，但使用显式通配符
 MyEnum::Variant(_, _) | MyEnum::OtherVariant(_, _)
 
-// or-pattern that matches either `MyEnum::Variant` or `MyEnum::OtherVariant` and binds the u64 field to `x`
+// 或模式，匹配 `MyEnum::Variant` 或 `MyEnum::OtherVariant`，并将 u64 字段绑定到 `x`
 MyEnum::Variant(x, _) | MyEnum::OtherVariant(_, x)
 
-// constructor pattern that matches `OtherEnum::V` and if the inner `MyEnum` is `MyEnum::Variant`
+// 构造器模式，匹配 `OtherEnum::V` 并且内部 `MyEnum` 是 `MyEnum::Variant`
 OtherEnum::V(MyEnum::Variant(..))
 ```
 
-### Patterns and Variables
+### 模式和变量
 
-Patterns that contain variables bind them to the match subject or subject subcomponent being
-matched. These variables can then be used either in any match guard expressions, or on the
-right-hand side of the match arm. For example:
+包含变量的模式将变量绑定到匹配的值或值的子组件。这些变量可以在任何匹配守卫表达式中使用，也可以在匹配分支的右侧使用。例如：
 
 ```move
 public struct Wrapper(u64)
@@ -143,16 +130,14 @@ fun add_under_wrapper_unless_equal(wrapper: Wrapper, x: u64): u64 {
         Wrapper(y) => y + x,
     }
 }
-add_under_wrapper_unless_equal(Wrapper(1), 2); // returns Wrapper(3)
-add_under_wrapper_unless_equal(Wrapper(2), 3); // returns Wrapper(5)
-add_under_wrapper_unless_equal(Wrapper(3), 3); // returns Wrapper(3)
+add_under_wrapper_unless_equal(Wrapper(1), 2); // 返回 Wrapper(3)
+add_under_wrapper_unless_equal(Wrapper(2), 3); // 返回 Wrapper(5)
+add_under_wrapper_unless_equal(Wrapper(3), 3); // 返回 Wrapper(3)
 ```
 
-### Combining Patterns
+### 组合模式
 
-Patterns can be nested, but patterns can also be combined using the or operator (`|`). For example,
-`p1 | p2` succeeds if either pattern `p1` or `p2` matches the subject. This pattern can occur
-anywhere -- either as a top-level pattern or a sub-pattern within another pattern.
+模式可以嵌套，但也可以使用或运算符 (`|`) 组合模式。例如，`p1 | p2` 成功匹配如果模式 `p1` 或 `p2` 中的任何一个匹配。这种模式可以出现在任何地方——作为顶层模式或另一个模式中的子模式。
 
 ```move
 public enum MyEnum has drop {
@@ -168,54 +153,45 @@ fun test_or_pattern(x: u64): u64 {
     }
 }
 
-test_or_pattern(MyEnum::Variant(3, true)); // returns 1
-test_or_pattern(MyEnum::OtherVariant(true, 2)); // returns 1
-test_or_pattern(MyEnum::Variant(8, true)); // returns 2
-test_or_pattern(MyEnum::OtherVariant(false, 7)); // returns 2
-test_or_pattern(MyEnum::OtherVariant(false, 80)); // returns 3
+test_or_pattern(MyEnum::Variant(3, true)); // 返回 1
+test_or_pattern(MyEnum::OtherVariant(true, 2)); // 返回 1
+test_or_pattern(MyEnum::Variant(8, true)); // 返回 2
+test_or_pattern(MyEnum::OtherVariant(false, 7)); // 返回 2
+test_or_pattern(MyEnum::OtherVariant(false, 80)); // 返回 3
 ```
 
-### Restrictions on Some Patterns
+### 某些模式的限制
 
-The `mut` and `..` patterns also have specific conditions placed on when, where, and how they can be
-used, as detailed in [Limitations on Specific Patterns](#limitations-on-specific-patterns). At a
-high level, the `mut` modifier can only be used on variable patterns, and the `..` pattern can only
-be used once within a constructor pattern -- and not as a top-level pattern.
+`mut` 和 `..` 模式在使用时有特定的条件，如 [特定模式的限制](#limitations-on-specific-patterns) 中所述。大体上，`mut` 修饰符只能用于变量模式，`..` 模式只能在构造器模式中使用一次——不能作为顶层模式使用。
 
-The following is an _invalid_ usage of the `..` pattern because it is used as a top-level pattern:
+以下是 `..` 模式的 _无效_ 用法，因为它用作顶层模式：
 
 ```move
 match (x) {
     .. => 1,
-    // ERROR: `..` pattern can only be used within a constructor pattern
+    // 错误: `..` 模式只能在构造器模式中使用
 }
 
 match (x) {
     MyStruct(.., ..) => 1,
-    // ERROR:    ^^  `..` pattern can only be used once within a constructor pattern
+    // 错误:    ^^  `..` 模式只能在构造器模式中使用一次
 }
 ```
 
-### Pattern Typing
+### 模式类型
 
-Patterns are not expressions, but they are nevertheless typed. This means that the type of a pattern
-must match the type of the value it matches. For example, the pattern `1` has an integer type, the
-pattern `MyEnum::Variant(1, true)` has type `MyEnum`, the pattern `MyStruct { x, y }` has type
-`MyStruct`, and `OtherStruct<bool> { x: true, y: 1}` has type `OtherStruct<bool>`. If you try to
-match on an expression that differs from the type of the pattern in the match, this will result in a
-type error. For example:
+模式不是表达式，但它们仍然是类型化的。这意味着模式的类型必须与匹配值的类型匹配。例如，模式 `1` 具有整数类型，模式 `MyEnum::Variant(1, true)` 具有 `MyEnum` 类型，模式 `MyStruct { x, y }` 具有 `MyStruct` 类型，而 `OtherStruct<bool> { x: true, y: 1}` 具有 `OtherStruct<bool>` 类型。如果尝试匹配类型与模式类型不同的表达式，将导致类型错误。例如：
 
 ```move
 match (1) {
-    // The `true` literal pattern is of type `bool` so this is a type error.
+    // `true` 字面量模式是 `bool` 类型，因此这是一个类型错误。
     true => 1,
-    // TYPE ERROR: expected type u64, found bool
+    // 类型错误: 预期类型 u64，找到 bool
     _ => 2,
 }
 ```
 
-Similarly, the following would also result in a type error because `MyEnum` and `MyStruct` are
-different types:
+同样，以下也会导致类型错误，因为 `MyEnum` 和 `MyStruct` 是不同的类型：
 
 ```
 match (MyStruct { x: 0, y: 0 }) {
@@ -224,10 +200,9 @@ match (MyStruct { x: 0, y: 0 }) {
 }
 ```
 
-## Matching
+## 匹配
 
-Prior to delving into the specifics of pattern matching and what it means for a value to "match" a
-pattern, let's examine a few examples to provide an intuition for the concept.
+在深入探讨模式匹配的具体细节以及一个值与模式“匹配”意味着什么之前，让我们通过几个示例来提供一个直观的理解。
 
 ```move
 fun test_lit(x: u64): u8 {
@@ -237,19 +212,19 @@ fun test_lit(x: u64): u8 {
         _ => 4,
     }
 }
-test_lit(1); // returns 2
-test_lit(2); // returns 3
-test_lit(3); // returns 4
-test_lit(10); // returns 4
+test_lit(1); // 返回 2
+test_lit(2); // 返回 3
+test_lit(3); // 返回 4
+test_lit(10); // 返回 4
 
 fun test_var(x: u64): u64 {
     match (x) {
         y => y,
     }
 }
-test_var(1); // returns 1
-test_var(2); // returns 2
-test_var(3); // returns 3
+test_var(1); // 返回 1
+test_var(2); // 返回 2
+test_var(3); // 返回 3
 ...
 
 const MyConstant: u64 = 10;
@@ -259,9 +234,9 @@ fun test_constant(x: u64): u64 {
         _ => 2,
     }
 }
-test_constant(MyConstant); // returns 1
-test_constant(10); // returns 1
-test_constant(20); // returns 2
+test_constant(MyConstant); // 返回 1
+test_constant(10); // 返回 1
+test_constant(20); // 返回 2
 
 fun test_or_pattern(x: u64): u64 {
     match (x) {
@@ -270,9 +245,9 @@ fun test_or_pattern(x: u64): u64 {
         _ => 3,
     }
 }
-test_or_pattern(3); // returns 1
-test_or_pattern(5); // returns 2
-test_or_pattern(70); // returns 3
+test_or_pattern(3); // 返回 1
+test_or_pattern(5); // 返回 2
+test_or_pattern(70); // 返回 3
 
 fun test_or_at_pattern(x: u64): u64 {
     match (x) {
@@ -281,77 +256,64 @@ fun test_or_at_pattern(x: u64): u64 {
         z => z + 3,
     }
 }
-test_or_pattern(2); // returns 3
-test_or_pattern(5); // returns 7
-test_or_pattern(70); // returns 73
+test_or_pattern(2); // 返回 3
+test_or_pattern(5); // 返回 7
+test_or_pattern(70); // 返回 73
 ```
 
-The most important thing to note from these examples is that a pattern matches a value if the value
-is equal to the pattern, and wildcard/variable patterns match anything. This is true for literals,
-variables, and constants. For example, in the `test_lit` function, the value `1` matches the pattern
-`1`, the value `2` matches the pattern `2`, and the value `3` matches the wildcard `_`. Similarly,
-in the `test_var` function, both the value `1` and the value `2` matches the pattern `y`.
+从这些示例中最重要的一点是，一个模式匹配一个值如果该值等于该模式，并且通配符/变量模式匹配任何值。这对文字、变量和常量都是如此。例如，在 `test_lit` 函数中，值 `1` 匹配模式 `1`，值 `2` 匹配模式 `2`，而值 `3` 匹配通配符 `_`。类似地，在 `test_var` 函数中，值 `1` 和 `2` 都匹配模式 `y`。
 
-A variable `x` matches (or "equals") any value, and a wildcard `_` matches any value (but only one
-value). Or-patterns are like a logical OR, where a value matches the pattern if it matches any of
-patterns in the or-pattern so `p1 | p2 | p3` should be read "matches p1, or p2, or p3".
+变量 `x` 匹配（或“等于”）任何值，而通配符 `_` 匹配任何值（但只匹配一个值）。或者模式就像一个逻辑 OR，值匹配模式如果它匹配或模式中的任何一个模式，所以 `p1 | p2 | p3` 应该被解读为“匹配 p1，或 p2，或 p3”。
 
-### Matching Constructors
+### 匹配构造函数
 
-Pattern matching includes the concept of constructor patterns. These patterns allow you to inspect
-and access deep within both structs and enums, and are one of the most powerful parts of pattern
-matching. Constructor patterns, coupled with variable bindings, allow you to match on values by
-their structure, and pull out the parts of the value you care about for usage on the right-hand side
-of the match arm.
+模式匹配包括构造函数模式的概念。这些模式允许你检查并访问结构体和枚举中的深层次内容，是模式匹配最强大的部分之一。构造函数模式与变量绑定结合，允许你通过结构匹配值，并提取你关心的部分以在匹配分支的右侧使用。
 
-Take the following:
+看看下面的例子：
 
 ```move
-fun f(x: MyEnum) {
+public enum MyEnum has drop {
+    Variant(u64, bool),
+    OtherVariant(bool, u64),
+}
+
+fun f(x: MyEnum): u64 {
     match (x) {
         MyEnum::Variant(1, true) => 1,
         MyEnum::OtherVariant(_, 3) => 2,
         MyEnum::Variant(..) => 3,
         MyEnum::OtherVariant(..) => 4,
+    }
 }
-f(MyEnum::Variant(1, true)); // returns 1
-f(MyEnum::Variant(2, true)); // returns 3
-f(MyEnum::OtherVariant(false, 3)); // returns 2
-f(MyEnum::OtherVariant(true, 3)); // returns 2
-f(MyEnum::OtherVariant(true, 2)); // returns 4
+f(MyEnum::Variant(1, true)); // 返回 1
+f(MyEnum::Variant(2, true)); // 返回 3
+f(MyEnum::OtherVariant(false, 3)); // 返回 2
+f(MyEnum::OtherVariant(true, 3)); // 返回 2
+f(MyEnum::OtherVariant(true, 2)); // 返回 4
 ```
 
-This is saying that "if `x` is `MyEnum::Variant` with the fields `1` and `true`, then return `1`. If
-it is `MyEnum::OtherVariant` with any value for the first field, and `3` for the second, then return
-`2`. If it is `MyEnum::Variant` with any fields, then return `3`. Finally, if it is
-`MyEnum::OtherVariant` with any fields, then return `4`".
+这段代码的意思是“如果 `x` 是 `MyEnum::Variant` 并且字段是 `1` 和 `true`，则返回 `1`。如果它是 `MyEnum::OtherVariant` 并且第一个字段是任何值，第二个字段是 `3`，则返回 `2`。如果它是 `MyEnum::Variant` 并且字段是任何值，则返回 `3`。最后，如果它是 `MyEnum::OtherVariant` 并且字段是任何值，则返回 `4`”。
 
-You can also nest patterns. So, if you wanted to match either 1, 2, or 10, instead of just matching
-1 in the previous `MyEnum::Variant`, you could do so with an or-pattern:
+你还可以嵌套模式。因此，如果你想匹配 1、2 或 10，而不仅仅是匹配前面的 `MyEnum::Variant` 中的 1，你可以使用 or 模式来实现：
 
 ```move
-fun f(x: MyEnum) {
+fun f(x: MyEnum): u64 {
     match (x) {
         MyEnum::Variant(1 | 2 | 10, true) => 1,
         MyEnum::OtherVariant(_, 3) => 2,
         MyEnum::Variant(..) => 3,
         MyEnum::OtherVariant(..) => 4,
+    }
 }
-f(MyEnum::Variant(1, true)); // returns 1
-f(MyEnum::Variant(2, true)); // returns 1
-f(MyEnum::Variant(10, true)); // returns 1
-f(MyEnum::Variant(10, false)); // returns 3
+f(MyEnum::Variant(1, true)); // 返回 1
+f(MyEnum::Variant(2, true)); // 返回 1
+f(MyEnum::Variant(10, true)); // 返回 1
+f(MyEnum::Variant(10, false)); // 返回 3
 ```
 
-### Ability Constraints
+### 能力约束
 
-Additionally, match bindings are subject to the same ability restrictions as other aspects of Move.
-In particular, the compiler will signal an error if you try to match a value (not-reference) without
-`drop` using a wildcard, as the wildcard expects to drop the value. Similarly, if you bind a
-non-`drop` value using a binder, it must be used in the right-hand side of the match arm. In
-addition, if you fully destruct that value, you have unpacked it, matching the semantics of
-[non-`drop` struct unpacking](../structs.md#destroying-structs-via-pattern-matching). See the
-[abilities section on `drop`](../abilities.md#drop) for more details about the `drop` capability.
+此外，匹配绑定受到与Move其他方面相同的能力限制。特别是，如果你试图使用通配符匹配一个没有`drop`能力的值（非引用），编译器将发出错误信号，因为通配符期望丢弃该值。同样，如果你使用绑定器绑定一个非`drop`值，它必须在匹配分支的右侧使用。此外，如果你完全解构该值，你就拆解了它，这与[非`drop`结构体拆解](../structs.md#destroying-structs-via-pattern-matching)的语义相匹配。有关`drop`能力的更多详细信息，请参阅[能力部分的`drop`](../abilities.md#drop)。
 
 ```move
 public struct NonDrop(u64)
@@ -360,7 +322,7 @@ fun drop_nondrop(x: NonDrop) {
     match (x) {
         NonDrop(1) => 1,
         _ => 2
-        // ERROR: cannot wildcard match on a non-droppable value
+        // 错误：不能在不可丢弃的值上使用通配符匹配
     }
 }
 
@@ -368,7 +330,7 @@ fun destructure_nondrop(x: NonDrop) {
     match (x) {
         NonDrop(1) => 1,
         NonDrop(_) => 2
-        // OK!
+        // 正确！
     }
 }
 
@@ -380,28 +342,17 @@ fun use_nondrop(x: NonDrop): NonDrop {
 }
 ```
 
-## Exhaustiveness
+## 穷尽性
 
-The `match` expression in Move must be _exhaustive_: every possible value of the type being matched
-must be covered by one of the patterns in one of the match's arms. If the series of match arms is
-not exhaustive, the compiler will raise an error. Note that any arm with a guard expression does not
-contribute to match exhaustion, as it might fail to match at runtime.
+Move中的`match`表达式必须是_穷尽的_：被匹配类型的每个可能值都必须被匹配分支中的一个模式所覆盖。如果匹配分支序列不是穷尽的，编译器将引发错误。注意，任何带有守卫表达式的分支都不会贡献于匹配穷尽性，因为它可能在运行时匹配失败。
 
-As an example, a match on a `u8` is exhaustive only if it matches on _every_ number from 0 to 255
-inclusive, unless there is a wildcard or variable pattern present. Similarly, a match on a `bool`
-would need to match on both `true` and `false`, unless there is a wildcard or variable pattern
-present.
+例如，对`u8`的匹配只有在匹配0到255（包括255）的_每个_数字时才是穷尽的，除非存在通配符或变量模式。同样，对`bool`的匹配需要匹配`true`和`false`两者，除非存在通配符或变量模式。
 
-For structs, because there is only one type of constructor for the type, only one constructor needs
-to be matched, but the fields within the struct need to be matched exhaustively as well. Conversely,
-enums may define multiple variants, and each variant must be matched (including any sub-fields) for
-the match to be considered exhaustive.
+对于结构体，因为类型只有一种构造函数，所以只需要匹配一个构造函数，但结构体内的字段也需要被穷尽地匹配。相反，枚举可能定义多个变体，每个变体都必须被匹配（包括任何子字段）才能被视为穷尽匹配。
 
-Because underscores and variables are wildcards that match anything, they count as matching all
-values of the type they are matching on in that position. Additionally, the multi-arity wildcard
-pattern `..` can be used to match on multiple values within a struct or enum variant.
+因为下划线和变量是匹配任何内容的通配符，它们被视为匹配该位置上它们所匹配类型的所有值。此外，多元通配符模式`..`可用于匹配结构体或枚举变体内的多个值。
 
-To see some examples of _non-exhaustive_ matches, consider the following:
+看一些_非穷尽_匹配的例子，考虑以下内容：
 
 ```move
 public enum MyEnum {
@@ -416,7 +367,7 @@ fun f(x: MyEnum): u8 {
         MyEnum::Variant(1, true) => 1,
         MyEnum::Variant(_, _) => 1,
         MyEnum::OtherVariant(_, 3) => 2,
-        // ERROR: not exhaustive as the value `MyEnum::OtherVariant(_, 4)` is not matched.
+        // 错误：不穷尽，因为值`MyEnum::OtherVariant(_, 4)`没有被匹配。
     }
 }
 
@@ -425,13 +376,12 @@ fun match_pair_bool(x: Pair<bool>): u8 {
         Pair(true, true) => 1,
         Pair(true, false) => 1,
         Pair(false, false) => 1,
-        // ERROR: not exhaustive as the value `Pair(false, true)` is not matched.
+        // 错误：不穷尽，因为值`Pair(false, true)`没有被匹配。
     }
 }
 ```
 
-These examples can then be made exhaustive by adding a wildcard pattern to the end of the match arm,
-or by fully matching on the remaining values:
+可以通过在匹配分支末尾添加通配符模式，或完全匹配剩余值来使这些例子变得穷尽：
 
 ```move
 fun f(x: MyEnum): u8 {
@@ -439,9 +389,8 @@ fun f(x: MyEnum): u8 {
         MyEnum::Variant(1, true) => 1,
         MyEnum::Variant(_, _) => 1,
         MyEnum::OtherVariant(_, 3) => 2,
-        // Now exhaustive since this will match all values of MyEnum::OtherVariant
+        // 现在穷尽了，因为这将匹配MyEnum::OtherVariant的所有值
         MyEnum::OtherVariant(..) => 2,
-
     }
 }
 
@@ -450,19 +399,15 @@ fun match_pair_bool(x: Pair<bool>): u8 {
         Pair(true, true) => 1,
         Pair(true, false) => 1,
         Pair(false, false) => 1,
-        // Now exhaustive since this will match all values of Pair<bool>
+        // 现在穷尽了，因为这将匹配Pair<bool>的所有值
         Pair(false, true) => 1,
     }
 }
 ```
 
-## Guards
+## 守卫
 
-As previously mentioned, you can add a guard to a match arm by adding an `if` clause after the
-pattern. This guard will run _after_ the pattern has been matched but _before_ the expression on the
-right hand side of the arrow is evaluated. If the guard expression evaluates to `true` then the
-expression on the right hand side of the arrow will be evaluated, if it evaluates to `false` then it
-will be considered a failed match and the next match arm in the `match` expression will be checked.
+如前所述，你可以通过在模式后添加一个 `if` 子句来向匹配分支添加守卫。这个守卫将在模式匹配之后但在箭头右侧的表达式求值之前运行。如果守卫表达式求值为 `true`，则箭头右侧的表达式将被求值；如果求值为 `false`，则将被视为匹配失败，并检查 `match` 表达式中的下一个匹配分支。
 
 ```move
 fun match_with_guard(x: u64): u64 {
@@ -473,14 +418,11 @@ fun match_with_guard(x: u64): u64 {
     }
 }
 
-match_with_guard(1); // returns 2
-match_with_guard(0); // returns 3
+match_with_guard(1); // 返回 2
+match_with_guard(0); // 返回 3
 ```
 
-Guard expressions can reference variables bound in the pattern during evaluation. However, note that
-_variables are only available as immutable reference in guards_ regardless of the pattern being
-matched -- even if there are mutability specifiers on the variable or if the pattern is being
-matched by value.
+守卫表达式可以引用在模式求值期间绑定的变量。然而，请注意，无论模式是如何匹配的，变量在守卫中始终仅作为不可变引用可用——即使变量上有可变性说明符或者模式是按值匹配的。
 
 ```move
 fun incr(x: &mut u64) {
@@ -490,7 +432,7 @@ fun incr(x: &mut u64) {
 fun match_with_guard_incr(x: u64): u64 {
     match (x) {
         x if ({ incr(&mut x); x == 1 }) => 1,
-        // ERROR:    ^^^ invalid borrow of immutable value
+        // 错误:    ^^^ 对不可变值的无效借用
         _ => 2,
     }
 }
@@ -498,36 +440,31 @@ fun match_with_guard_incr(x: u64): u64 {
 fun match_with_guard_incr2(x: &mut u64): u64 {
     match (x) {
         x if ({ incr(&mut x); x == 1 }) => 1,
-        // ERROR:    ^^^ invalid borrow of immutable value
+        // 错误:    ^^^ 对不可变值的无效借用
         _ => 2,
     }
 }
 ```
 
-Additionally, it is important to note any match arms that have guard expressions will not be
-considered either for exhaustivity purposes because the compiler has no way of evaluating the guard
-expression statically.
+此外，需要注意的是，任何具有守卫表达式的匹配分支都不会被视为出于穷尽性检查的目的，因为编译器无法静态地评估守卫表达式。
 
-## Limitations on Specific Patterns
+## 特定模式的限制
 
-There are some restrictions on when the `..` and `mut` pattern modifiers can be used in a pattern.
+在模式中使用 `..` 和 `mut` 模式修饰符时存在一些限制。
 
-### Mutability Usage
+### 可变性使用
 
-A `mut` modifier can be placed on a variable pattern to specify that the _variable_ is to be mutated
-in the right-hand expression of the match arm. Note that since the `mut` modifier only signifies
-that the variable is to be mutated, not the underlying data, this can be used on all types of match
-(by value, immutable reference, and mutable reference).
+`mut` 修饰符可以放在变量模式上，以指定该变量在匹配分支的右侧表达式中是可变的。请注意，由于 `mut` 修饰符仅表示变量是可变的，而不是底层数据，因此可以在所有类型的匹配中使用（按值、不可变引用和可变引用）。
 
-Note that the `mut` modifier can only be applied to variables, and not other types of patterns.
+请注意，`mut` 修饰符只能应用于变量，而不能应用于其他类型的模式。
 
 ```move
-public struct MyStruct(u64)
+public struct MyStruct(u64);
 
 fun top_level_mut(x: MyStruct) {
     match (x) {
         mut MyStruct(y) => 1,
-        // ERROR: cannot use mut on a non-variable pattern
+        // 错误: 不能在非变量模式上使用 mut
     }
 }
 
@@ -560,28 +497,22 @@ fun mut_on_mut(x: &mut MyStruct): u64 {
 
 let mut x = MyStruct(1);
 
-mut_on_mut(&mut x); // returns 2
-x.0; // returns 2
+mut_on_mut(&mut x); // 返回 2
+x.0; // 返回 2
 
-mut_on_immut(&x); // returns 3
-x.0; // returns 2
+mut_on_immut(&x); // 返回 3
+x.0; // 返回 2
 
-mut_on_value(x); // returns 3
+mut_on_value(x); // 返回 3
 ```
 
-### `..` Usage
+### `..` 的使用
 
-The `..` pattern can only be used within a constructor pattern as a wildcard that matches any number
-of fields -- the  
-the compiler expands the `..` to inserting `_` in any missing fields in the constructor pattern (if
-any). So `MyStruct(_, _, _)` is the same as `MyStruct(..)`, `MyStruct(1, _, _)` is the same as
-`MyStruct(1, ..)`. Because of this, there are some restrictions on how, and where the `..` pattern
-can be used:
+`..` 模式只能在构造函数模式中用作通配符，匹配任意数量的字段——编译器将 `..` 展开为在构造函数模式中插入任何缺失字段中的 `_`。所以 `MyStruct(_, _, _)` 等同于 `MyStruct(..)`，`MyStruct(1, _, _)` 等同于 `MyStruct(1, ..)`。因此，对于 `..` 模式的使用有一些限制：
 
-- It can only be used **once** within the constructor pattern;
-- In positional arguments it can be used at the beginning, middle, or end of the patterns within the
-  constructor;
-- In named arguments it can only be used at the end of the patterns within the constructor;
+- 它只能在构造函数模式中使用**一次**；
+- 在位置参数中，它可以在构造函数模式中的开始、中间或结尾使用；
+- 在命名参数中，它只能在构造函数模式的结尾使用；
 
 ```move
 public struct MyStruct(u64, u64, u64, u64) has drop;
@@ -596,11 +527,11 @@ public struct MyStruct2 {
 fun wild_match(x: MyStruct) {
     match (x) {
         MyStruct(.., 1) => 1,
-        // OK! The `..` pattern can be used at the begining of the constructor pattern
+        // OK! `..` 模式可以在构造函数模式的开头使用
         MyStruct(1, ..) => 2,
-        // OK! The `..` pattern can be used at the end of the constructor pattern
+        // OK! `..` 模式可以在构造函数模式的结尾使用
         MyStruct(1, .., 1) => 3,
-        // OK! The `..` pattern can be used at the middle of the constructor pattern
+        // OK! `..` 模式可以在构造函数模式的中间使用
         MyStruct(1, .., 1, 1) => 4,
         MyStruct(..) => 5,
     }

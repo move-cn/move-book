@@ -1,16 +1,12 @@
-# Loop Constructs in Move
+# Move 中的循环结构
 
-Many programs require iteration over values, and Move provides `while` and `loop` forms to allow you
-to write code in these situations. In addition, you can also modify control flow of these loops
-during execution by using `break` (to exit the loop) and `continue` (to skip the remainder of this
-iteration and return to the top of the control flow structure).
+许多程序需要对值进行迭代，Move 提供了 `while` 和 `loop` 形式来让你编写这样的代码。此外，你还可以使用 `break`（退出循环）和 `continue`（跳过本次迭代的剩余部分并返回到控制流结构的顶部）在执行过程中修改这些循环的控制流。
 
-## `while` Loops
+## `while` 循环
 
-The `while` construct repeats the body (an expression of type unit) until the condition (an
-expression of type `bool`) evaluates to `false`.
+`while` 构造重复执行循环体（一个 `unit` 类型的表达式），直到条件（一个 `bool` 类型的表达式）计算结果为 `false`。
 
-Here is an example of simple `while` loop that computes the sum of the numbers from `1` to `n`:
+下面是一个简单的 `while` 循环示例，它计算从 `1` 到 `n` 的数字之和：
 
 ```move
 fun sum(n: u64): u64 {
@@ -25,7 +21,7 @@ fun sum(n: u64): u64 {
 }
 ```
 
-Infinite `while` loops are also allowed:
+无限 `while` 循环也是允许的：
 
 ```move
 fun foo() {
@@ -33,10 +29,9 @@ fun foo() {
 }
 ```
 
-### Using `break` Inside of `while` Loops
+### 在 `while` 循环中使用 `break`
 
-In Move, `while` loops can use `break` to exit early. For example, suppose we were looking for the
-position of a value in a vector, and would like to `break` if we find it:
+在 Move 中，`while` 循环可以使用 `break` 提前退出。例如，假设我们正在查找向量中的某个值的位置，并希望在找到它时退出：
 
 ```move
 fun find_position(values: &vector<u64>, target_value: u64): Option<u64> {
@@ -60,17 +55,13 @@ fun find_position(values: &vector<u64>, target_value: u64): Option<u64> {
 }
 ```
 
-Here, if the borrowed vector value is equal to our target value, we set the `found` flag to `true`
-and then call `break`, which will cause the program to exit the loop.
+在这里，如果借用的向量值等于我们的目标值，我们将 `found` 标志设置为 `true`，然后调用 `break`，这将导致程序退出循环。
 
-Finally, note that `break` for `while` loops cannot take a value: `while` loops always return the
-unit type `()` and thus `break` does, too.
+最后，请注意 `while` 循环的 `break` 不能带值：`while` 循环始终返回 `unit` 类型 `()`，因此 `break` 也是。
 
-### Using `continue` Inside of `while` Loops
+### 在 `while` 循环中使用 `continue`
 
-Similar to `break`, Move's `while` loops can invoke `continue` to skip over part of the loop body.
-This allows us to skip part of a computation if a condition is not met, such as in the following
-example:
+与 `break` 类似，Move 的 `while` 循环可以调用 `continue` 跳过部分循环体。这允许我们在条件不满足时跳过部分计算，例如以下示例：
 
 ```move
 fun sum_even(values: &vector<u64>): u64 {
@@ -88,13 +79,11 @@ fun sum_even(values: &vector<u64>): u64 {
 }
 ```
 
-This code will iterate over the provided vector. For each entry, if that entry is an even number, it
-will add it to the `even_sum`. If it is not, however, it will call `continue`, skipping the sum
-operation and returning to the `while` loop conditional check.
+此代码将遍历提供的向量。对于每个条目，如果该条目是偶数，它将其加到 `even_sum` 中。如果不是，则调用 `continue`，跳过求和操作并返回到 `while` 循环条件检查。
 
-## `loop` Expressions
+## `loop` 表达式
 
-The `loop` expression repeats the loop body (an expression with type `()`) until it hits a `break`:
+`loop` 表达式重复执行循环体（一个类型为 `()` 的表达式），直到遇到 `break`：
 
 ```move
 fun sum(n: u64): u64 {
@@ -111,8 +100,7 @@ fun sum(n: u64): u64 {
 }
 ```
 
-Without a `break`, the loop will continue forever. In the example below, the program will run
-forever because the `loop` does not have a `break`:
+没有 `break` 的话，循环将永远继续。在下面的示例中，由于 `loop` 没有 `break`，程序将永远运行：
 
 ```move
 fun foo() {
@@ -121,7 +109,7 @@ fun foo() {
 }
 ```
 
-Here is an example that uses `loop` to write the `sum` function:
+下面是一个使用 `loop` 编写 `sum` 函数的示例：
 
 ```move
 fun sum(n: u64): u64 {
@@ -137,11 +125,9 @@ fun sum(n: u64): u64 {
 }
 ```
 
-### Using `break` with Values in `loop`
+### 在 `loop` 中使用带值的 `break`
 
-Unlike `while` loops, which always return `()`, a `loop` may return a value using `break`. In doing
-so, the overall `loop` expression evaluates to a value of that type. For example, we can rewrite
-`find_position` from above using `loop` and `break`, immediately returning the index if we find it:
+与始终返回 `()` 的 `while` 循环不同，`loop` 可以使用 `break` 返回一个值。这样做时，整个 `loop` 表达式计算结果为该类型的值。例如，我们可以使用 `loop` 和 `break` 重写上面的 `find_position`，在找到目标值时立即返回索引：
 
 ```move
 fun find_position(values: &vector<u64>, target_value: u64): Option<u64> {
@@ -159,13 +145,11 @@ fun find_position(values: &vector<u64>, target_value: u64): Option<u64> {
 }
 ```
 
-This loop will break with an option result, and, as the last expression in the function body, will
-produce that value as the final function result.
+此循环将以一个 Option 结果结束，并作为函数体的最后一个表达式，生成该值作为最终的函数结果。
 
-### Using `continue` Inside of `loop` Expressions
+### 在 `loop` 表达式中使用 `continue`
 
-As you might expect, `continue` can also be used inside a `loop`. Here is the previous `sum_even`
-function rewritten using `loop` with `break `and` continue` instead of `while`.
+如你所料，`continue` 也可以在 `loop` 中使用。以下是之前使用 `loop`、`break` 和 `continue` 重写的 `sum_even` 函数。
 
 ```move
 fun sum_even(values: &vector<u64>): u64 {
@@ -184,16 +168,15 @@ fun sum_even(values: &vector<u64>): u64 {
 }
 ```
 
-## The Type of `while` and `loop`
+## `while` 和 `loop` 的类型
 
-In Move, loops are typed expressions. A `while` expression always has type `()`.
+在 Move 中，循环是类型化表达式。`while` 表达式始终具有 `()` 类型。
 
 ```move
 let () = while (i < 10) { i = i + 1 };
 ```
 
-If a `loop` contains a `break`, the expression has the type of the break. A break with no value has
-the unit type `()`.
+如果一个 `loop` 包含一个 `break`，该表达式的类型为 `break` 的类型。没有值的 `break` 具有 `unit` 类型 `()`。
 
 ```move
 (loop { if (i < 10) i = i + 1 else break }: ());
@@ -203,15 +186,14 @@ let x: u64 = loop { if (i < 10) i = i + 1 else break 5 };
 let x: u64 = loop { if (i < 10) { i = i + 1; continue} else break 5 };
 ```
 
-In addition, if a loop contains multiple breaks, they must all return the same type:
+此外，如果一个 `loop` 包含多个 `break`，它们必须全部返回相同的类型：
 
 ```move
-// invalid -- first break returns (), second returns 5
+// 无效 -- 第一个 break 返回 ()，第二个返回 5
 let x: u64 = loop { if (i < 10) break else break 5 };
 ```
 
-If `loop` does not have a `break`, `loop` can have any type much like `return`, `abort`, `break`,
-and `continue`.
+如果 `loop` 没有 `break`，`loop` 可以具有任何类型，就像 `return`、`abort`、`break` 和 `continue` 一样。
 
 ```move
 (loop (): u64);
@@ -219,5 +201,4 @@ and `continue`.
 (loop (): &vector<vector<u8>>);
 ```
 
-If you need even more-precise control flow, such as breaking out of nested loops, the next chapter
-presents the use of labeled control flow in Move.
+如果你需要更精确的控制流，例如跳出嵌套循环，下一章将介绍 Move 中的标签控制流的使用。
