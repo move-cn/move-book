@@ -1,139 +1,122 @@
-# Functions
+# Functions（函数）
 
-Functions are declared inside of modules and define the logic and behavior of the module. Functions
-can be reused, either being called from other functions or as entry points for execution.
+函数被声明在模块内部，并定义模块的逻辑和行为。函数可以被重用，可以作为其他函数的调用点或作为执行的入口点。
 
-## Declaration
+## 声明
 
-Functions are declared with the `fun` keyword followed by the function name, type parameters,
-parameters, a return type, and finally the function body.
+函数使用 `fun` 关键字声明，后面跟着函数名、类型参数、参数列表、返回类型和函数体。
 
 ```text
 <visibility>? <entry>? fun <identifier><[type_parameters: constraint],*>([identifier: type],*): <return_type> <function_body>
 ```
 
-For example
+例如
 
 ```move
 fun foo<T1, T2>(x: u64, y: T1, z: T2): (T2, T1, u64) { (z, y, x) }
 ```
 
-### Visibility
+### 可见性
 
-Module functions, by default, can only be called within the same module. These internal (sometimes
-called private) functions cannot be called from other modules or as entry points.
+模块内的函数默认只能在同一模块内调用。这些内部（有时称为私有）函数不能从其他模块调用或作为入口点。
 
 ```move
 module a::m {
     fun foo(): u64 { 0 }
-    fun calls_foo(): u64 { foo() } // valid
+    fun calls_foo(): u64 { foo() } // 合法
 }
 
 module b::other {
     fun calls_m_foo(): u64 {
-        a::m::foo() // ERROR!
-//      ^^^^^^^^^^^ 'foo' is internal to 'a::m'
+        a::m::foo() // 错误！
+//      ^^^^^^^^^^^ 'foo' 是 'a::m' 内部的
     }
 }
 ```
 
-To allow access from other modules, the function must be declared `public` or `public(package)`.
-Tangential to visibility, an [`entry`](#entry-modifier) function can be called as an entry point for
-execution.
+要允许从其他模块访问该函数，函数必须声明为 `public` 或 `public(package)`。与可见性相对应，一个 [`entry`](#entry-modifier) 函数可以作为执行的入口点。
 
-#### `public` visibility
+#### `public` 可见性
 
-A `public` function can be called by _any_ function defined in _any_ module. As shown in the
-following example, a `public` function can be called by:
+`public` 函数可以被**任何**模块中的**任何**函数调用。如下示例所示，`public` 函数可以被：
 
-- other functions defined in the same module,
-- functions defined in another module, or
-- as an entry point for execution.
+- 同一模块中定义的其他函数调用，
+- 另一个模块中定义的函数调用，或
+- 作为执行的入口点。
 
 ```move
 module a::m {
     public fun foo(): u64 { 0 }
-    fun calls_foo(): u64 { foo() } // valid
+    fun calls_foo(): u64 { foo() } // 合法
 }
 
 module b::other {
     fun calls_m_foo(): u64 {
-        a::m::foo() // valid
+        a::m::foo() // 合法
     }
 }
 ```
 
-Fore more details on the entry point to execution see [the section below](#entry-modifier).
+有关入口点执行的更多详细信息，请参阅[下面的章节](#entry-modifier)。
 
-#### `public(package)` visibility
+#### `public(package)` 可见性
 
-The `public(package)` visibility modifier is a more restricted form of the `public` modifier to give
-more control about where a function can be used. A `public(package)` function can be called by:
+`public(package)` 可见性修饰符是 `public` 修饰符的一种更受限制的形式，用于更精确地控制函数的使用范围。`public(package)` 函数可以被：
 
-- other functions defined in the same module, or
-- other functions defined in the same package (the same address)
+- 同一模块中定义的其他函数调用，
+- 同一包（同一地址）中定义的其他函数调用。
 
 ```move
 module a::m {
     public(package) fun foo(): u64 { 0 }
-    fun calls_foo(): u64 { foo() } // valid
+    fun calls_foo(): u64 { foo() } // 合法
 }
 
 module a::n {
     fun calls_m_foo(): u64 {
-        a::m::foo() // valid, also in `a`
+        a::m::foo() // 合法，在 `a` 中也可以调用
     }
 }
 
 module b::other {
     fun calls_m_foo(): u64 {
-        b::m::foo() // ERROR!
-//      ^^^^^^^^^^^ 'foo' can only be called from a module in `a`
+        b::m::foo() // 错误！
+//      ^^^^^^^^^^^ 'foo' 只能从 `a` 包中的模块调用
     }
 }
 ```
 
-#### DEPRECATED `public(friend)` visibility
+#### 已废弃的 `public(friend)` 可见性
 
-Before the addition of `public(package)`, `public(friend)` was used to allow limited public access
-to functions in the same package, but where the list of allowed modules had to be explicitly
-enumerated by the callee's module. see [Friends](./friends.md) for more details.
+在引入 `public(package)` 之前，`public(friend)` 用于允许有限的公共访问权限，但必须由被调用模块显式列出允许的模块列表。详细信息请参阅 [Friends](./friends.md)。
 
-### `entry` modifier
+### `entry` 修饰符
 
-In addition to `public` functions, you might have some functions in your modules that you want to
-use as the entry point to execution. The `entry` modifier is designed to allow module functions to
-initiate execution, without having to expose the functionality to other modules.
+除了 `public` 函数外，可能还有一些函数希望用作执行的入口点。`entry` 修饰符设计用于允许模块函数发起执行，而无需将功能公开给其他模块。
 
-Essentially, the combination of `pbulic` and `entry` functions define the "main" functions of a
-module, and they specify where Move programs can start executing.
+虽然 `entry` 函数可以作为 Move 程序的起始点，但它们并不限制于此用例。
 
-Keep in mind though, an `entry` function _can_ still be called by other Move functions. So while
-they _can_ serve as the start of a Move program, they aren't restricted to that case.
-
-For example:
+例如：
 
 ```move
 module a::m {
     entry fun foo(): u64 { 0 }
-    fun calls_foo(): u64 { foo() } // valid!
+    fun calls_foo(): u64 { foo() } // 合法！
 }
 
 module a::n {
     fun calls_m_foo(): u64 {
-        a::m::foo() // ERROR!
-//      ^^^^^^^^^^^ 'foo' is internal to 'a::m'
+        a::m::foo() // 错误！
+//      ^^^^^^^^^^^ 'foo' 是 'a::m' 内部的
     }
 }
 ```
 
-`entry` functions may have restrictions on their parameters and return types. Although, these
-restrictions are specific to each individual deployment of Move.
+`entry` 函数可能对其参数和返回类型有限制。但这些限制是针对每个 Move 部署的特定情况的。
 
-[The documentation for `entry` functions on Sui can be found here.](https://docs.sui.io/concepts/sui-move-concepts/entry-functions).
+关于 Sui 中 `entry` 函数的文档可以在 [这里找到](https://docs.sui.io/concepts/sui-move-concepts/entry-functions)。
 
-To enable easier testing, `entry` functions can be called from
-[`#[test]` and `#[test_only]`](./unit-testing.md) contexts.
+为了更轻松地进行测试，`entry` 函数可以从 [`#[test]` 和 `#[test_only]`](./unit-testing.md) 上下文中调用。
 
 ```move
 module a::m {
@@ -141,16 +124,15 @@ module a::m {
 }
 module a::m_test {
     #[test]
-    fun my_test(): u64 { a::m::foo() } // valid!
+    fun my_test(): u64 { a::m::foo() } // 合法！
     #[test_only]
-    fun my_test_helper(): u64 { a::m::foo() } // valid!
+    fun my_test_helper(): u64 { a::m::foo() } // 合法！
 }
 ```
 
-### Name
+### 名称
 
-Function names can start with letters `a` to `z`. After the first character, function names can
-contain underscores `_`, letters `a` to `z`, letters `A` to `Z`, or digits `0` to `9`.
+函数名称可以以字母 `a` 到 `z` 开头。在第一个字符之后，函数名称可以包含下划线 `_`，字母 `a` 到 `z`，字母 `A` 到 `Z`，或数字 `0` 到 `9`。
 
 ```move
 fun fOO() {}
@@ -158,34 +140,34 @@ fun bar_42() {}
 fun bAZ_19() {}
 ```
 
-### Type Parameters
+### 类型参数
 
-After the name, functions can have type parameters
+在名称之后，函数可以有类型参数
 
 ```move
 fun id<T>(x: T): T { x }
 fun example<T1: copy, T2>(x: T1, y: T2): (T1, T1, T2) { (copy x, x, y) }
 ```
 
-For more details, see [Move generics](./generics.md).
+更多详情请参阅 [Move generics](./generics.md)。
 
-### Parameters
+### 参数
 
-Functions parameters are declared with a local variable name followed by a type annotation
+函数参数通过本地变量名后跟类型注解声明
 
 ```move
 fun add(x: u64, y: u64): u64 { x + y }
 ```
 
-We read this as `x` has type `u64`
+我们将其读作 `x` 具有类型 `u64`
 
-A function does not have to have any parameters at all.
+一个函数也可以完全没有任何参数。
 
 ```move
 fun useless() { }
 ```
 
-This is very common for functions that create new or empty data structures
+这对于创建新的或空的数据结构非常常见。
 
 ```move
 module a::example {
@@ -197,24 +179,23 @@ module a::example {
 }
 ```
 
-### Return type
+### 返回类型
 
-After the parameters, a function specifies its return type.
+在参数之后，函数指定其返回类型。
 
 ```move
 fun zero(): u64 { 0 }
 ```
 
-Here `: u64` indicates that the function's return type is `u64`.
+这里的 `: u64` 表示函数的返回类型是 `u64`。
 
-Using [tuples](./primitive-types/tuples.md), a function can return multiple values:
+使用 [元组](./primitive-types/tuples.md)，函数可以返回多个值：
 
 ```move
 fun one_two_three(): (u64, u64, u64) { (0, 1, 2) }
 ```
 
-If no return type is specified, the function has an implicit return type of unit `()`. These
-functions are equivalent:
+如果没有指定返回类型，函数具有隐式的返回类型单元 `()`。以下函数是等效的：
 
 ```move
 fun just_unit(): () { () }
@@ -222,37 +203,31 @@ fun just_unit() { () }
 fun just_unit() { }
 ```
 
-As mentioned in the [tuples section](./primitive-types/tuples.md), these tuple "values" do not exist
-as runtime values. This means that a function that returns unit `()` does not return any value
-during execution.
+正如在 [元组部分](./primitive-types/tuples.md) 提到的，这些元组 "值" 在运行时并不存在。这意味着返回单元 `()` 的函数在执行期间不返回任何值。
 
-### Function body
+### 函数体
 
-A function's body is an expression block. The return value of the function is the last value in the
-sequence
+函数体是一个表达式块。函数的返回值是序列中的最后一个值
 
 ```move
 fun example(): u64 {
     let x = 0;
     x = x + 1;
-    x // returns 'x'
+    x // 返回 'x'
 }
 ```
 
-See [the section below for more information on returns](#returning-values)
+有关返回值的更多信息，请参阅 [下面的章节](#returning-values)。
 
-For more information on expression blocks, see [Move variables](./variables.md).
+有关表达式块的更多信息，请参阅 [Move variables](./variables.md)。
 
-### Native Functions
+### 原生函数
 
-Some functions do not have a body specified, and instead have the body provided by the VM. These
-functions are marked `native`.
+某些函数没有指定函数体,而是由虚拟机(VM)提供函数体。这些函数被标记为`native`。
 
-Without modifying the VM source code, a programmer cannot add new native functions. Furthermore, it
-is the intent that `native` functions are used for either standard library code or for functionality
-needed for the given Move environment.
+如果不修改VM源代码,程序员无法添加新的原生函数。此外,`native`函数的目的是用于标准库代码或特定Move环境所需的功能。
 
-Most `native` functions you will likely see are in standard library code, such as `vector`
+你可能会看到的大多数`native`函数都在标准库代码中,例如`vector`:
 
 ```move
 module std::vector {
@@ -261,9 +236,9 @@ module std::vector {
 }
 ```
 
-## Calling
+## 函数调用
 
-When calling a function, the name can be specified either through an alias or fully qualified
+调用函数时,可以通过别名或完全限定名来指定函数名:
 
 ```move
 module a::example {
@@ -273,7 +248,7 @@ module a::example {
 module b::other {
     use a::example::{Self, zero};
     fun call_zero() {
-        // With the `use` above all of these calls are equivalent
+        // 有了上面的`use`语句,以下所有调用都是等价的
         a::example::zero();
         example::zero();
         zero();
@@ -281,7 +256,7 @@ module b::other {
 }
 ```
 
-When calling a function, an argument must be given for every parameter.
+调用函数时,必须为每个参数提供一个实参。
 
 ```move
 module a::example {
@@ -301,7 +276,7 @@ module b::other {
 }
 ```
 
-Type arguments can be either specified or inferred. Both calls are equivalent.
+类型参数可以被显式指定或推断。以下两个调用是等价的:
 
 ```move
 module aexample {
@@ -316,11 +291,11 @@ module b::other {
 }
 ```
 
-For more details, see [Move generics](./generics.md).
+更多详情,请参见[Move泛型](./generics.md)。
 
-## Returning values
+## 返回值
 
-The result of a function, its "return value", is the final value of its function body. For example
+函数的结果,即"返回值",是其函数体的最终值。例如:
 
 ```move
 fun add(x: u64, y: u64): u64 {
@@ -328,11 +303,9 @@ fun add(x: u64, y: u64): u64 {
 }
 ```
 
-The return value here is the result of `x + y`.
+这里的返回值是`x + y`的结果。
 
-[As mentioned above](#function-body), the function's body is an [expression block](./variables.md).
-The expression block can sequence various statements, and the final expression in the block will be
-be the value of that block
+[如上所述](#function-body),函数的主体是一个[表达式块](./variables.md)。表达式块可以按顺序执行各种语句,块中的最后一个表达式将成为该块的值:
 
 ```move
 fun double_and_add(x: u64, y: u64): u64 {
@@ -342,20 +315,18 @@ fun double_and_add(x: u64, y: u64): u64 {
 }
 ```
 
-The return value here is the result of `double_x + double_y`
+这里的返回值是`double_x + double_y`的结果。
 
-### `return` expression
+### `return`表达式
 
-A function implicitly returns the value that its body evaluates to. However, functions can also use
-the explicit `return` expression:
+函数隐式地返回其主体计算的值。但是,函数也可以使用显式的`return`表达式:
 
 ```move
 fun f1(): u64 { return 0 }
 fun f2(): u64 { 0 }
 ```
 
-These two functions are equivalent. In this slightly more involved example, the function subtracts
-two `u64` values, but returns early with `0` if the second value is too large:
+这两个函数是等价的。在这个稍微复杂一点的例子中,函数将两个`u64`值相减,但如果第二个值太大,则提前返回`0`:
 
 ```move
 fun safe_sub(x: u64, y: u64): u64 {
@@ -364,10 +335,9 @@ fun safe_sub(x: u64, y: u64): u64 {
 }
 ```
 
-Note that the body of this function could also have been written as `if (y > x) 0 else x - y`.
+注意,这个函数的主体也可以写成`if (y > x) 0 else x - y`。
 
-However `return` really shines is in exiting deep within other control flow constructs. In this
-example, the function iterates through a vector to find the index of a given value:
+然而,`return`的真正优势在于可以在其他控制流结构的深处退出。在这个例子中,函数遍历一个向量以查找给定值的索引:
 
 ```move
 use std::vector;
@@ -384,8 +354,7 @@ fun index_of<T>(v: &vector<T>, target: &T): Option<u64> {
 }
 ```
 
-Using `return` without an argument is shorthand for `return ()`. That is, the following two
-functions are equivalent:
+不带参数使用`return`是`return ()`的简写。也就是说,以下两个函数是等价的:
 
 ```move
 fun foo() { return }

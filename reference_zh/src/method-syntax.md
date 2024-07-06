@@ -1,50 +1,33 @@
-# Methods
+# Methods(方法)
 
-As a syntactic convenience, some functions in Move can be called as "methods" on a value. This is done
-by using the `.` operator to call the function, where the value on the left-hand side of the `.` is
-the first argument to the function (sometimes called the receiver). The type of that value
-statically determines which function is called. This is an important difference from some other
-languages, where this syntax might indicate a dynamic call, where the function to be called is
-determined at runtime. In Move, all function calls are statically determined.
+为了简化语法，Move中的一些函数可以作为值的“方法”来调用。这是通过使用 `.` 操作符来调用函数实现的，其中 `.` 左侧的值是函数的第一个参数（有时称为接收者）。该值的类型静态决定了调用哪个函数。这与其他一些语言的重要区别在于，这种语法表示的不是动态调用，函数调用在运行时确定。在Move中，所有函数调用都是静态确定的。
 
-In short, this syntax exists to make it easier to call functions without having to create an alias
-with `use`, and without having to explicitly borrow the first argument to the function.
-Additionally, this can make code more readable, as it reduces the amount of boilerplate needed to
-call a function and makes it easier to chain function calls.
+简而言之，这种语法的存在使得在调用函数时不必创建 `use` 别名，并且不必显式借用函数的第一个参数。此外，这可以使代码更具可读性，因为它减少了调用函数所需的样板代码，并使得链式调用函数更容易。
 
-## Syntax
+## 语法
 
-The syntax for calling a method is as follows:
+调用方法的语法如下：
 
 ```text
 <expression> . <identifier> <[type_arguments],*> ( <arguments> )
 ```
 
-For example
+例如：
 
 ```move
 coin.value();
 *nums.borrow_mut(i) = 5;
 ```
 
-## Method Resolution
+## 方法解析
 
-When a method is called, the compiler will statically determine which function is called based on
-the type of the receiver (the argument on the left-hand side of the `.`). The compiler maintains a
-mapping from type and method name to the module and function name that should be called. This
-mapping is created form the `use fun` aliases that are currently in scope, and from the appropriate
-functions in the receiver type's defining module. In all cases, the receiver type is the first
-argument to the function, whether by-value or by-reference.
+当调用方法时，编译器将静态确定调用哪个函数，基于接收者的类型（`.` 左侧的参数）。编译器维护一个从类型和方法名称到模块和函数名称的映射。这个映射是根据当前范围内的 `use fun` 别名以及接收者类型的定义模块中的适当函数创建的。在所有情况下，接收者类型是函数的第一个参数，无论是按值传递还是按引用传递。
 
-In this section, when we say a method "resolves" to a function, we mean that the compiler will
-statically replace the method with a normal [function](./functions.md) call. For example if we have
-`x.foo(e)` with `foo` resolving to `a::m::foo`, the compiler will replace `x.foo(e)` with
-`a::m::foo(x, e)`, potentially [automatically borrowing](#automatic-borrowing) `x`.
+在本节中，当我们说一个方法“解析”为一个函数时，我们的意思是编译器将静态地用正常的[函数](./functions.md)调用替换该方法。例如，如果我们有 `x.foo(e)`，其中 `foo` 解析为 `a::m::foo`，则编译器将 `x.foo(e)` 替换为 `a::m::foo(x, e)`，可能会[自动借用](#automatic-borrowing) `x`。
 
-### Functions in the Defining Module
+### 定义模块中的函数
 
-In a type’s defining module, the compiler will automatically create a method alias for any function
-declaration for its types when the type is the first argument in the function. For example,
+在类型的定义模块中，编译器将自动为其类型的任何函数声明创建一个方法别名，当类型是函数的第一个参数时。例如：
 
 ```move
 module a::m {
@@ -54,31 +37,28 @@ module a::m {
 }
 ```
 
-The function `foo` can be called as a method on a value of type `X`. However, not the first argument
-(and one is not created for `bool` since `bool` is not defined in that module). For example,
+函数 `foo` 可以作为类型 `X` 的值的方法调用。然而，`bar` 不能（因为第一个参数不是 `X`，并且不会为 `bool` 创建一个别名，因为 `bool` 不是在该模块中定义的）。例如：
 
 ```move
 fun example(x: a::m::X) {
-    x.foo(); // valid
-    // x.bar(true); ERROR!
+    x.foo(); // 有效
+    // x.bar(true); 错误!
 }
 ```
 
-### `use fun` Aliases
+### `use fun` 别名
 
-Like a traditional [`use`](uses.md), a `use fun` statement creates an alias local to its current
-scope. This could be for the current module or the current expression block. However, the alias is
-associated to a type.
+与传统的 [`use`](uses.md) 语句类似，`use fun` 语句创建一个别名，在其当前范围内是局部的。这可以是当前模块或当前表达式块。然而，该别名是关联到一个类型的。
 
-The syntax for a `use fun` statement is as follows:
+`use fun` 语句的语法如下：
 
 ```move
 use fun <function> as <type>.<method alias>;
 ```
 
-This creates an alias for the `<function>`, which the `<type>` can receive as `<method alias>`.
+这为 `<function>` 创建了一个别名，<type> 可以作为 `<method alias>` 接收。
 
-For example
+例如：
 
 ```move
 module a::cup {
@@ -99,7 +79,7 @@ module a::cup {
 }
 ```
 
-We can now create `use fun` aliases to these functions
+我们现在可以为这些函数创建 `use fun` 别名：
 
 ```move
 module b::example {
@@ -108,15 +88,14 @@ module b::example {
     use fun a::cup::cup_swap as Cup.set;
 
     fun example(c: &mut Cup<u64>) {
-        let _ = c.borrow(); // resolves to a::cup::cup_borrow
-        let v = c.value(); // resolves to a::cup::cup_value
-        c.set(v * 2); // resolves to a::cup::cup_swap
+        let _ = c.borrow(); // 解析为 a::cup::cup_borrow
+        let v = c.value(); // 解析为 a::cup::cup_value
+        c.set(v * 2); // 解析为 a::cup::cup_swap
     }
 }
 ```
 
-Note that the `<function>` in the `use fun` does not have to be a fully resolved path, and an alias
-can be used instead, so the declarations in the above example could equivalently be written as
+注意，`use fun` 中的 `<function>` 不必是一个完全解析的路径，可以使用别名，因此上述示例中的声明也可以等效地写成：
 
 ```move
     use a::cup::{Self, cup_swap};
@@ -126,9 +105,7 @@ can be used instead, so the declarations in the above example could equivalently
     use fun cup_swap as Cup.set;
 ```
 
-While these examples are cute for renaming the functions in the current module, the feature is
-perhaps more useful for declaring methods on types from other modules. For example, if we wanted to
-add a new utility to `Cup`, we could do so with a `use fun` alias and still use method syntax
+虽然这些示例在当前模块中重命名函数很有趣，但该功能在声明其他模块中的类型的方法时可能更有用。例如，如果我们想向 `Cup` 添加一个新实用程序，我们可以使用 `use fun` 别名并仍然使用方法语法：
 
 ```move
 module b::example {
@@ -141,18 +118,16 @@ module b::example {
 }
 ```
 
-Normally, we would be stuck having to call it as `double(&c)` because `b::example` did not define
-`Cup`, but instead we can use a `use fun` alias
+通常，我们不得不调用 `double(&c)`，因为 `b::example` 并未定义 `Cup`，但我们可以使用 `use fun` 别名：
 
 ```move
     fun double_double(c: Cup<u64>): (Cup<u64>, Cup<u64>) {
         use fun b::example::double as Cup.dub;
-        (c.dub(), c.dub()) // resolves to b::example::double in both calls
+        (c.dub(), c.dub()) // 在两个调用中都解析为 b::example::double
     }
 ```
 
-While `use fun` can be made in any scope, the target `<function>` of the `use fun` must have a first
-argument that is the same as the `<type>`.
+虽然 `use fun` 可以在任何范围内创建，但 `use fun` 的目标 `<function>` 必须具有与 `<type>` 相同的第一个参数。
 
 ```move
 public struct X() has copy, drop, store;
@@ -160,12 +135,12 @@ public struct X() has copy, drop, store;
 fun new(): X { X() }
 fun flag(flag: bool): u8 { if (flag) 1 else 0 }
 
-use fun new as X.new; // ERROR!
-use fun flag as X.flag; // ERROR!
-// Neither `new` nor `flag` has first argument of type `X`
+use fun new as X.new; // 错误!
+use fun flag as X.flag; // 错误!
+// `new` 和 `flag` 都没有第一个参数为类型 `X`
 ```
 
-But any first argument of the `<type>` can be used, including references and mutable references
+但 `<type>` 的任何第一个参数都可以使用，包括引用和可变引用：
 
 ```move
 public struct X() has copy, drop, store;
@@ -174,14 +149,13 @@ public fun by_val(_: X) {}
 public fun by_ref(_: &X) {}
 public fun by_mut(_: &mut X) {}
 
-// All 3 valid, in any scope
+// 全部3个有效，在任何范围内
 use fun by_val as X.v;
 use fun by_ref as X.r;
 use fun by_mut as X.m;
 ```
 
-Note for generics, the methods are associated for _all_ instances of the generic type. You cannot
-overload the method to resolve to different functions depending on the instantiation.
+注意对于泛型，方法是关联到该泛型类型的所有实例的。不能根据实例化情况重载方法以解析为不同的函数。
 
 ```move
 public struct Cup<T>(T) has copy, drop, store;
@@ -190,20 +164,14 @@ public fun value<T: copy>(c: &Cup<T>): T {
     c.0
 }
 
-use fun value as Cup<bool>.flag; // ERROR!
-use fun value as Cup<u64>.num; // ERROR!
-// In both cases, `use fun` aliases cannot be generic, they must work for all instances of the type
+use fun value as Cup<bool>.flag; // 错误!
+use fun value as Cup<u64>.num; // 错误!
+// 在这两种情况下，`use fun` 别名不能是泛型的，它们必须对该类型的所有实例有效
 ```
 
-### `public use fun` Aliases
+### `public use fun` 别名
 
-Unlike a traditional [`use`](uses.md), the `use fun` statement can be made `public`, which allows it
-to be used outside of its declared scope. A `use fun` can be made `public` if it is declared in the
-module that defines the receivers type, much like the method aliases that are
-[automatically created](#functions-in-the-defining-module) for functions in the defining module. Or
-conversely, one can think that an implicit `public use fun` is created automatically for every
-function in the defining module that has a first argument of the receiver type (if it is defined in
-that module). Both of these views are equivalent.
+与传统的 [`use`](uses.md) 不同，`use fun` 语句可以被声明为 `public`，允许在其声明的作用域之外使用。如果在定义接收者类型的模块中声明，`use fun` 可以是 `public` 的，这类似于在定义模块中为函数[自动创建](#functions-in-the-defining-module)的方法别名。或者可以认为，对于每个在定义模块中定义的第一个参数为接收者类型的函数，自动创建一个隐式的 `public use fun`。这两种观点是等价的。
 
 ```move
 module a::cup {
@@ -216,23 +184,19 @@ module a::cup {
 }
 ```
 
-In this example, a public method alias is created for `a::cup::Cup.borrow` and
-`a::cup::Cup.cup_borrow`. Both resolve to `a::cup::cup_borrow`. And both are "public" in the sense
-that they can be used outside of `a::cup`, without an additional `use` or `use fun`.
+在此示例中，为 `a::cup::Cup.borrow` 和 `a::cup::Cup.cup_borrow` 创建了一个公共方法别名。两者都解析为 `a::cup::cup_borrow`，并且两者都是“公共的”，这意味着它们可以在 `a::cup` 之外使用，而无需额外的 `use` 或 `use fun`。
 
 ```move
 module b::example {
 
     fun example<T: drop>(c: a::cup::Cup<u64>) {
-        c.borrow(); // resolves to a::cup::cup_borrow
-        c.cup_borrow(); // resolves to a::cup::cup_borrow
+        c.borrow(); // 解析为 a::cup::cup_borrow
+        c.cup_borrow(); // 解析为 a::cup::cup_borrow
     }
 }
 ```
 
-The `public use fun` declarations thus serve as a way of renaming a function if you want to give it
-a cleaner name for use with method syntax. This is especially helpful if you have a module with
-multiple types, and similarly named functions for each type.
+`public use fun` 声明因此作为一种重命名函数的方法，如果你想为方法语法提供一个更简洁的名称。这在具有多种类型且每种类型具有类似名称的函数的模块中特别有用。
 
 ```move
 module a::shapes {
@@ -240,7 +204,7 @@ module a::shapes {
     public struct Rectangle { base: u64, height: u64 }
     public struct Box { base: u64, height: u64, depth: u64 }
 
-    // Rectangle and Box can have methods with the same name
+    // Rectangle 和 Box 可以具有相同名称的方法
 
     public use fun rectangle_base as Rectangle.base;
     public fun rectangle_base(rectangle: &Rectangle): u64 {
@@ -255,8 +219,7 @@ module a::shapes {
 }
 ```
 
-Another use for `public use fun` is adding methods to types from other modules. This can be helpful
-in conjunction with functions spread out across a single package.
+`public use fun` 的另一个用途是为其他模块中的类型添加方法。这在单个包中跨多个模块分散的函数中很有用。
 
 ```move
 module a::cup {
@@ -266,7 +229,7 @@ module a::cup {
     public fun borrow<T>(c: &Cup<T>): &T {
         &c.0
     }
-    // `public use fun` to a function defined in another module
+    // `public use fun` 引用在另一个模块中定义的函数
     public use fun a::utils::split as Cup.split;
 }
 
@@ -283,12 +246,11 @@ module a::utils {
 }
 ```
 
-And note that this `public use fun` does not create a circular dependency, as the `use fun` is not
-present after the module is compiled--all methods are resolved statically.
+需要注意的是，这个 `public use fun` 不会创建循环依赖，因为 `use fun` 在模块编译后不存在--所有方法都是静态解析的。
 
-### Interactions with `use` Aliases
+### 与 `use` 别名的交互
 
-A small detail to note is that method aliases respect normal `use` aliases.
+需要注意的一点是，方法别名遵循正常的 `use` 别名规则。
 
 ```move
 module a::cup {
@@ -303,21 +265,16 @@ module b::other {
     use a::cup::{Cup, cup_borrow as borrow};
 
     fun example(c: &Cup<u64>) {
-        c.borrow(); // resolves to a::cup::cup_borrow
+        c.borrow(); // 解析为 a::cup::cup_borrow
     }
 }
 ```
 
-A helpful way to think about this is that `use` creates an implicit `use fun` alias for the function
-whenever it can. In this case the `use a::cup::cup_borrow as borrow` creates an implicit
-`use fun a::cup::cup_borrow as Cup.borrow` because it would be a valid `use fun` alias. Both views
-are equivalent. This line of reasoning can inform how specific methods will resolve with shadowing.
-See the cases in [Scoping](#scoping) for more details.
+一个有用的思路是，`use` 会在可能的情况下为函数创建一个隐式的 `use fun` 别名。在这种情况下，`use a::cup::cup_borrow as borrow` 创建了一个隐式的 `use fun a::cup::cup_borrow as Cup.borrow`，因为它是一个有效的 `use fun` 别名。这两种观点是等价的。这种推理可以帮助理解特定方法在遮蔽情况下如何解析。有关更多详细信息，请参见[作用域](#scoping)中的案例。
 
-### Scoping
+### 作用域
 
-If not `public`, a `use fun` alias is local to its scope, much like a normal [`use`](uses.md). For
-example
+如果不是 `public` 的，`use fun` 别名是其作用域的局部变量，就像普通的[`use`](uses.md)一样。例如：
 
 ```move
 module a::m {
@@ -332,23 +289,22 @@ module b::other {
     use fun a::m::foo as X.f;
 
     fun example(x: &X) {
-        x.f(); // resolves to a::m::foo
+        x.f(); // 解析为 a::m::foo
         {
             use a::m::bar as f;
-            x.f(); // resolves to a::m::bar
+            x.f(); // 解析为 a::m::bar
         };
-        x.f(); // still resolves to a::m::foo
+        x.f(); // 仍然解析为 a::m::foo
         {
             use fun a::m::bar as X.f;
-            x.f(); // resolves to a::m::bar
+            x.f(); // 解析为 a::m::bar
         }
     }
 ```
 
-## Automatic Borrowing
+## 自动借用
 
-When resolving a method, the compiler will automatically borrow the receiver if the function expects
-a reference. For example
+在解析方法时，编译器会在函数需要引用时自动借用接收者。例如：
 
 ```move
 module a::m {
@@ -358,14 +314,13 @@ module a::m {
     public fun by_mut(_: &mut X) {}
 
     fun example(mut x: X) {
-        x.by_ref(); // resolves to a::m::by_ref(&x)
-        x.by_mut(); // resolves to a::m::by_mut(&mut x)
+        x.by_ref(); // 解析为 a::m::by_ref(&x)
+        x.by_mut(); // 解析为 a::m::by_mut(&mut x)
     }
 }
 ```
 
-In these examples, `x` was automatically borrowed to `&x` and `&mut x` respectively. This will also
-work through field access
+在这些示例中，`x` 被自动借用为 `&x` 和 `&mut x`。这也适用于字段访问：
 
 ```move
 module a::m {
@@ -377,18 +332,15 @@ module a::m {
     public struct Y has drop { x: X }
 
     fun example(mut y: Y) {
-        y.x.by_ref(); // resolves to a::m::by_ref(&y.x)
-        y.x.by_mut(); // resolves to a::m::by_mut(&mut y.x)
+        y.x.by_ref(); // 解析为 a::m::by_ref(&y.x)
+        y.x.by_mut(); // 解析为 a::m::by_mut(&mut y.x)
     }
 }
 ```
 
-Note that in both examples, the local variable had to be labeled as [`mut`](./variables.md) to allow
-for the `&mut` borrow. Without this, there would be an error saying that `x` (or `y` in the second
-example) is not mutable.
+请注意，在这两个示例中，本地变量必须标记为 [`mut`](./variables.md) 以允许 `&mut` 借用。否则，会出现错误，提示 `x`（或第二个示例中的 `y`）不可变。
 
-Keep in mind that without a reference, normal rules for variable and field access come into play.
-Meaning a value might be moved or copied if it is not borrowed.
+需要记住的是，如果没有引用，正常的变量和字段访问规则将生效。这意味着如果没有借用，值可能会被移动或复制。
 
 ```move
 module a::m {
@@ -401,15 +353,15 @@ module a::m {
     public fun drop_y(y: Y) { y }
 
     fun example(y: Y) {
-        y.x.by_val(); // copies `y.x` since `by_val` is by-value and `X` has `copy`
-        y.drop_y(); // moves `y` since `drop_y` is by-value and `Y` does _not_ have `copy`
+        y.x.by_val(); // 复制 `y.x` 因为 `by_val` 是按值传递的，并且 `X` 具有 `copy`
+        y.drop_y(); // 移动 `y` 因为 `drop_y` 是按值传递的，并且 `Y` 没有 `copy`
     }
 }
 ```
 
-## Chaining
+## 链式调用
 
-Method calls can be chained, because any expression can be the receiver of the method.
+方法调用可以是链式调用，因为任何表达式都可以是方法的接收者。
 
 ```move
 module a::shapes {
@@ -434,8 +386,4 @@ module b::example {
 }
 ```
 
-In this example for `l.start().x()`, the compiler first resolves `l.start()` to
-`a::shapes::start(&l)`. Then `.x()` is resolved to `a::shapes::x(a::shapes::start(&l))`. Similarly
-for `l.end().x()`. Keep in mind, this feature is not "special"--the left-hand side of the `.` can be
-any expression, and the compiler will resolve the method call as normal. We simply draw attention to
-this sort of "chaining" because it is a common practice to increase readability.
+在这个例子中，对于 `l.start().x()`，编译器首先将 `l.start()` 解析为 `a::shapes::start(&l)`。然后将 `.x()` 解析为 `a::shapes::x(a::shapes::start(&l))`。同样适用于 `l.end().x()`。请记住，这个功能并不是"特别的"--`.` 左边的表达式可以是任何表达式，编译器将正常解析方法调用。我们特别提到这种"链式调用"，因为它是增加可读性的常见做法。

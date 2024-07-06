@@ -1,16 +1,17 @@
-# Primitive Types
+## 原始类型
 
-The primitive types are the basic building blocks of the language.
+原始类型是语言的基本构建块。
 
-These primitive types can be used on their own or can be used be used to build more complex,
-user-defined types, e.g. in a [`struct`](./structs.md).
+这些原始类型可以单独使用，也可以用于构建更复杂的用户定义类型，例如在 [`struct`](./structs.md) 中。
 
-- [Integers](./primitive-types/integers.md)
-- [Bool](./primitive-types/bool.md)
-- [Address](./primitive-types/address.md)
-- [Vector](./primitive-types/vector.md)
+- [整数 (Integers)](./primitive-types/integers.md)
+- [布尔型 (Bool)](./primitive-types/bool.md)
+- [地址 (Address)](./primitive-types/address.md)
+- [向量 (Vector)](./primitive-types/vector.md)
 
-These primitive types are used in conjunction with other types
+这些原始类型可以与其他类型一起使用。
 
-- [References](./primitive-types/references.md)
-- [Tuples and Unit](./primitive-types/tuples.md)
+- [引用 (References)](./primitive-types/references.md)
+- [元组和单位类型 (Tuples and Unit)](./primitive-types/tuples.md)
+
+点击链接查看详细信息。

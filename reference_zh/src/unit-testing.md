@@ -1,36 +1,28 @@
-# Unit Tests
+# Unit Tests（单元测试）
 
-Unit testing for Move uses three annotations in the Move source language:
+Move 的单元测试在 Move 源语言中使用三个注解：
 
-- `#[test]` marks a function as a test;
-- `#[expected_failure]` marks that a test is expected to fail;
-- `#[test_only]` marks a module or module member ([`use`](./uses.md), [function](./functions.md),
-  [struct](./structs.md), or [constant](./constants.md)) as code to be included for testing only.
+- `#[test]` 标记一个函数为测试；
+- `#[expected_failure]` 标记一个测试预期会失败；
+- `#[test_only]` 标记一个模块或模块成员（[`use`](./uses.md)、[函数](./functions.md)、[结构体](./structs.md)或[常量](./constants.md)）仅用于测试。
 
-These annotations can be placed on any appropriate form with any visibility. Whenever a module or
-module member is annotated as `#[test_only]` or `#[test]`, it will not be included in the compiled
-bytecode unless it is compiled for testing.
+这些注解可以放置在任何适当的形式上，并具有任何可见性。每当一个模块或模块成员被注解为 `#[test_only]` 或 `#[test]` 时，除非为测试编译，否则它不会包含在已编译的字节码中。
 
-## Test Annotations
+## 测试注解
 
-The `#[test]` annotation can only be placed on a function with no parameters. This annotation marks
-the function as a test to be run by the unit testing harness.
+`#[test]` 注解只能放在没有参数的函数上。这个注解将函数标记为由单元测试框架运行的测试。
 
 ```move
-#[test] // OK
+#[test] // 正确
 fun this_is_a_test() { ... }
 
-#[test] // Will fail to compile since the test takes an argument
+#[test] // 编译失败，因为测试接受了一个参数
 fun this_is_not_correct(arg: u64) { ... }
 ```
 
-A test can also be annotated as an `#[expected_failure]`. This annotation marks that the test is
-expected to raise an error. There are a number of options that can be used with the
-`#[expected_failure]` annotation to ensure only a failure with the specified condition is marked as
-passing, these options are detailed in [Expected Failures](#expected-failures). Only functions that
-have the `#[test]` annotation can also be annotated as an #`[expected_failure]`.
+测试还可以标注为 `#[expected_failure]`。这个注解标记测试预期会引发错误。有许多选项可以与 `#[expected_failure]` 注解一起使用，以确保只有在指定条件下失败才会被标记为通过，这些选项在[预期失败](#expected-failures)部分详细介绍。只有具有 `#[test]` 注解的函数也可以被注解为 `#[expected_failure]`。
 
-Some simple examples of using the `#[expected_failure]` annotation are shown below:
+以下是一些使用 `#[expected_failure]` 注解的简单示例：
 
 ```move
 #[test]
@@ -41,33 +33,29 @@ public fun this_test_will_abort_and_pass() { abort 1 }
 #[expected_failure]
 public fun test_will_error_and_pass() { 1/0; }
 
-#[test] // Will pass since test fails with the expected abort code constant.
-#[expected_failure(abort_code = ENotFound)] // ENotFound is a constant defined in the module
+#[test] // 通过，因为测试失败并且返回预期的中止代码常量。
+#[expected_failure(abort_code = ENotFound)] // ENotFound 是模块中定义的常量
 public fun test_will_error_and_pass_abort_code() { abort ENotFound }
 
-#[test] // Will fail since test fails with a different error than expected.
+#[test] // 失败，因为测试失败并返回一个不同于预期的错误。
 #[expected_failure(abort_code = my_module::ENotFound)]
 public fun test_will_error_and_fail() { 1/0; }
 
-#[test, expected_failure] // Can have multiple in one attribute. This test will pass.
+#[test, expected_failure] // 可以在一个属性中有多个注解。此测试将通过。
 public fun this_other_test_will_abort_and_pass() { abort 1 }
 ```
 
-> **Note**: `#[test]` and `#[test_only]` functions can also call
-> [`entry`](./functions.md#entry-modifier) functions, regardless of their visibility.
+> **注意**: `#[test]` 和 `#[test_only]` 函数也可以调用 [`entry`](./functions.md#entry-modifier) 函数，无论其可见性如何。
 
-## Expected Failures
+## 预期失败
 
-There are a number of different ways that you can use the `#[expected_failure]` annotation to
-specify different types of error conditions. These are:
+可以使用 `#[expected_failure]` 注解来指定不同类型的错误条件。包括以下几种方式：
 
 ### 1. `#[expected_failure(abort_code = <constant>)]`
 
-This will pass if the test aborts with the specified constant value in the module that defines the
-constant and fail otherwise. This is the recommended way of testing for expected test failures.
+如果测试中止并且返回的常量值与模块中定义的常量相同，则测试通过，否则测试失败。这是测试预期失败的推荐方式。
 
-> **Note**: You can reference constants outside of the current module or package in
-> `expected_failure` annotations.
+> **注意**: 你可以在 `expected_failure` 注解中引用当前模块或包之外的常量。
 
 ```move
 module pkg_addr::other_module {
@@ -89,7 +77,7 @@ module pkg_addr::my_module {
     #[expected_failure(abort_code = other_module::ENotFound)]
     fun test_will_abort_and_pass() { other_module::will_abort() }
 
-    // FAIL: Will not pass since we are expecting the constant from the wrong module.
+    // 失败：因为我们期望的常量来自错误的模块。
     #[test]
     #[expected_failure(abort_code = ENotFound)]
     fun test_will_abort_and_pass() { other_module::will_abort() }
@@ -98,9 +86,7 @@ module pkg_addr::my_module {
 
 ### 2. `#[expected_failure(arithmetic_error, location = <location>)]`
 
-This specifies that the test is expected to fail with an arithmetic error (e.g., integer overflow,
-division by zero, etc) at the specified location. The `<location>` must be a valid path to a module
-location, e.g., `Self`, or `my_package::my_module`.
+这指定了测试预期会在指定位置失败，并引发算术错误（例如，整数溢出，除以零等）。`<location>` 必须是模块位置的有效路径，例如 `Self` 或 `my_package::my_module`。
 
 ```move
 module pkg_addr::other_module {
@@ -117,7 +103,7 @@ module pkg_addr::my_module {
     #[expected_failure(arithmetic_error, location = pkg_addr::other_module)]
     fun test_will_arith_error_and_pass2() { other_module::will_arith_error() }
 
-    // FAIL: Will fail since the location we expect it the fail at is different from where the test actually failed.
+    // 失败：因为我们期望它失败的位置与测试实际失败的位置不同。
     #[test]
     #[expected_failure(arithmetic_error, location = Self)]
     fun test_will_arith_error_and_fail() { other_module::will_arith_error() }
@@ -126,9 +112,7 @@ module pkg_addr::my_module {
 
 ### 3. `#[expected_failure(out_of_gas, location = <location>)]`
 
-This specifies that the test is expected to fail with an out of gas error at the specified location.
-The `<location>` must be a valid path to a module location, e.g., `Self`, or
-`my_package::my_module`.
+这指定了测试预期会在指定位置失败，并引发耗尽气体错误。`<location>` 必须是模块位置的有效路径，例如 `Self` 或 `my_package::my_module`。
 
 ```move
 module pkg_addr::other_module {
@@ -145,8 +129,7 @@ module pkg_addr::my_module {
     #[expected_failure(arithmetic_error, location = pkg_addr::other_module)]
     fun test_will_oog_and_pass2() { other_module::will_oog() }
 
-    // FAIL: Will fail since the location we expect it the fail at is different from where
-    // the test actually failed.
+    // 失败：因为我们期望它失败的位置与测试实际失败的位置不同。
     #[test]
     #[expected_failure(out_of_gas, location = Self)]
     fun test_will_oog_and_fail() { other_module::will_oog() }
@@ -155,12 +138,7 @@ module pkg_addr::my_module {
 
 ### 4. `#[expected_failure(vector_error, minor_status = <u64_opt>, location = <location>)]`
 
-This specifies that the test is expected to fail with a vector error at the specified location with
-the given `minor_status` (if provided). The `<location>` must be a valid path to a module module
-location, e.g., `Self`, or `my_package::my_module`. The `<u64_opt>` is an optional parameter that
-specifies the minor status of the vector error. If it is not specified, the test will pass if the
-test fails with any minor status. If it is specified, the test will only pass if the test fails with
-a vector error with the specified minor status.
+这指定了测试预期会在指定位置失败，并引发向量错误，并带有给定的 `minor_status`（如果提供）。`<location>` 必须是模块位置的有效路径，例如 `Self` 或 `my_package::my_module`。`<u64_opt>` 是一个可选参数，指定向量错误的次要状态。如果未指定，则测试失败时，只要引发任何次要状态的向量错误，测试就会通过。如果指定了，则只有在测试失败并引发指定次要状态的向量错误时，测试才会通过。
 
 ```move
 module pkg_addr::other_module {
@@ -204,12 +182,9 @@ module pkg_addr::my_module {
     }
 }
 ```
-
 ### 5. `#[expected_failure]`
 
-This will pass if the test aborts with _any_ error code. You should be **_incredibly careful_**
-using this to annotate expected tests failures, and always prefer one of the ways described above
-instead. Examples of these types of annotations are:
+这个注解表示，如果测试因_任何_错误代码中止，测试将通过。使用此注解来标注预期失败的测试时应当**极其谨慎**，并始终优先使用上述描述的方式。以下是一些此类注解的示例：
 
 ```move
 #[test]
@@ -221,70 +196,57 @@ fun test_will_abort_and_pass1() { abort 1 }
 fun test_will_arith_error_and_pass2() { 1/0; }
 ```
 
-## Test Only Annotations
+## 仅测试注解
 
-A module and any of its members can be declared as test only. If an item is annotated as
-`#[test_only]` the item will only be included in the compiled Move bytecode when compiled in test
-mode. Additionally, when compiled outside of test mode, any non-test `use`s of a `#[test_only]`
-module will raise an error during compilation.
+模块及其成员可以声明为仅用于测试。如果一个项目被注解为 `#[test_only]`，则该项目仅在测试模式下编译时才会包含在已编译的 Move 字节码中。此外，在非测试模式下编译时，任何非测试 `use` 的 `#[test_only]` 模块将在编译期间引发错误。
 
-> **Note**: functions that are annotated with `#[test_only]` will only be available to be called
-> from test code, but they themselves are not tests and will not be run as tests by the unit testing
-> framework.
+> **注意**: 注解为 `#[test_only]` 的函数仅可从测试代码中调用，但它们本身不是测试，且不会由单元测试框架运行。
 
 ```move
-#[test_only] // test only attributes can be attached to modules
+#[test_only] // 仅测试属性可以附加到模块
 module abc { ... }
 
-#[test_only] // test only attributes can be attached to constants
+#[test_only] // 仅测试属性可以附加到常量
 const MY_ADDR: address = @0x1;
 
-#[test_only] // .. to uses
+#[test_only] // 仅测试属性可以附加到 use
 use pkg_addr::some_other_module;
 
-#[test_only] // .. to structs
+#[test_only] // 仅测试属性可以附加到结构体
 public struct SomeStruct { ... }
 
-#[test_only] // .. and functions. Can only be called from test code, but this is _not_ a test!
+#[test_only] // 仅测试属性可以附加到函数。只能从测试代码中调用，但这不是一个测试！
 fun test_only_function(...) { ... }
 ```
 
-## Running Unit Tests
+## 运行单元测试
 
-Unit tests for a Move package can be run with the [`sui move test` command](./packages.md).
+Move 包的单元测试可以使用 [`sui move test` 命令](./packages.md)运行。
 
-When running tests, every test will either `PASS`, `FAIL`, or `TIMEOUT`. If a test case fails, the
-location of the failure along with the function name that caused the failure will be reported if
-possible. You can see an example of this below.
+在运行测试时，每个测试将 `PASS`、`FAIL` 或 `TIMEOUT`。如果测试用例失败，如果可能，将报告失败的位置和引起失败的函数名称。可以在下面的示例中看到这一点。
 
-A test will be marked as timing out if it exceeds the maximum number of instructions that can be
-executed for any single test. This bound can be changed using the options below. Additionally, while
-the result of a test is always deterministic, tests are run in parallel by default, so the ordering
-of test results in a test run is non-deterministic unless running with only one thread, which can be
-configured via an option.
+如果测试用例超出了可以为任何单个测试执行的最大指令数，则该测试将被标记为超时。可以使用以下选项更改此界限。此外，虽然测试结果始终是确定性的，但默认情况下测试是并行运行的，因此除非使用单线程运行，否则测试结果的顺序是非确定性的，这可以通过一个选项进行配置。
 
-These aforementioned options are two among many that can fine-tune testing and help debug failing
-tests. To see all available options, and a description of what each one does, pass the `--help` flag
-to the `sui move test` command:
+上述选项是许多选项中的两个，可以微调测试并帮助调试失败的测试。要查看所有可用选项及其描述，请将 `--help` 标志传递给 `sui move test` 命令：
 
 ```
 $ sui move test --help
 ```
 
-## Example
+## 示例
 
-A simple module using some of the unit testing features is shown in the following example:
+以下示例展示了一个使用一些单元测试功能的简单模块：
 
-First create an empty package and change directory into it:
+首先创建一个空包并切换到该目录：
 
 ```bash
 $ sui move new test_example; cd test_example
 ```
 
-Next add the following module under the `sources` directory:
+然后在 `sources` 目录下添加以下模块：
 
 ```move
-// filename: sources/my_module.move
+// 文件名：sources/my_module.move
 module test_example::my_module {
 
     public struct Wrapper(u64)
@@ -303,14 +265,14 @@ module test_example::my_module {
     }
 
     #[test]
-    // Or #[expected_failure] if we don't care about the abort code
+    // 或者 #[expected_failure] 如果我们不关心中止代码
     #[expected_failure(abort_code = ECoinIsZero)]
     fun make_sure_zero_coin_fails() {
         let coin = Wrapper(0);
         let Wrapper(_) = make_sure_non_zero_coin(coin);
     }
 
-    #[test_only] // test only helper function
+    #[test_only] // 仅用于测试的辅助函数
     fun make_coin_zero(coin: &mut Wrapper) {
         coin.0 = 0;
     }
@@ -319,15 +281,15 @@ module test_example::my_module {
     #[expected_failure(abort_code = ECoinIsZero)]
     fun make_sure_zero_coin_fails2() {
         let mut coin = Wrapper(10);
-        coin.make_coin_zero();
+        make_coin_zero(&mut coin);
         let Wrapper(_) = make_sure_non_zero_coin(coin);
     }
 }
 ```
 
-### Running Tests
+### 运行测试
 
-You can then run these tests with the `move test` command:
+你可以使用 `move test` 命令运行这些测试：
 
 ```bash
 $ sui move test
@@ -341,13 +303,11 @@ Running Move unit tests
 Test result: OK. Total tests: 3; passed: 3; failed: 0
 ```
 
-### Using Test Flags
+### 使用测试标志
 
-#### Passing specific tests to run
+#### 运行特定测试
 
-You can run a specific test, or a set of tests with `sui move test <str>`. This will only run tests
-whose fully qualified name contains `<str>`. For example if we wanted to only run tests with
-`"non_zero"` in their name:
+你可以使用 `sui move test <str>` 运行特定测试或一组测试。这将只运行名称中包含 `<str>` 的测试。例如，如果我们只想运行名称中包含 `"non_zero"` 的测试：
 
 ```bash
 $ sui move test non_zero
@@ -359,9 +319,9 @@ Running Move unit tests
 Test result: OK. Total tests: 1; passed: 1; failed: 0
 ```
 
-#### `-i <bound>` or `--gas_used <bound>`
+#### `-i <bound>` 或 `--gas_used <bound>`
 
-This bounds the amount of gas that can be consumed for any one test to `<bound>`:
+这将限定任何一个测试可以消耗的最大气体量为 `<bound>`：
 
 ```bash
 $ sui move test -i 0
@@ -412,9 +372,7 @@ Test result: FAILED. Total tests: 3; passed: 0; failed: 3
 
 #### `-s` or `--statistics`
 
-With these flags you can gather statistics about the tests run and report the runtime and gas used
-for each test. You can additionally add `csv` (`sui move test -s csv`) to get the gas usage in a csv
-output format. For example, if we wanted to see the statistics for the tests in the example above:
+使用这些标志，您可以收集运行的测试的统计信息，并报告每个测试的运行时间和气体使用量。您还可以添加 `csv` (`sui move test -s csv`) 以获取气体使用量的 CSV 输出格式。例如，如果我们想查看上述示例中测试的统计信息：
 
 ```bash
 $ sui move test -s

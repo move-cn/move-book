@@ -1,12 +1,12 @@
-# The Move Programming Language
+# Move 编程语言
 
 [The Move Reference](introduction.md)
 
-# Getting Started
+# 入门
 
 - [Modules](modules.md)
 
-# Basic Concepts
+# 基础概念 
 
 - [Primitive Types](primitive-types.md)
   - [Integers](primitive-types/integers.md)
@@ -31,20 +31,20 @@
 - [Type Abilities](abilities.md)
 - [Uses and Aliases](uses.md)
 
-# Advanced Concepts
+# 进阶概念
 
 - [Method Syntax](method-syntax.md)
 - [Index Syntax Methods](index-syntax.md)
 
-# Tooling
+# 工具
 
 - [Packages](packages.md)
 - [Unit Tests](unit-testing.md)
 
-# Reference
+# 参考
 
 - [Coding Conventions](coding-conventions.md)
 
-# Deprecated
+# 废弃
 
 - [Friends](friends.md)
