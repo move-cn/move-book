@@ -1,39 +1,29 @@
-# Generics
+# Generics（泛型）
 
-Generics can be used to define functions and structs over different input data types. This language
-feature is sometimes referred to as parametric polymorphism. In Move, we will often use the term
-generics interchangeably with _type parameters_ and _type arguments_.
+泛型可以用来定义函数和结构体，使它们可以适用于不同的输入数据类型。在 Move 中，我们通常将这种语言特性称为参数化多态性。泛型参数和类型参数的术语在 Move 中可以互换使用。
 
-Generics are commonly used in library code, such as in [vector](./primitive-types/vector.md), to
-declare code that works over any possible type (that satisfies the specified constraints). This sort
-of parameterization allows you to reuse the same implementation across multiple types and
-situations.
+泛型通常用于库代码中，例如在 [vector](./primitive-types/vector.md) 中，用于声明可以处理任何可能类型（满足指定约束条件）的代码。这种参数化允许您在多种类型和情况下重用相同的实现。
 
-## Declaring Type Parameters
+## 声明类型参数
 
-Both functions and structs can take a list of type parameters in their signatures, enclosed by a
-pair of angle brackets `<...>`.
+函数和结构体可以在它们的签名中使用一组类型参数列表，用尖括号 `<...>` 括起来。
 
-### Generic Functions
+### 泛型函数
 
-Type parameters for functions are placed after the function name and before the (value) parameter
-list. The following code defines a generic identity function that takes a value of any type and
-returns that value unchanged.
+函数的类型参数位于函数名之后和（值）参数列表之前。以下代码定义了一个泛型的身份函数，它接受任何类型的值并返回该值本身。
 
 ```move
 fun id<T>(x: T): T {
-    // this type annotation is unnecessary but valid
+    // 这种类型注解是不必要的但是有效的
     (x: T)
 }
 ```
 
-Once defined, the type parameter `T` can be used in parameter types, return types, and inside the
-function body.
+一旦定义，类型参数 `T` 可以在参数类型、返回类型和函数体内部使用。
 
-### Generic Structs
+### 泛型结构体
 
-Type parameters for structs are placed after the struct name, and can be used to name the types of
-the fields.
+结构体的类型参数位于结构体名字之后，可以用来命名字段的类型。
 
 ```move
 public struct Foo<T> has copy, drop { x: T }
@@ -44,14 +34,13 @@ public struct Bar<T1, T2> has copy, drop {
 }
 ```
 
-Note that [type parameters do not have to be used](#unused-type-parameters)
+请注意，[类型参数不一定要被使用](#unused-type-parameters)。
 
-## Type Arguments
+## 类型参数
 
-### Calling Generic Functions
+### 调用泛型函数
 
-When calling a generic function, one can specify the type arguments for the function's type
-parameters in a list enclosed by a pair of angle brackets.
+在调用泛型函数时，可以在尖括号内指定函数的类型参数。
 
 ```move
 fun foo() {
@@ -59,105 +48,95 @@ fun foo() {
 }
 ```
 
-If you do not specify the type arguments, Move's [type inference](#type-inference) will supply them
-for you.
+如果您没有指定类型参数，Move 的 [类型推断](#type-inference) 将为您提供它们。
 
-### Using Generic Structs
+### 使用泛型结构体
 
-Similarly, one can attach a list of type arguments for the struct's type parameters when
-constructing or destructing values of generic types.
+类似地，可以在构造或销毁泛型类型的值时附加一个类型参数列表。
 
 ```move
 fun foo() {
-    // type arguments on construction
+    // 构造时的类型参数
     let foo = Foo<bool> { x: true };
     let bar = Bar<u64, u8> { x: 0, y: vector<u8>[] };
 
-    // type arguments on destruction
+    // 销毁时的类型参数
     let Foo<bool> { x } = foo;
     let Bar<u64, u8> { x, y } = bar;
 }
 ```
 
-In any case if you do not specify the type arguments, Move's [type inference](#type-inference) will
-supply them for you.
+在任何情况下，如果您没有指定类型参数，Move 的 [类型推断](#type-inference) 将为您提供它们。
 
-### Type Argument Mismatch
+### 类型参数不匹配
 
-If you specify the type arguments and they conflict with the actual values supplied, an error will
-be given:
+如果指定的类型参数与实际提供的值冲突，则会产生错误：
 
 ```move
 fun foo() {
-    let x = id<u64>(true); // ERROR! true is not a u64
+    let x = id<u64>(true); // 错误！true 不是 u64
 }
 ```
 
-and similarly:
+类似地：
 
 ```move
 fun foo() {
-    let foo = Foo<bool> { x: 0 }; // ERROR! 0 is not a bool
-    let Foo<address> { x } = foo; // ERROR! bool is incompatible with address
+    let foo = Foo<bool> { x: 0 }; // 错误！0 不是 bool
+    let Foo<address> { x } = foo; // 错误！bool 与 address 不兼容
 }
 ```
 
-## Type Inference
+## 类型推断
 
-In most cases, the Move compiler will be able to infer the type arguments so you don't have to write
-them down explicitly. Here's what the examples above would look like if we omit the type arguments:
+在大多数情况下，Move 编译器能够推断出类型参数，因此您不必显式地写出它们。如果省略类型参数，以下是上面示例的代码：
 
 ```move
 fun foo() {
     let x = id(true);
-    //        ^ <bool> is inferred
+    //        ^ <bool> 被推断出来了
 
     let foo = Foo { x: true };
-    //           ^ <bool> is inferred
+    //           ^ <bool> 被推断出来了
 
     let Foo { x } = foo;
-    //     ^ <bool> is inferred
+    //     ^ <bool> 被推断出来了
 }
 ```
 
-Note: when the compiler is unable to infer the types, you'll need annotate them manually. A common
-scenario is to call a function with type parameters appearing only at return positions.
+注意：当编译器无法推断类型时，您需要手动注释它们。一个常见的场景是调用一个只在返回位置使用类型参数的函数。
 
 ```move
 module a::m {
 
     fun foo() {
-        let v = vector[]; // ERROR!
-        //            ^ The compiler cannot figure out the element type, since it is never used
+        let v = vector[]; // 错误！
+        //            ^ 编译器无法确定元素类型，因为它从未被使用过
 
         let v = vector<u64>[];
-        //            ^~~~~ Must annotate manually in this case.
+        //            ^~~~~ 在这种情况下必须手动注释
     }
 }
 ```
 
-Note that these cases are a bit contrived since the `vector[]` is never used, ad as such, Move's
-type inference cannot infer the type.
+请注意，这些情况有些刻意，因为 `vector[]` 从未被使用，因此 Move 的类型推断不能推断出类型。
 
-However, the compiler will be able to infer the type if that value is used later in that function:
+然而，如果稍后在该函数中使用该值，编译器将能够推断出类型：
 
 ```move
 module a::m {
     fun foo() {
         let v = vector[];
-        //            ^ <u64> is inferred
+        //            ^ <u64> 被推断出来了
         vector::push_back(&mut v, 42);
-        //               ^ <u64> is inferred
+        //               ^ <u64> 被推断出来了
     }
 }
 ```
 
-## Integers
+## 整数
 
-In Move, the integer types `u8`, `u16`, `u32`, `u64`, `u128`, and `u256` are all distinct types.
-However, each one of these types can be created with the same numerical value syntax. In other
-words, if a type suffix is not provided, the compiler will infer the integer type based on the usage
-of the value.
+在 Move 中，整数类型 `u8`、`u16`、`u32`、`u64`、`u128` 和 `u256` 都是不同的类型。然而，每种类型都可以用相同的数值语法创建。换句话说，如果没有提供类型后缀，编译器将根据值的使用情况推断整数类型。
 
 ```move
 let x8: u8 = 0;
@@ -168,35 +147,32 @@ let x128: u128 = 0;
 let x256: u256 = 0;
 ```
 
-If the value is not used in a context that requires a specific integer type, `u64` is taken as a
-default.
+如果值在不需要特定整数类型的上下文中未被使用，`u64` 将作为默认值。
 
 ```move
 let x = 0;
-//      ^ u64 is used by default
+//      ^ 默认使用 u64
 ```
 
-If the value however is too large for the inferred type, an error will be given
+然而，如果值对于推断类型太大，将会产生错误。
 
 ```move
-let i: u8 = 256; // ERROR!
-//          ^^^ too large for u8
+let i: u8 = 256; // 错误！
+//          ^^^ 对于 u8 来说太大了
 let x = 340282366920938463463374607431768211454;
-//      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ too large for u64
+//      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 对于 u64 来说太大了
 ```
 
-In cases where the number is too large, you might need to annotate it explicitly
+在数字太大的情况下，您可能需要显式注释它：
 
 ```move
 let x = 340282366920938463463374607431768211454u128;
-//                                             ^^^^ valid!
+//                                             ^^^^ 有效！
 ```
 
-## Unused Type Parameters
+## 未使用的类型参数
 
-For a struct definition, an unused type parameter is one that does not appear in any field defined
-in the struct, but is checked statically at compile time. Move allows unused type parameters so the
-following struct definition is valid:
+对于结构体定义，未使用的类型参数是指在结构体定义的任何字段中都没有出现的类型参数，但在编译时会进行静态检查。Move 允许未使用的类型参数，因此以下结构体定义是有效的：
 
 ```move
 public struct Foo<T> {
@@ -204,27 +180,26 @@ public struct Foo<T> {
 }
 ```
 
-This can be convenient when modeling certain concepts. Here is an example:
+在建模某些概念时，这样做非常方便。以下是一个示例：
 
 ```move
 module a::m {
-    // Currency Specifiers
+    // 货币说明符
     public struct A {}
     public struct B {}
 
-    // A generic coin type that can be instantiated using a currency
-    // specifier type.
-    //   e.g. Coin<A>, Coin<B> etc.
+    // 一个通用的硬币类型，可以使用货币说明符类型进行实例化。
+    //   例如 Coin<A>, Coin<B> 等等
     public struct Coin<Currency> has store {
         value: u64
     }
 
-    // Write code generically about all currencies
+    // 编写关于所有货币的通用代码
     public fun mint_generic<Currency>(value: u64): Coin<Currency> {
         Coin { value }
     }
 
-    // Write code concretely about one currency
+    // 编写关于某个货币具体代码
     public fun mint_a(value: u64): Coin<A> {
         mint_generic(value)
     }
@@ -234,10 +209,8 @@ module a::m {
 }
 ```
 
-In this example, `Coin<Currency>` is generic on the `Currency` type parameter, which specifies the
-currency of the coin and allows code to be written either generically on any currency or concretely
-on a specific currency. This generality applies even when the `Currency` type parameter does not
-appear in any of the fields defined in `Coin`.
+在此示例中，`Coin<Currency>` 是泛型的 `Currency` 类型参数，指定了硬币的货币类型，并允许代码既可以通用地处理任何货币，也可以具体地处理特定货币。即使在 `Coin` 的任何字段中没有使用 `Currency` 类型参数，这种通用性也适用。
+
 
 ### Phantom Type Parameters
 
@@ -318,42 +291,87 @@ public struct HasCopy has copy {}
 Consider now the type `S<HasCopy, NoCopy>`. Since `S` is defined with `copy` and all non-phantom
 arguments have `copy` then `S<HasCopy, NoCopy>` also has `copy`.
 
-#### Phantom Type Parameters with Ability Constraints
+### 拥有 Ability 约束的 Phantom 类型参数
 
-Ability constraints and phantom type parameters are orthogonal features in the sense that phantom
-parameters can be declared with ability constraints.
+在之前的例子中,尽管`struct Coin`要求有`store`能力,但`Coin<A>`和`Coin<B>`都不会有`store`能力。这是因为[条件能力和泛型类型](./abilities.md#conditional-abilities-and-generic-types)的规则,以及`A`和`B`没有`store`能力,尽管它们在`struct Coin`的主体中甚至没有被使用。这可能会导致一些不愉快的后果。例如,我们无法将`Coin<A>`放入存储中的钱包。
+
+一个可能的解决方案是为`A`和`B`添加虚假的能力注释(例如,`public struct Currency1 has store {}`)。但是,这可能会导致错误或安全漏洞,因为它用不必要的能力声明削弱了类型。例如,我们永远不会期望存储中的值有一个`A`类型的字段,但有了虚假的`store`能力,这就成为可能。此外,这些虚假注释会具有传染性,要求许多使用未使用类型参数的泛型函数也包含必要的约束。
+
+幻象类型参数解决了这个问题。未使用的类型参数可以被标记为幻象类型参数,它们不参与结构体的能力推导。这样,幻象类型参数的参数在推导泛型类型的能力时不会被考虑,从而避免了虚假能力注释的需要。为了使这个放宽的规则是安全的,Move的类型系统保证了声明为`phantom`的参数要么在结构体定义中完全不使用,要么只作为参数用于同样声明为`phantom`的类型参数。
+
+#### 声明
+
+在结构体定义中,可以通过在类型参数声明前添加`phantom`关键字来将其声明为幻象类型参数。
+
+```move
+public struct Coin<phantom Currency> has store {
+    value: u64
+}
+```
+
+如果一个类型参数被声明为幻象,我们称之为幻象类型参数。在定义结构体时,Move的类型检查器确保每个幻象类型参数要么在结构体定义内部不使用,要么只作为幻象类型参数的参数使用。
+
+```move
+public struct S1<phantom T1, T2> { f: u64 }
+//               ^^^^^^^ 有效,T1 在结构体定义中没有出现
+
+public struct S2<phantom T1, T2> { f: S1<T1, T2> }
+//               ^^^^^^^ 有效,T1 出现在幻象位置
+```
+
+以下代码显示了违反规则的例子:
+
+```move
+public struct S1<phantom T> { f: T }
+//               ^^^^^^^ 错误!  ^ 不是幻象位置
+
+public struct S2<T> { f: T }
+public struct S3<phantom T> { f: S2<T> }
+//               ^^^^^^^ 错误!     ^ 不是幻象位置
+```
+
+更正式地说,如果一个类型被用作幻象类型参数的参数,我们说该类型出现在幻象位置。有了这个定义,正确使用幻象参数的规则可以被指定为:幻象类型参数只能出现在幻象位置。
+
+请注意,指定`phantom`不是必需的,但如果一个类型参数可以是`phantom`但未被标记为`phantom`,编译器会发出警告。
+
+#### 实例化
+
+在实例化结构体时,幻象参数的参数在推导结构体能力时被排除。例如,考虑以下代码:
+
+```move
+public struct S<T1, phantom T2> has copy { f: T1 }
+public struct NoCopy {}
+public struct HasCopy has copy {}
+```
+
+现在考虑类型`S<HasCopy, NoCopy>`。由于`S`定义时有`copy`能力,并且所有非幻象参数都有`copy`能力,因此`S<HasCopy, NoCopy>`也有`copy`能力。
+
+#### 带能力约束的幻象类型参数
+
+能力约束和幻象类型参数是正交的特性,意味着幻象参数可以声明为带有能力约束。
 
 ```move
 public struct S<phantom T: copy> {}
 ```
 
-When instantiating a phantom type parameter with an ability constraint, the type argument has to
-satisfy that constraint, even though the parameter is phantom. The usual restrictions apply and `T`
-can only be instantiated with arguments having `copy`.
+在实例化带有能力约束的幻象类型参数时,类型参数必须满足该约束,尽管该参数是幻象的。通常的限制适用,`T`只能用具有`copy`能力的参数实例化。
 
-## Constraints
+## 约束
 
-In the examples above, we have demonstrated how one can use type parameters to define "unknown"
-types that can be plugged in by callers at a later time. This however means the type system has
-little information about the type and has to perform checks in a very conservative way. In some
-sense, the type system must assume the worst case scenario for an unconstrained generic--a type with
-no [abilities](./abilities.md).
+在上面的例子中,我们演示了如何使用类型参数来定义可以由调用者在稍后填充的"未知"类型。然而,这意味着类型系统对该类型的信息很少,必须以非常保守的方式进行检查。在某种意义上,类型系统必须假设无约束泛型的最坏情况 —— 一个没有[能力](./abilities.md)的类型。
 
-Constraints offer a way to specify what properties these unknown types have so the type system can
-allow operations that would otherwise be unsafe.
+约束提供了一种方法来指定这些未知类型具有哪些属性,以便类型系统可以允许原本不安全的操作。
 
-### Declaring Constraints
+### 声明约束
 
-Constraints can be imposed on type parameters using the following syntax.
+可以使用以下语法对类型参数施加约束:
 
 ```move
-// T is the name of the type parameter
+// T 是类型参数的名称
 T: <ability> (+ <ability>)*
 ```
 
-The `<ability>` can be any of the four [abilities](./abilities.md), and a type parameter can be
-constrained with multiple abilities at once. So all of the following would be valid type parameter
-declarations:
+`<ability>`可以是四种[能力](./abilities.md)中的任何一种,一个类型参数可以同时被多个能力约束。因此,以下都是有效的类型参数声明:
 
 ```move
 T: copy
@@ -361,29 +379,29 @@ T: copy + drop
 T: copy + drop + store + key
 ```
 
-### Verifying Constraints
+### 验证约束
 
-Constraints are checked at instantiation sites
+约束在实例化点进行检查
 
 ```move
 public struct Foo<T: copy> { x: T }
 
 public struct Bar { x: Foo<u8> }
-//                         ^^ valid, u8 has `copy`
+//                         ^^ 有效,u8 有 `copy` 能力
 
 public struct Baz<T> { x: Foo<T> }
-//                            ^ ERROR! T does not have 'copy'
+//                            ^ 错误! T 没有 'copy' 能力
 ```
 
-And similarly for functions
+函数也是类似的
 
 ```move
 fun unsafe_consume<T>(x: T) {
-    // ERROR! x does not have 'drop'
+    // 错误! x 没有 'drop' 能力
 }
 
 fun consume<T: drop>(x: T) {
-    // valid, x will be dropped automatically
+    // 有效,x 将自动被丢弃
 }
 
 public struct NoAbilities {}
@@ -391,20 +409,20 @@ public struct NoAbilities {}
 fun foo() {
     let r = NoAbilities {};
     consume<NoAbilities>(NoAbilities);
-    //      ^^^^^^^^^^^ ERROR! NoAbilities does not have 'drop'
+    //      ^^^^^^^^^^^ 错误! NoAbilities 没有 'drop' 能力
 }
 ```
 
-And some similar examples, but with `copy`
+这里是一些类似的例子,但使用了`copy`能力:
 
 ```move
 fun unsafe_double<T>(x: T) {
     (copy x, x)
-    // ERROR! T does not have 'copy'
+    // 错误! T 没有 'copy' 能力
 }
 
 fun double<T: copy>(x: T) {
-    (copy x, x) // valid, T has 'copy'
+    (copy x, x) // 有效,T 有 'copy' 能力
 }
 
 public struct NoAbilities {}
@@ -412,30 +430,28 @@ public struct NoAbilities {}
 fun foo(): (NoAbilities, NoAbilities) {
     let r = NoAbilities {};
     double<NoAbilities>(r)
-    //     ^ ERROR! NoAbilities does not have 'copy'
+    //     ^ 错误! NoAbilities 没有 'copy' 能力
 }
 ```
 
-For more information, see the abilities section on
-[conditional abilities and generic types](./abilities.md#conditional-abilities-and-generic-types).
+更多信息,请参见能力部分的[条件能力和泛型类型](./abilities.md#conditional-abilities-and-generic-types)。
 
-## Limitations on Recursions
+## 递归限制
 
-### Recursive Structs
+### 递归结构体
 
-Generic structs can not contain fields of the same type, either directly or indirectly, even with
-different type arguments. All of the following struct definitions are invalid:
+泛型结构体不能直接或间接地包含相同类型的字段,即使有不同的类型参数也不行。以下所有结构体定义都是无效的:
 
 ```move
 public struct Foo<T> {
-    x: Foo<u64> // ERROR! 'Foo' containing 'Foo'
+    x: Foo<u64> // 错误! 'Foo' 包含 'Foo'
 }
 
 public struct Bar<T> {
-    x: Bar<T> // ERROR! 'Bar' containing 'Bar'
+    x: Bar<T> // 错误! 'Bar' 包含 'Bar'
 }
 
-// ERROR! 'A' and 'B' forming a cycle, which is not allowed either.
+// 错误! 'A' 和 'B' 形成了一个循环,这也是不允许的。
 public struct A<T> {
     x: B<T, u64>
 }
@@ -446,42 +462,38 @@ public struct B<T1, T2> {
 }
 ```
 
-### Advanced Topic: Type-level Recursions
+### 高级主题: 类型级递归
 
-Move allows generic functions to be called recursively. However, when used in combination with
-generic structs, this could create an infinite number of types in certain cases, and allowing this
-means adding unnecessary complexity to the compiler, vm and other language components. Therefore,
-such recursions are forbidden.
+Move允许泛型函数递归调用。然而,当与泛型结构体结合使用时,这可能在某些情况下创建无限数量的类型,允许这种情况会给编译器、虚拟机和其他语言组件增加不必要的复杂性。因此,这种递归是被禁止的。
 
-This restriction might be relaxed in the future, but for now, the following examples should give you
-an idea of what is allowed and what is not.
+这个限制可能在将来会放宽,但目前,以下示例应该能让你了解什么是允许的,什么是不允许的。
 
 ```move
 module a::m {
     public struct A<T> {}
 
-    // Finitely many types -- allowed.
-    // foo<T> -> foo<T> -> foo<T> -> ... is valid
+    // 有限数量的类型 -- 允许。
+    // foo<T> -> foo<T> -> foo<T> -> ... 是有效的
     fun foo<T>() {
         foo<T>();
     }
 
-    // Finitely many types -- allowed.
-    // foo<T> -> foo<A<u64>> -> foo<A<u64>> -> ... is valid
+    // 有限数量的类型 -- 允许。
+    // foo<T> -> foo<A<u64>> -> foo<A<u64>> -> ... 是有效的
     fun foo<T>() {
         foo<A<u64>>();
     }
 }
 ```
 
-Not allowed:
+不允许:
 
 ```move
 module a::m {
     public struct A<T> {}
 
-    // Infinitely many types -- NOT allowed.
-    // error!
+    // 无限数量的类型 -- 不允许。
+    // 错误!
     // foo<T> -> foo<A<T>> -> foo<A<A<T>>> -> ...
     fun foo<T>() {
         foo<Foo<T>>();
@@ -489,14 +501,14 @@ module a::m {
 }
 ```
 
-And similarly, not allowed:
+同样,不允许:
 
 ```move
 module a::n {
     public struct A<T> {}
 
-    // Infinitely many types -- NOT allowed.
-    // error!
+    // 无限数量的类型 -- 不允许。
+    // 错误!
     // foo<T1, T2> -> bar<T2, T1> -> foo<T2, A<T1>>
     //   -> bar<A<T1>, T2> -> foo<A<T1>, A<T2>>
     //   -> bar<A<T2>, A<T1>> -> foo<A<T2>, A<A<T1>>>
@@ -511,20 +523,18 @@ module a::n {
 }
 ```
 
-Note, the check for type level recursions is based on a conservative analysis on the call sites and
-does NOT take control flow or runtime values into account.
+注意,类型级递归的检查基于对调用点的保守分析,不考虑控制流或运行时值。
 
 ```move
 module a::m {
     public struct A<T> {}
 
-    // Infinitely many types -- NOT allowed.
-    // error!
+    // 无限数量的类型 -- 不允许。
+    // 错误!
     fun foo<T>(n: u64) {
         if (n > 0) foo<A<T>>(n - 1);
     }
 }
 ```
 
-The function in the example above will technically terminate for any given input and therefore only
-creating finitely many types, but it is still considered invalid by Move's type system.
+上面例子中的函数在技术上对任何给定输入都会终止,因此只会创建有限数量的类型,但它仍被 Move 的类型系统认为是无效的。

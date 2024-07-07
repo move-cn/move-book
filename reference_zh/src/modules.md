@@ -1,16 +1,10 @@
-# Modules
+# Modules(模块)
 
-**Modules** are the core program unit that define types along with functions that operate on these
-types. Struct types define the schema of Move's [storage](./abilities.md#key), and module functions
-define the rules interacting with values of those types. While modules themselves are also stored in
-storage, they are not accessible from within a Move program. In a blockchain environment, the
-modules are stored on chain in a process typically referred to as "publishing". After being
-published, [`entry`](./functions.md#entry-modifier) and [`public`](./functions.md#visibility)
-functions can be invoked according to the rules of that particular Move instance.
+**模块** 是定义类型及操作这些类型的函数的核心程序单元。结构类型定义了 Move 存储的模式，而模块函数定义了与这些类型的值交互的规则。虽然模块本身也存储在存储中，但在 Move 程序内部是不可访问的。在区块链环境中，模块存储在链上，通常称为 "发布" 过程。在发布后，可以根据特定 Move 实例的规则调用 [`entry`](./functions.md#entry-modifier) 和 [`public`](./functions.md#visibility) 函数。
 
-## Syntax
+## 语法
 
-A module has the following syntax:
+模块具有以下语法：
 
 ```text
 module <address>::<identifier> {
@@ -18,10 +12,9 @@ module <address>::<identifier> {
 }
 ```
 
-where `<address>` is a valid [address](./primitive-types/address.md) specifying the module's
-package.
+其中 `<address>` 是指定模块所属包的有效 [地址](./primitive-types/address.md)。
 
-For example:
+例如：
 
 ```move
 module 0x42::test {
@@ -39,14 +32,11 @@ module 0x42::test {
 }
 ```
 
-## Names
+## 名称
 
-The `module test_addr::test` part specifies that the module `test` will be published under the
-numerical [address](./primitive-types/address.md) value assigned for the name `test_addr` in the
-[package settings](./packages.md).
+`module test_addr::test` 部分指定了模块 `test` 将在名称为 `test_addr` 的包设置中分配的数字 [地址](./primitive-types/address.md) 值下进行发布。
 
-Modules should normally be declared using [named addresses](./primitive-types/address.md) (as
-opposed to using the numerical value directly). For example:
+通常应使用 [命名地址](./primitive-types/address.md) 来声明模块（而不是直接使用数字值）。例如：
 
 ```move
 module test_addr::test {
@@ -61,11 +51,9 @@ module test_addr::test {
 }
 ```
 
-These named addresses commonly match the name of the [package](./packages.md).
+这些命名地址通常与 [包](./packages.md) 的名称匹配。
 
-Because named addresses only exist at the source language level and during compilation, named
-addresses will be fully substituted for their value at the bytecode level. For example if we had the
-following code:
+因为命名地址仅存在于源语言级别和编译过程中，在字节码级别上，命名地址将完全替换为其值。例如，如果我们有以下代码：
 
 ```move
 fun example() {
@@ -73,8 +61,7 @@ fun example() {
 }
 ```
 
-and we compiled it with `my_addr` set to `0xC0FFEE`, then it would be operationally equivalent to
-the following:
+并且将其编译时设置 `my_addr` 设置为 `0xC0FFEE`，则其操作上等效于：
 
 ```move
 fun example() {
@@ -82,29 +69,21 @@ fun example() {
 }
 ```
 
-While at the source level these two different accesses are equivalent, it is a best practice to
-always use the named address and not the numerical value assigned to that address.
+尽管在源级别上这两种访问方式是等效的，但最佳实践是始终使用命名地址而不是分配给该地址的数字值。
 
-Module names can start with a lowercase letter from `a` to `z` or an uppercase letter from `A` to
-`Z`. After the first character, module names can contain underscores `_`, letters `a` to `z`,
-letters `A` to `Z`, or digits `0` to `9`.
+模块名可以以小写字母 `a` 到 `z` 或大写字母 `A` 到 `Z` 开始。在第一个字符之后，模块名可以包含下划线 `_`、字母 `a` 到 `z`、字母 `A` 到 `Z` 或数字 `0` 到 `9`。
 
 ```move
 module a::my_module {}
 module a::foo_bar_42 {}
 ```
 
-Typically, module names start with a lowercase letter. A module named `my_module` should be stored
-in a source file named `my_module.move`.
+通常，模块名以小写字母开头。名为 `my_module` 的模块应存储在名为 `my_module.move` 的源文件中。
 
-## Members
+## 成员
 
-All members inside a `module` block can appear in any order. Fundamentally, a module is a collection
-of [`types`](./structs.md) and [`functions`](./functions.md). The [`use`](./uses.md) keyword refers
-to members from other modules. The [`const`](./constants.md) keyword defines constants that can be
-used in the functions of a module.
+模块块内的所有成员可以以任何顺序出现。基本上，模块是 [`types`](./structs.md) 和 [`functions`](./functions.md) 的集合。[`use`](./uses.md) 关键字用于引用其他模块的成员。[`const`](./constants.md) 关键字定义可以在模块函数中使用的常量。
 
-The [`friend`](./friends.md) syntax is a deprecated concept for specifying a list of trusted
-modules. The concept has been superseded by [`public(package)`](./functions.md#visibility)
+[`friend`](./friends.md) 语法是一种已废弃的概念，用于指定一组受信任的模块列表。该概念已被 [`public(package)`](./functions.md#visibility) 取代。
 
-<!-- TODO member access rules -->
+<!-- TODO 成员访问规则 -->

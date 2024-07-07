@@ -1,212 +1,159 @@
-# Abilities
+# 能力
 
-Abilities are a typing feature in Move that control what actions are permissible for values of a
-given type. This system grants fine grained control over the "linear" typing behavior of values, as
-well as if and how values are used in storage (as defined by the specific deployment of Move, e.g.
-the notion of storage for the blockchain). This is implemented by gating access to certain bytecode
-instructions so that for a value to be used with the bytecode instruction, it must have the ability
-required (if one is required at all—not every instruction is gated by an ability).
+能力是Move语言中的一个类型特性，用于控制某种类型的值可以执行哪些操作。这套系统提供了对值的“线性”类型行为的细粒度控制，以及值在存储中的使用方式（由Move的具体部署定义，例如区块链中的存储概念）。这是通过限制对某些字节码指令的访问来实现的，只有当一个值具有所需的能力（如果需要的话——并非每个指令都需要能力）时，才能使用这些字节码指令。
 
-For Sui, `key` is used to signify an [object](./abilities/object.md). Objects are the basic unit of
-storage where each object has a unique, 32-byte ID. `store` is then used to both indicate what data
-can be stored inside of an object, and is also used to indicate what types can be transferred
-outside of their defining module.
+对于Sui，`key`用于表示一个[对象](./abilities/object.md)。对象是存储的基本单位，每个对象都有一个唯一的32字节ID。`store`则用于指示可以存储在对象内部的数据类型，同时也用于指示哪些类型可以在定义模块之外进行转移。
 
-<!-- TODO future section on detailed walk through maybe. We have some examples at the end but it might be helpful to explain why we have precisely this set of abilities
+## 四种能力
 
-If you are already somewhat familiar with abilities from writing Move programs, but are still confused as to what is going on, it might be helpful to skip to the [motivating walkthrough](#motivating-walkthrough) section to get an idea of what the system is setup in the way that it is. -->
-
-## The Four Abilities
-
-The four abilities are:
+四种能力分别是：
 
 - [`copy`](#copy)
-  - Allows values of types with this ability to be copied.
+  - 允许具有此能力的类型的值被复制。
 - [`drop`](#drop)
-  - Allows values of types with this ability to be popped/dropped.
+  - 允许具有此能力的类型的值被丢弃。
 - [`store`](#store)
-  - Allows values of types with this ability to exist inside a value in storage.
-  - For Sui, `store` controls what data can be stored inside of an [object](./abilities/object.md).
-    `store` also controls what types can be transferred outside of their defining module.
+  - 允许具有此能力的类型的值存在于存储中的某个值内。
+  - 对于Sui，`store`控制哪些数据可以存储在[对象](./abilities/object.md)内，也控制哪些类型可以在定义模块之外转移。
 - [`key`](#key)
-  - Allows the type to serve as a "key" for storage. Ostensibly this means the value can be a
-    top-level value in storage; in other words, it does not need to be contained in another value to
-    be in storage.
-  - For Sui, `key` is used to signify an [object](./abilities/object.md).
+  - 允许类型作为存储的“键”。这意味着该值可以作为存储中的顶级值；换句话说，它不需要包含在其他值中即可存在于存储中。
+  - 对于Sui，`key`用于表示一个[对象](./abilities/object.md)。
 
 ### `copy`
 
-The `copy` ability allows values of types with that ability to be copied. It gates the ability to
-copy values out of local variables with the [`copy`](./variables.md#move-and-copy) operator and to
-copy values via references with
-[dereference `*e`](./primitive-types/references.md#reading-and-writing-through-references).
+`copy`能力允许具有此能力的类型的值被复制。它限制了从局部变量中复制值的能力，通过[`copy`](./variables.md#move-and-copy)操作符以及通过引用复制值的能力，通过[dereference `*e`](./primitive-types/references.md#reading-and-writing-through-references)操作符。
 
-If a value has `copy`, all values contained inside of that value have `copy`.
+如果一个值具有`copy`，那么该值内部包含的所有值都具有`copy`。
 
 ### `drop`
 
-The `drop` ability allows values of types with that ability to be dropped. By dropped, we mean that
-value is not transferred and is effectively destroyed as the Move program executes. As such, this
-ability gates the ability to ignore values in a multitude of locations, including:
+`drop`能力允许具有此能力的类型的值被丢弃。丢弃是指该值未被转移且在Move程序执行时被有效地销毁。因此，这种能力限制了在多个位置忽略值的能力，包括：
 
-- not using the value in a local variable or parameter
-- not using the value in a [sequence via `;`](./variables.md#expression-blocks)
-- overwriting values in variables in [assignments](./variables.md#assignments)
-- overwriting values via references when
-  [writing `*e1 = e2`](./primitive-types/references.md#reading-and-writing-through-references).
+- 不使用局部变量或参数中的值
+- 不使用[序列中的值通过`;`](./variables.md#expression-blocks)
+- 在[赋值](./variables.md#assignments)时覆盖变量中的值
+- 在[引用写操作时](./primitive-types/references.md#reading-and-writing-through-references)覆盖值。
 
-If a value has `drop`, all values contained inside of that value have `drop`.
+如果一个值具有`drop`，那么该值内部包含的所有值都具有`drop`。
 
 ### `store`
 
-The `store` ability allows values of types with this ability to exist inside of a value in storage,
-_but_ not necessarily as a top-level value in storage. This is the only ability that does not
-directly gate an operation. Instead it gates the existence in storage when used in tandem with
-`key`.
+`store`能力允许具有此能力的类型的值存在于存储中的某个值内，但不一定作为存储中的顶级值。这是唯一一个不直接限制操作的能力。相反，它在与`key`一起使用时限制了在存储中的存在。
 
-If a value has `store`, all values contained inside of that value have `store`.
+如果一个值具有`store`，那么该值内部包含的所有值都具有`store`。
 
-For Sui, `store` serves double duty. It controls what values can appear inside of an
-[object](./abilities/object.md), and what objects can be
-[transferred](./abilities/object.md#transfer-rules) outside of their defining module.
+对于Sui，`store`有双重作用。它控制哪些值可以出现在一个[对象](./abilities/object.md)内部，以及哪些对象可以在定义模块之外[转移](./abilities/object.md#transfer-rules)。
 
 ### `key`
 
-The `key` ability allows the type to serve as a key for storage operations as defined by the
-deployment of Move. While it is specific per Move instance, it serves to gates all storage
-operations, so in order for a type to be used with storage primitives, the type must have the `key`
-ability.
+`key`能力允许类型作为存储操作的键，如Move的部署所定义。虽然它特定于每个Move实例，但它用于限制所有存储操作，因此要想使用存储原语，类型必须具有`key`能力。
 
-If a value has `key`, all values contained inside of that value have `store`. This is the only
-ability with this sort of asymmetry.
+如果一个值具有`key`，那么该值内部包含的所有值都具有`store`。这是唯一具有这种不对称性的能力。
 
-For Sui, `key` is used to signify an [object](./abilities/object.md).
+对于Sui，`key`用于表示一个[对象](./abilities/object.md)。
 
-## Builtin Types
+## 内建类型
 
-All primitive, builtin types have `copy`, `drop`, and `store`.
+所有原始内建类型都具有`copy`、`drop`和`store`。
 
-- `bool`, `u8`, `u16`, `u32`, `u64`, `u128`, `u256`, and `address` all have `copy`, `drop`, and
-  `store`.
-- `vector<T>` may have `copy`, `drop`, and `store` depending on the abilities of `T`.
-  - See [Conditional Abilities and Generic Types](#conditional-abilities-and-generic-types) for more
-    details.
-- Immutable references `&` and mutable references `&mut` both have `copy` and `drop`.
-  - This refers to copying and dropping the reference itself, not what they refer to.
-  - References cannot appear in global storage, hence they do not have `store`.
+- `bool`、`u8`、`u16`、`u32`、`u64`、`u128`、`u256`和`address`都具有`copy`、`drop`和`store`。
+- `vector<T>`可能具有`copy`、`drop`和`store`，这取决于`T`的能力。
+  - 参见[条件能力和泛型类型](#conditional-abilities-and-generic-types)了解更多详情。
+- 不可变引用`&`和可变引用`&mut`都具有`copy`和`drop`。
+  - 这指的是复制和丢弃引用本身，而不是它们引用的内容。
+  - 引用不能出现在全局存储中，因此它们不具有`store`。
 
-Note that none of the primitive types have `key`, meaning none of them can be used directly with
-storage operations.
+注意，原始类型中没有一个具有`key`，这意味着它们不能直接用于存储操作。
 
-## Annotating Structs and Enums
+## 标注结构体和枚举
 
-To declare that a `struct` or `enum` has an ability, it is declared with `has <ability>` after the
-datatype name and either before or after the fields/variants. For example:
+要声明一个结构体或枚举具有某种能力，可以在数据类型名称之后、字段/变体之前或之后使用`has <ability>`进行声明。例如：
 
 ```move
 {{#include ../../packages/reference/sources/abilities.move:annotating_datatypes}}
 ```
 
-In this case: `Ignorable*` has the `drop` ability. `Pair*` and `MyVec*` both have `copy`, `drop`,
-and `store`.
+在这种情况下：`Ignorable*`具有`drop`能力。`Pair*`和`MyVec*`都具有`copy`、`drop`和`store`。
 
-All of these abilities have strong guarantees over these gated operations. The operation can be
-performed on the value only if it has that ability; even if the value is deeply nested inside of
-some other collection!
+所有这些能力对这些受限制的操作具有强保证。只有当值具有这种能力时，才能对该值执行操作；即使该值深深嵌套在某个集合中也是如此！
 
-As such: when declaring a struct’s abilities, certain requirements are placed on the fields. All
-fields must satisfy these constraints. These rules are necessary so that structs satisfy the
-reachability rules for the abilities given above. If a struct is declared with the ability...
+因此：在声明结构体的能力时，对字段有一定的要求。所有字段必须满足这些约束。这些规则是必要的，以便结构体满足上述能力的可达性规则。如果一个结构体被声明具有能力...
 
-- `copy`, all fields must have `copy`.
-- `drop`, all fields must have `drop`.
-- `store`, all fields must have `store`.
-- `key`, all fields must have `store`.
-  - `key` is the only ability currently that doesn’t require itself.
+- `copy`，所有字段必须具有`copy`。
+- `drop`，所有字段必须具有`drop`。
+- `store`，所有字段必须具有`store`。
+- `key`，所有字段必须具有`store`。
+  - `key`是目前唯一不要求自身的能力。
 
-An enum can have any of these abilities with the exception of `key`, which enums cannot have because
-they cannot be top-level values (objects) in storage. The same rules apply to fields of enum
-variants as they do for struct fields though. In particular, if an enum is declared with the
-ability...
+枚举可以具有上述任何能力，除了`key`，因为枚举不能作为存储中的顶级值（对象）。对于枚举变体的字段，规则与结构体字段相同。如果枚举被声明具有能力...
 
-- `copy`, all fields of all variants must have `copy`.
-- `drop`, all fields of all variants must have `drop`.
-- `store`, all fields of all variants must have `store`.
-- `key`, is not allowed on enums as previously mentioned.
+- `copy`，所有变体的所有字段必须具有`copy`。
+- `drop`，所有变体的所有字段必须具有`drop`。
+- `store`，所有变体的所有字段必须具有`store`。
+- `key`，枚举不允许具有此能力。
 
-For example:
+例如：
 
 ```move
-// A struct without any abilities
+// 一个没有任何能力的结构体
 public struct NoAbilities {}
 
 public struct WantsCopy has copy {
-    f: NoAbilities, // ERROR 'NoAbilities' does not have 'copy'
+    f: NoAbilities, // 错误 'NoAbilities' 不具有 'copy'
 }
 
 public enum WantsCopyEnum has copy {
     Variant1
-    Variant2(NoAbilities), // ERROR 'NoAbilities' does not have 'copy'
+    Variant2(NoAbilities), // 错误 'NoAbilities' 不具有 'copy'
 }
 ```
 
-and similarly:
+同样地：
 
 ```move
-// A struct without any abilities
+// 一个没有任何能力的结构体
 public struct NoAbilities {}
 
 public struct MyData has key {
-    f: NoAbilities, // Error 'NoAbilities' does not have 'store'
+    f: NoAbilities, // 错误 'NoAbilities' 不具有 'store'
 }
 
 public struct MyDataEnum has store {
     Variant1,
-    Variant2(NoAbilities), // Error 'NoAbilities' does not have 'store'
+    Variant2(NoAbilities), // 错误 'NoAbilities' 不具有 'store'
 }
 ```
 
-## Conditional Abilities and Generic Types
+## 条件能力和泛型类型
 
-When abilities are annotated on a generic type, not all instances of that type are guaranteed to
-have that ability. Consider this struct declaration:
+当能力标注在泛型类型上时，并不是该类型的所有实例都保证具有该能力。考虑以下结构体声明：
 
 ```move
 {{#include ../../packages/reference/sources/abilities.move:conditional_abilities}}
 ```
 
-It might be very helpful if `Cup` could hold any type, regardless of its abilities. The type system
-can _see_ the type parameter, so it should be able to remove abilities from `Cup` if it _sees_ a
-type parameter that would violate the guarantees for that ability.
+如果`Cup`能够容纳任何类型，而不考虑其能力，那将非常有帮助。类型系统可以_看到_类型参数，因此如果它_看到_一个类型参数会违反该能力的保证，它应该能够从`Cup`中删除该能力。
 
-This behavior might sound a bit confusing at first, but it might be more understandable if we think
-about collection types. We could consider the builtin type `vector` to have the following type
-declaration:
+这种行为一开始可能听起来有点混乱，但如果我们考虑集合类型，它可能会更容易理解。我们可以将内建类型`vector`看作具有以下类型声明：
 
 ```move
 vector<T> has copy, drop, store;
 ```
 
-We want `vector`s to work with any type. We don't want separate `vector` types for different
-abilities. So what are the rules we would want? Precisely the same that we would want with the field
-rules above. So, it would be safe to copy a `vector` value only if the inner elements can be copied.
-It would be safe to ignore a `vector` value only if the inner elements can be ignored/dropped. And,
-it would be safe to put a `vector` in storage only if the inner elements can be in storage.
+我们希望`vector`能与任何类型一起工作。我们不希望为不同的能力创建单独的`vector`类型。那么我们希望的规则是什么？正是我们在上述字段规则中希望的规则。因此，只有当内部元素可以复制时，才可以复制`vector`值。只有当内部元素可以忽略/丢弃时，才可以忽略`vector`值。而且，只有当内部元素可以存在于存储中时，才可以将`vector`放入存储中。
 
-To have this extra expressiveness, a type might not have all the abilities it was declared with
-depending on the instantiation of that type; instead, the abilities a type will have depends on both
-its declaration **and** its type arguments. For any type, type parameters are pessimistically
-assumed to be used inside of the struct, so the abilities are only granted if the type parameters
-meet the requirements described above for fields. Taking `Cup` from above as an example:
+为了具有这种额外的表达能力，类型可能没有它声明的所有能力，具体取决于该类型的实例化；相反，一个类型将具有的能力取决于其声明**和**其类型参数。对于任何类型，类型参数被悲观地假设用于结构体内部，因此只有当类型参数满足上述字段的要求时，才授予能力。以上面的`Cup`为例：
 
-- `Cup` has the ability `copy` only if `T` has `copy`.
-- It has `drop` only if `T` has `drop`.
-- It has `store` only if `T` has `store`.
-- It has `key` only if `T` has `store`.
+- 只有当`T`具有`copy`时，`Cup`才具有`copy`能力。
+- 只有当`T
 
-Here are examples for this conditional system for each ability:
+`具有`drop`时，它才具有`drop`能力。
+- 只有当`T`具有`store`时，它才具有`store`能力。
+- 只有当`T`具有`store`时，它才具有`key`能力。
 
-### Example: conditional `copy`
+以下是每种能力的条件系统示例：
+
+### 示例：条件`copy`
 
 ```move
 public struct NoAbilities {}
@@ -214,24 +161,24 @@ public struct S has copy, drop { f: bool }
 public struct Cup<T> has copy, drop, store { item: T }
 
 fun example(c_x: Cup<u64>, c_s: Cup<S>) {
-    // Valid, 'Cup<u64>' has 'copy' because 'u64' has 'copy'
+    // 有效，'Cup<u64>'具有'copy'，因为'u64'具有'copy'
     let c_x2 = copy c_x;
-    // Valid, 'Cup<S>' has 'copy' because 'S' has 'copy'
+    // 有效，'Cup<S>'具有'copy'，因为'S'具有'copy'
     let c_s2 = copy c_s;
 }
 
 fun invalid(c_account: Cup<signer>, c_n: Cup<NoAbilities>) {
-    // Invalid, 'Cup<signer>' does not have 'copy'.
-    // Even though 'Cup' was declared with copy, the instance does not have 'copy'
-    // because 'signer' does not have 'copy'
+    // 无效，'Cup<signer>'不具有'copy'。
+    // 即使'Cup'声明了copy，实例也不具有'copy'，
+    // 因为'signer'不具有'copy'
     let c_account2 = copy c_account;
-    // Invalid, 'Cup<NoAbilities>' does not have 'copy'
-    // because 'NoAbilities' does not have 'copy'
+    // 无效，'Cup<NoAbilities>'不具有'copy'，
+    // 因为'NoAbilities'不具有'copy'
     let c_n2 = copy c_n;
 }
 ```
 
-### Example: conditional `drop`
+### 示例：条件`drop`
 
 ```move
 public struct NoAbilities {}
@@ -239,72 +186,72 @@ public struct S has copy, drop { f: bool }
 public struct Cup<T> has copy, drop, store { item: T }
 
 fun unused() {
-    Cup<bool> { item: true }; // Valid, 'Cup<bool>' has 'drop'
-    Cup<S> { item: S { f: false }}; // Valid, 'Cup<S>' has 'drop'
+    Cup<bool> { item: true }; // 有效，'Cup<bool>'具有'drop'
+    Cup<S> { item: S { f: false }}; // 有效，'Cup<S>'具有'drop'
 }
 
 fun left_in_local(c_account: Cup<signer>): u64 {
     let c_b = Cup<bool> { item: true };
     let c_s = Cup<S> { item: S { f: false }};
-    // Valid return: 'c_account', 'c_b', and 'c_s' have values
-    // but 'Cup<signer>', 'Cup<bool>', and 'Cup<S>' have 'drop'
+    // 有效返回：'c_account'、'c_b'和'c_s'具有值
+    // 但'Cup<signer>'、'Cup<bool>'和'Cup<S>'具有'drop'
     0
 }
 
 fun invalid_unused() {
-    // Invalid, Cannot ignore 'Cup<NoAbilities>' because it does not have 'drop'.
-    // Even though 'Cup' was declared with 'drop', the instance does not have 'drop'
-    // because 'NoAbilities' does not have 'drop'
+    // 无效，不能忽略'Cup<NoAbilities>'，因为它不具有'drop'。
+    // 即使'Cup'声明了'drop'，实例也不具有'drop'，
+    // 因为'NoAbilities'不具有'drop'
     Cup<NoAbilities> { item: NoAbilities {} };
 }
 
 fun invalid_left_in_local(): u64 {
     let n = Cup<NoAbilities> { item: NoAbilities {} };
-    // Invalid return: 'c_n' has a value
-    // and 'Cup<NoAbilities>' does not have 'drop'
+    // 无效返回：'c_n'具有一个值
+    // 而'Cup<NoAbilities>'不具有'drop'
     0
 }
 ```
 
-### Example: conditional `store`
+### 示例: 条件性 `store` 能力
 
 ```move
 public struct Cup<T> has copy, drop, store { item: T }
 
-// 'MyInnerData is declared with 'store' so all fields need 'store'
+// 'MyInnerData' 声明时带有 'store' 能力,所以所有字段都需要 'store' 能力
 struct MyInnerData has store {
-    yes: Cup<u64>, // Valid, 'Cup<u64>' has 'store'
-    // no: Cup<signer>, Invalid, 'Cup<signer>' does not have 'store'
+    yes: Cup<u64>, // 有效,因为 'Cup<u64>' 有 'store' 能力
+    // no: Cup<signer>, 无效,因为 'Cup<signer>' 没有 'store' 能力
 }
 
-// 'MyData' is declared with 'key' so all fields need 'store'
+// 'MyData' 声明时带有 'key' 能力,所以所有字段都需要 'store' 能力
 struct MyData has key {
-    yes: Cup<u64>, // Valid, 'Cup<u64>' has 'store'
-    inner: Cup<MyInnerData>, // Valid, 'Cup<MyInnerData>' has 'store'
-    // no: Cup<signer>, Invalid, 'Cup<signer>' does not have 'store'
+    yes: Cup<u64>, // 有效,因为 'Cup<u64>' 有 'store' 能力
+    inner: Cup<MyInnerData>, // 有效,因为 'Cup<MyInnerData>' 有 'store' 能力
+    // no: Cup<signer>, 无效,因为 'Cup<signer>' 没有 'store' 能力
 }
 ```
 
-### Example: conditional `key`
+### 示例: 条件性 `key` 能力
 
 ```move
 public struct NoAbilities {}
 public struct MyData<T> has key { f: T }
 
 fun valid(addr: address) acquires MyData {
-    // Valid, 'MyData<u64>' has 'key'
+    // 有效,因为 'MyData<u64>' 有 'key' 能力
     transfer(addr, MyData<u64> { f: 0 });
 }
 
 fun invalid(addr: address) {
-   // Invalid, 'MyData<NoAbilities>' does not have 'key'
+   // 无效,因为 'MyData<NoAbilities>' 没有 'key' 能力
    transfer(addr, MyData<NoAbilities> { f: NoAbilities {} })
-   // Invalid, 'MyData<NoAbilities>' does not have 'key'
+   // 无效,因为 'MyData<NoAbilities>' 没有 'key' 能力
    borrow<NoAbilities>(addr);
-   // Invalid, 'MyData<NoAbilities>' does not have 'key'
+   // 无效,因为 'MyData<NoAbilities>' 没有 'key' 能力
    borrow_mut<NoAbilities>(addr);
 }
 
-// Mock storage operation
+// 模拟存储操作
 native public fun transfer<T: key>(addr: address, value: T);
 ```

@@ -4,32 +4,20 @@ title: Move Book
 custom_edit_url: https://github.com/move-language/move/edit/main/language/documentation/book/README.md
 ---
 
-In order to update the Move book and preview changes to it you'll need to install
-[`mdbook`](https://rust-lang.github.io/mdBook/guide/installation.html). You can do this via
-`cargo install mdbook`.
+为了更新 Move 书籍并预览更改，您需要安装 [`mdbook`](https://rust-lang.github.io/mdBook/guide/installation.html)。您可以通过 `cargo install mdbook` 安装它。
 
-After installing mdbook, you can preview changes via either `mdbook serve`, or if you want the
-output to change as you make changes to the book you can use `mdbook watch`. More information on
-options can be found at the [mdbook website](https://rust-lang.github.io/mdBook/).
+安装完 mdbook 后，您可以通过 `mdbook serve` 预览更改，或者如果希望在对书籍进行更改时输出也随之改变，可以使用 `mdbook watch`。更多选项的信息可以在 [mdbook 网站](https://rust-lang.github.io/mdBook/) 上找到。
 
-Once you are happy with your changes to the Move book, you can create a PR to update the Move book
-website. This is the process that has been used in the past and is known to work, but there may be a
-better way:
+完成对 Move 书籍的更改后，您可以创建一个 PR 来更新 Move 书籍网站。以下是过去使用过的流程，已知是有效的，但可能会有更好的方法：
 
-1. Run `mdbook build` in this directory. This will create a directory called `book`. Copy this to
-   some location `L` outside of the Move git tree.
+1. 在此目录中运行 `mdbook build`。这将创建一个名为 `book` 的目录。将其复制到 Move git 树外的某个位置 `L`。
 
-2. Make sure your upstream is up-to-date and checkout to `upstream/gh-pages`.
+2. 确保您的上游仓库是最新的，并切换到 `upstream/gh-pages` 分支。
 
-3. Once you have checked out to `upstream/gh-pages`, make sure you are at the root of the repo. You
-   should see a number of `.html` files. You can now move all contents in `L` to this location:
-   `mv L/* .`
+3. 一旦切换到了 `upstream/gh-pages`，确保您位于仓库的根目录。您应该看到一些 `.html` 文件。现在可以将目录 `L` 中的所有内容移动到此位置：`mv L/* .`
 
-4. Once this is done inspect things to make sure the book looks the way you want. If everything
-   looks good submit a PR to the **`gh-pages`** branch of the main Move repo.
+4. 完成后检查一切是否符合您的预期。如果一切正常，请提交一个 PR 到 Move 主仓库的 **`gh-pages`** 分支。
 
-After this the normal PR process is followed. Once the PR has been accepted and lands the updated
-Move book should be visible immediately.
+完成后，按照正常的 PR 流程进行。一旦 PR 被接受并合并，更新后的 Move 书籍应该会立即显示在网站上。
 
-**NB:** When adding a new (sub)section to the book you _must_ include the new file in the
-`SUMMARY.md` file otherwise it will not appear in the updated book.
+**注意：** 当向书籍添加新的（子）章节时，**必须**在 `SUMMARY.md` 文件中包含新文件，否则它不会出现在更新后的书籍中。

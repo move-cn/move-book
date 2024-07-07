@@ -1,33 +1,31 @@
-# Bool
+# 布尔类型
 
-`bool` is Move's primitive type for boolean `true` and `false` values.
+`bool` 是 Sui Move 语言中用于表示布尔值 `true` 和 `false` 的原始类型。
 
-## Literals
+## 字面值
 
-Literals for `bool` are either `true` or `false`.
+布尔类型的字面值可以是 `true` 或 `false`。
 
-## Operations
+## 操作
 
-### Logical
+### 逻辑运算
 
-`bool` supports three logical operations:
+`bool` 支持三种逻辑运算：
 
-| Syntax                    | Description                  | Equivalent Expression                                               |
-| ------------------------- | ---------------------------- | ------------------------------------------------------------------- |
-| `&&`                      | short-circuiting logical and | `p && q` is equivalent to `if (p) q else false`                     |
-| <code>&vert;&vert;</code> | short-circuiting logical or  | <code>p &vert;&vert; q</code> is equivalent to `if (p) true else q` |
-| `!`                       | logical negation             | `!p` is equivalent to `if (p) false else true`                      |
+| 语法                      | 描述                       | 等效表达式                                                      |
+| ------------------------- | -------------------------- | --------------------------------------------------------------- |
+| `&&`                      | 短路逻辑与                  | `p && q` 等效于 `if (p) q else false`                             |
+| <code>&vert;&vert;</code> | 短路逻辑或                  | <code>p &vert;&vert; q</code> 等效于 `if (p) true else q`         |
+| `!`                       | 逻辑非                      | `!p` 等效于 `if (p) false else true`                              |
 
-### Control Flow
+### 控制流
 
-`bool` values are used in several of Move's control-flow constructs:
+`bool` 值在 Sui Move 的多个控制流结构中使用：
 
 - [`if (bool) { ... }`](../control-flow/conditionals.md)
 - [`while (bool) { .. }`](../control-flow/loops.md)
 - [`assert!(bool, u64)`](../abort-and-assert.md)
 
-## Ownership
+## 所有权
 
-As with the other scalar values built-in to the language, boolean values are implicitly copyable,
-meaning they can be copied without an explicit instruction such as
-[`copy`](../variables.md#move-and-copy).
+与语言中其他标量值一样，布尔值是隐式可复制的，这意味着它们可以在不需要显式指令（如 [`copy`](../variables.md#move-and-copy)）的情况下进行复制。

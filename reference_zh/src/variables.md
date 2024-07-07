@@ -1,39 +1,36 @@
-# Local Variables and Scope
+# Local Variables and Scope(局部变量和作用域)
 
-Local variables in Move are lexically (statically) scoped. New variables are introduced with the
-keyword `let`, which will shadow any previous local with the same name. Locals marked as `mut` are
-mutable and can be updated both directly and via a mutable reference.
+在 Move 中，局部变量是词法（静态）作用域的。新变量通过关键字 `let` 引入，这将遮蔽任何具有相同名称的先前局部变量。标记为 `mut` 的局部变量是可变的，可以直接修改或通过可变引用进行修改。
 
-## Declaring Local Variables
+## 声明局部变量
 
-### `let` bindings
+### `let` 绑定
 
-Move programs use `let` to bind variable names to values:
+Move 程序使用 `let` 将变量名称绑定到值：
 
 ```move
 let x = 1;
-let y = x + x:
+let y = x + x;
 ```
 
-`let` can also be used without binding a value to the local.
+`let` 也可以在不将值绑定到局部变量的情况下使用。
 
 ```move
 let x;
 ```
 
-The local can then be assigned a value later.
+然后可以在稍后为局部变量赋值。
 
 ```move
 let x;
 if (cond) {
-  x = 1
+  x = 1;
 } else {
-  x = 0
+  x = 0;
 }
 ```
 
-This can be very helpful when trying to extract a value from a loop when a default value cannot be
-provided.
+在无法提供默认值时，这在从循环中提取值时非常有用。
 
 ```move
 let x;
@@ -49,8 +46,7 @@ loop {
 }
 ```
 
-To modify a local variable _after_ it is assigned, or to borrow it mutably `&mut`, it must be
-declared as `mut`.
+要在赋值后修改局部变量，或者借用它的可变引用 `&mut`，必须将其声明为 `mut`。
 
 ```move
 let mut x = 0;
@@ -58,37 +54,35 @@ if (cond) x = x + 1;
 foo(&mut x);
 ```
 
-For more details see the section on [assignments](#assignments) below.
+有关更多详细信息，请参见下面的 [赋值](#assignments) 部分。
 
-### Variables must be assigned before use
+### 变量必须在使用前赋值
 
-Move's type system prevents a local variable from being used before it has been assigned.
+Move 的类型系统防止局部变量在赋值前使用。
 
 ```move
 let x;
-x + x // ERROR! x is used before being assigned
+x + x // 错误！x 在赋值前被使用
 ```
 
 ```move
 let x;
 if (cond) x = 0;
-x + x // ERROR! x does not have a value in all cases
+x + x // 错误！x 并不是在所有情况下都有值
 ```
 
 ```move
 let x;
 while (cond) x = 0;
-x + x // ERROR! x does not have a value in all cases
+x + x // 错误！x 并不是在所有情况下都有值
 ```
 
-### Valid variable names
+### 有效的变量名
 
-Variable names can contain underscores `_`, letters `a` to `z`, letters `A` to `Z`, and digits `0`
-to `9`. Variable names must start with either an underscore `_` or a letter `a` through `z`. They
-_cannot_ start with uppercase letters.
+变量名可以包含下划线 `_`、字母 `a` 到 `z`、字母 `A` 到 `Z` 和数字 `0` 到 `9`。变量名必须以下划线 `_` 或字母 `a` 到 `z` 开头。它们不能以大写字母开头。
 
 ```move
-// all valid
+// 所有合法的变量名
 let x = e;
 let _x = e;
 let _A = e;
@@ -96,22 +90,20 @@ let x0 = e;
 let xA = e;
 let foobar_123 = e;
 
-// all invalid
-let X = e; // ERROR!
-let Foo = e; // ERROR!
+// 所有非法的变量名
+let X = e; // 错误！
+let Foo = e; // 错误！
 ```
 
-### Type annotations
+### 类型注解
 
-The type of a local variable can almost always be inferred by Move's type system. However, Move
-allows explicit type annotations that can be useful for readability, clarity, or debuggability. The
-syntax for adding a type annotation is:
+局部变量的类型几乎总是可以通过 Move 的类型系统推断出来。然而，Move 允许显式的类型注解，这对于可读性、清晰性或调试非常有用。添加类型注解的语法是：
 
 ```move
-let x: T = e; // "Variable x of type T is initialized to expression e"
+let x: T = e; // "变量 x 的类型为 T，被初始化为表达式 e"
 ```
 
-Some examples of explicit type annotations:
+一些显式类型注解的例子：
 
 ```move
 module 0x42::example {
@@ -128,51 +120,43 @@ module 0x42::example {
 }
 ```
 
-Note that the type annotations must always be to the right of the pattern:
+注意，类型注解必须始终位于模式的右侧：
 
 ```move
-// ERROR! should be let (x, y): (&u64, &mut u64) = ...
+// 错误！应为 let (x, y): (&u64, &mut u64) = ...
 let (x: &u64, y: &mut u64) = (&0, &mut 1);
 ```
 
-### When annotations are necessary
+### 何时需要注解
 
-In some cases, a local type annotation is required if the type system cannot infer the type. This
-commonly occurs when the type argument for a generic type cannot be inferred. For example:
+在某些情况下，如果类型系统无法推断类型，则需要局部类型注解。这通常发生在无法推断泛型类型的类型参数时。例如：
 
 ```move
-let _v1 = vector[]; // ERROR!
-//        ^^^^^^^^ Could not infer this type. Try adding an annotation
-let v2: vector<u64> = vector[]; // no error
+let _v1 = vector[]; // 错误！
+//        ^^^^^^^^ 无法推断此类型。尝试添加注解
+let v2: vector<u64> = vector[]; // 无错误
 ```
 
-In a rarer case, the type system might not be able to infer a type for divergent code (where all the
-following code is unreachable). Both [`return`](./functions.md#return-expression) and
-[`abort`](./abort-and-assert.md) are expressions and can have any type. A
-[`loop`](./control-flow/loops.md) has type `()` if it has a `break` (or `T` if has a `break e` where
-`e: T`), but if there is no break out of the `loop`, it could have any type. If these types cannot
-be inferred, a type annotation is required. For example, this code:
+在较少见的情况下，如果类型系统无法推断出分歧代码（所有后续代码都不可达）的类型，也可能需要类型注解。`return` 和 `abort` 都是表达式，可以具有任何类型。如果一个 `loop` 具有 `break`，则其类型为 `()`（或者如果具有 `break e` 且 `e: T`，则类型为 `T`），但如果没有跳出 `loop`，它可以具有任何类型。如果这些类型无法推断，则需要类型注解。例如，此代码：
 
 ```move
 let a: u8 = return ();
 let b: bool = abort 0;
 let c: signer = loop ();
 
-let x = return (); // ERROR!
-//  ^ Could not infer this type. Try adding an annotation
-let y = abort 0; // ERROR!
-//  ^ Could not infer this type. Try adding an annotation
-let z = loop (); // ERROR!
-//  ^ Could not infer this type. Try adding an annotation
+let x = return (); // 错误！
+//  ^ 无法推断此类型。尝试添加注解
+let y = abort 0; // 错误！
+//  ^ 无法推断此类型。尝试添加注解
+let z = loop (); // 错误！
+//  ^ 无法推断此类型。尝试添加注解
 ```
 
-Adding type annotations to this code will expose other errors about dead code or unused local
-variables, but the example is still helpful for understanding this problem.
+为此代码添加类型注解将会暴露其他关于无效代码或未使用的局部变量的错误，但这个例子对于理解这个问题仍然有帮助。
 
-### Multiple declarations with tuples
+### 使用元组的多个声明
 
-`let` can introduce more than one local at a time using tuples. The locals declared inside the
-parenthesis are initialized to the corresponding values from the tuple.
+`let` 可以使用元组一次引入多个局部变量。括号内声明的局部变量初始化为元组中的相应值。
 
 ```move
 let () = ();
@@ -181,31 +165,29 @@ let (y0, y1, y2) = (0, 1, 2);
 let (z0, z1, z2, z3) = (0, 1, 2, 3);
 ```
 
-The type of the expression must match the arity of the tuple pattern exactly.
+表达式的类型必须完全匹配元组模式的元数。
 
 ```move
-let (x, y) = (0, 1, 2); // ERROR!
-let (x, y, z, q) = (0, 1, 2); // ERROR!
+let (x, y) = (0, 1, 2); // 错误！
+let (x, y, z, q) = (0, 1, 2); // 错误！
 ```
 
-You cannot declare more than one local with the same name in a single `let`.
+不能在单个 `let` 中声明多个具有相同名称的局部变量。
 
 ```move
-let (x, x) = 0; // ERROR!
+let (x, x) = 0; // 错误！
 ```
 
-The mutability of the local variables declared can be mixed.
+声明的局部变量的可变性可以混合。
 
 ```move
 let (mut x, y) = (0, 1);
 x = 1;
 ```
 
-### Multiple declarations with structs
+### 使用结构体的多个声明
 
-`let` can also introduce more than one local variables at a time when destructuring (or matching against) a
-struct. In this form, the `let` creates a set of local variables that are initialized to the values
-of the fields from a struct. The syntax looks like this:
+`let` 还可以在解构（或匹配）结构体时一次引入多个局部变量。在这种形式中，`let` 创建一组局部变量，这些变量被初始化为结构体字段的值。语法如下所示：
 
 ```move
 public struct T { f1: u64, f2: u64 }
@@ -217,25 +199,25 @@ let T { f1: local1, f2: local2 } = T { f1: 1, f2: 2 };
 // local2: u64
 ```
 
-Similarly for positional structs
+类似地，对于位置结构体：
 
 ```move
 public struct P(u64, u64)
 ```
 
-and
+和
 
 ```move
-let P (local1, local2) = P ( 1, 2 );
+let P (local1, local2) = P (1, 2);
 // local1: u64
 // local2: u64
 ```
 
-Here is a more complicated example:
+下面是一个更复杂的例子：
 
 ```move
 module 0x42::example {
-    public struct X(u64)
+    public struct X(u64);
     public struct Y { x1: X, x2: X }
 
     fun new_x(): X {
@@ -244,7 +226,7 @@ module 0x42::example {
 
     fun example() {
         let Y { x1: X(f), x2 } = Y { x1: new_x(), x2: new_x() };
-        assert!(f + x2.f == 2, 42);
+        assert!(f + x2.0 == 2, 42);
 
         let Y { x1: X(f1), x2: X(f2) } = Y { x1: new_x(), x2: new_x() };
         assert!(f1 + f2 == 2, 42);
@@ -252,42 +234,39 @@ module 0x42::example {
 }
 ```
 
-Fields of structs can serve double duty, identifying the field to bind _and_ the name of the
-variable. This is sometimes referred to as punning.
+结构体的字段可以起到双重作用，既标识要绑定的字段，又标识变量的名称。这有时被称为捣鬼（punning）。
 
 ```move
 let Y { x1, x2 } = e;
 ```
 
-is equivalent to:
+等价于：
 
 ```move
 let Y { x1: x1, x2: x2 } = e;
 ```
 
-As shown with tuples, you cannot declare more than one local with the same name in a single `let`.
+如元组所示，不能在单个 `let` 中声明多个具有相同名称的局部变量。
 
 ```move
-let Y { x1: x, x2: x } = e; // ERROR!
+let Y { x1: x, x2: x } = e; // 错误！
 ```
 
-And as with tuples, the mutability of the local variables declared can be mixed.
+同样地，声明的局部变量的可变性可以混合。
 
 ```move
 let Y { x1: mut x1, x2 } = e;
 ```
 
-Furthermore, the mutability of annotation can be applied to the punned fields. Giving the equivalent
-example
+此外，可变性注解可以应用于捣鬼字段。给出等价的例子：
 
 ```move
 let Y { mut x1, x2 } = e;
 ```
 
-### Destructuring against references
+### 针对引用的解构
 
-In the examples above for structs, the bound value in the let was moved, destroying the struct value
-and binding its fields.
+在上述结构体的例子中，`let` 中绑定的值被移动，销毁了结构体值并绑定其字段。
 
 ```move
 public struct T { f1: u64, f2: u64 }
@@ -299,10 +278,9 @@ let T { f1: local1, f2: local2 } = T { f1: 1, f2: 2 };
 // local2: u64
 ```
 
-In this scenario the struct value `T { f1: 1, f2: 2 }` no longer exists after the `let`.
+在这种情况下，结构体值 `T { f1: 1, f2: 2 }` 在 `let` 之后不再存在。
 
-If you wish instead to not move and destroy the struct value, you can borrow each of its fields. For
-example:
+如果您希望不移动和销毁结构体值，可以借用它的每个字段。例如：
 
 ```move
 let t = T { f1: 1, f2: 2 };
@@ -311,7 +289,7 @@ let T { f1: local1, f2: local2 } = &t;
 // local2: &u64
 ```
 
-And similarly with mutable references:
+同样地，对于可变引用：
 
 ```move
 let mut t = T { f1: 1, f2: 2 };
@@ -320,11 +298,11 @@ let T { f1: local1, f2: local2 } = &mut t;
 // local2: &mut u64
 ```
 
-This behavior can also work with nested structs.
+这种行为也适用于嵌套结构体。
 
 ```move
 module 0x42::example {
-    public struct X(u64)
+    public struct X(u64);
     public struct Y { x1: X, x2: X }
 
     fun new_x(): X {
@@ -335,7 +313,7 @@ module 0x42::example {
         let mut y = Y { x1: new_x(), x2: new_x() };
 
         let Y { x1: X(f), x2 } = &y;
-        assert!(*f + x2.f == 2, 42);
+        assert!(*f + x2.0 == 2, 42);
 
         let Y { x1: X(f1), x2: X(f2) } = &mut y;
         *f1 = *f1 + 1;
@@ -345,10 +323,9 @@ module 0x42::example {
 }
 ```
 
-### Ignoring Values
+### 忽略数值
 
-In `let` bindings, it is often helpful to ignore some values. Local variables that start with `_`
-will be ignored and not introduce a new variable
+在 `let` 绑定中，有时候忽略一些数值是很有帮助的。以 `_` 开头的局部变量会被忽略，不会引入新的变量。
 
 ```move
 fun three(): (u64, u64, u64) {
@@ -362,32 +339,30 @@ let (x2, _y, z2) = three();
 assert!(x1 + z1 == x2 + z2, 42);
 ```
 
-This can be necessary at times as the compiler will warn on unused local variables
+有时候这是必要的，因为编译器会对未使用的局部变量发出警告。
 
 ```move
-let (x1, y, z1) = three(); // WARNING!
-//       ^ unused local 'y'
+let (x1, y, z1) = three(); // 警告！
+//       ^ 未使用的局部变量 'y'
 ```
 
-### General `let` grammar
+### 通用的 `let` 语法
 
-All of the different structures in `let` can be combined! With that we arrive at this general
-grammar for `let` statements:
+所有 `let` 语句中的不同结构都可以结合在一起！由此得出了 `let` 语句的通用语法：
 
-> _let-binding_ → **let** _pattern-or-list_ _type-annotation_<sub>_opt_</sub> >
-> _initializer_<sub>_opt_</sub> > _pattern-or-list_ → _pattern_ | **(** _pattern-list_ **)** >
-> _pattern-list_ → _pattern_ **,**<sub>_opt_</sub> | _pattern_ **,** _pattern-list_ >
-> _type-annotation_ → **:** _type_ _initializer_ → **=** _expression_
+> _let-binding_ → **let** _pattern-or-list_ _type-annotation_<sub>_opt_</sub> _initializer_<sub>_opt_</sub>  
+> _pattern-or-list_ → _pattern_ | **(** _pattern-list_ **)**  
+> _pattern-list_ → _pattern_ **,**<sub>_opt_</sub> | _pattern_ **,** _pattern-list_  
+> _type-annotation_ → **:** _type_  
+> _initializer_ → **=** _expression_
 
-The general term for the item that introduces the bindings is a _pattern_. The pattern serves to
-both destructure data (possibly recursively) and introduce the bindings. The pattern grammar is as
-follows:
+引入绑定的项目的通用术语是 _pattern_。模式既用于解构数据（可能是递归的），也用于引入绑定。模式的语法如下：
 
-> _pattern_ → _local-variable_ | _struct-type_ **{** _field-binding-list_ **}** >
-> _field-binding-list_ → _field-binding_ **,**<sub>_opt_</sub> | _field-binding_ **,** >
-> _field-binding-list_ > _field-binding_ → _field_ | _field_ **:** _pattern_
+> _pattern_ → _local-variable_ | _struct-type_ **{** _field-binding-list_ **}**  
+> _field-binding-list_ → _field-binding_ **,**<sub>_opt_</sub> | _field-binding_ **,** _field-binding-list_  
+> _field-binding_ → _field_ | _field_ **:** _pattern_
 
-A few concrete examples with this grammar applied:
+使用此语法的几个具体示例：
 
 ```move
     let (x, y): (u64, u64) = (0, 1);
@@ -417,33 +392,30 @@ A few concrete examples with this grammar applied:
 //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ let-binding
 ```
 
-## Mutations
+## 变更
 
-### Assignments
+### 赋值
 
-After the local is introduced (either by `let` or as a function parameter), a `mut` local can be
-modified via an assignment:
+在引入局部变量后（通过 `let` 或作为函数参数），可以通过赋值修改 `mut` 局部变量：
 
 ```move
 x = e
 ```
 
-Unlike `let` bindings, assignments are expressions. In some languages, assignments return the value
-that was assigned, but in Move, the type of any assignment is always `()`.
+与 `let` 绑定不同，赋值是表达式。在某些语言中，赋值返回被赋的值，但在 Move 中，任何赋值的类型始终为 `()`。
 
 ```move
 (x = e: ())
 ```
 
-Practically, assignments being expressions means that they can be used without adding a new
-expression block with braces (`{`...`}`).
+实际上，赋值作为表达式意味着它们可以在不使用大括号（`{`...`}`）添加新表达式块的情况下使用。
 
 ```move
 let x;
 if (cond) x = 1 else x = 2;
 ```
 
-The assignment uses the similar pattern syntax scheme as `let` bindings, but with absence of `mut`:
+赋值使用与 `let` 绑定类似的模式语法方案，但不包含 `mut`：
 
 ```move
 module 0x42::example {
@@ -453,7 +425,7 @@ module 0x42::example {
         X { f: 1 }
     }
 
-    // Note: this example will complain about unused variables and assignments.
+    // 注意：此示例会有关于未使用变量和赋值的警告。
     fun example() {
        let (mut x, mut y, mut f, mut g) = (0, 0, 0, 0);
 
@@ -465,19 +437,17 @@ module 0x42::example {
 }
 ```
 
-Note that a local variable can only have one type, so the type of the local cannot change between
-assignments.
+注意，局部变量只能有一种类型，因此在赋值之间不能改变局部变量的类型。
 
 ```move
 let mut x;
 x = 0;
-x = false; // ERROR!
+x = false; // 错误！
 ```
 
-### Mutating through a reference
+### 通过引用进行修改
 
-In addition to directly modifying a local with assignment, a `mut` local can be modified via a
-mutable reference `&mut`.
+除了直接使用赋值修改局部变量外，还可以通过可变引用 `&mut` 修改 `mut` 局部变量。
 
 ```move
 let mut x = 0;
@@ -486,9 +456,9 @@ let r = &mut x;
 assert!(x == 1, 42);
 ```
 
-This is particularly useful if either:
+这特别有用，如果：
 
-(1) You want to modify different variables depending on some condition.
+(1) 你想根据某些条件修改不同的变量。
 
 ```move
 let mut x = 0;
@@ -497,14 +467,14 @@ let r = if (cond) &mut x else &mut y;
 *r = *r + 1;
 ```
 
-(2) You want another function to modify your local value.
+(2) 你希望另一个函数修改你的局部值。
 
 ```move
 let mut x = 0;
 modify_ref(&mut x);
 ```
 
-This sort of modification is how you modify structs and vectors!
+这种修改方式也适用于修改结构体和向量！
 
 ```move
 let mut v = vector[];
@@ -512,37 +482,35 @@ vector::push_back(&mut v, 100);
 assert!(*vector::borrow(&v, 0) == 100, 42);
 ```
 
-For more details, see [Move references](./primitive-types/references.md).
+更多细节请参阅 [Move references](./primitive-types/references.md)。
 
-## Scopes
+## 作用域
 
-Any local declared with `let` is available for any subsequent expression, _within that scope_.
-Scopes are declared with expression blocks, `{`...`}`.
+任何用 `let` 声明的局部变量，在其后的任何表达式中均可用，在该作用域内有效。作用域由表达式块 `{`...`}` 声明。
 
-Locals cannot be used outside of the declared scope.
+局部变量不能在声明的作用域之外使用。
 
 ```move
 let x = 0;
 {
     let y = 1;
 };
-x + y // ERROR!
-//  ^ unbound local 'y'
+x + y // 错误！
+//  ^ 未绑定的局部变量 'y'
 ```
 
-But, locals from an outer scope _can_ be used in a nested scope.
+但是，外部作用域的局部变量可以在嵌套作用域中使用。
 
 ```move
 {
     let x = 0;
     {
-        let y = x + 1; // valid
+        let y = x + 1; // 合法
     }
 }
 ```
 
-Locals can be mutated in any scope where they are accessible. That mutation survives with the local,
-regardless of the scope that performed the mutation.
+局部变量可以在其可访问的任何作用域中进行修改。该变更将随着局部变量一起生存，不论执行变更的作用域如何。
 
 ```move
 let mut x = 0;
@@ -555,61 +523,53 @@ assert!(x == 1, 42);
 assert!(x == 2, 42);
 ```
 
-### Expression Blocks
+### 表达式块
 
-An expression block is a series of statements separated by semicolons (`;`). The resulting value of
-an expression block is the value of the last expression in the block.
+表达式块是一系列由分号 (`;`) 分隔的语句。表达式块的结果值是块中最后一个表达式的值。
 
 ```move
 { let x = 1; let y = 1; x + y }
 ```
 
-In this example, the result of the block is `x + y`.
+在这个例子中，块的结果是 `x + y` 的值。
 
-A statement can be either a `let` declaration or an expression. Remember that assignments (`x = e`)
-are expressions of type `()`.
+语句可以是 `let` 声明或表达式。请记住，赋值语句 (`x = e`) 是类型为 `()` 的表达式。
 
 ```move
 { let x; let y = 1; x = 1; x + y }
 ```
 
-Function calls are another common expression of type `()`. Function calls that modify data are
-commonly used as statements.
+函数调用是另一种常见的类型为 `()` 的表达式。修改数据的函数调用通常用作语句。
 
 ```move
 { let v = vector[]; vector::push_back(&mut v, 1); v }
 ```
 
-This is not just limited to `()` types---any expression can be used as a statement in a sequence!
+这不仅限于 `()` 类型 --- 任何表达式都可以作为序列中的语句使用！
 
 ```move
 {
     let x = 0;
-    x + 1; // value is discarded
-    x + 2; // value is discarded
-    b"hello"; // value is discarded
+    x + 1; // 值被丢弃
+    x + 2; // 值被丢弃
+    b"hello"; // 值被丢弃
 }
 ```
 
-But! If the expression contains a resource (a value without the `drop` [ability](./abilities.md)),
-you will get an error. This is because Move's type system guarantees that any value that is dropped
-has the `drop` [ability](./abilities.md). (Ownership must be transferred or the value must be
-explicitly destroyed within its declaring module.)
+但是！如果表达式中包含资源（即没有 `drop` [能力](./abilities.md) 的值），你会收到错误消息。这是因为 Move 的类型系统保证任何被丢弃的值都具有 `drop` [能力](./abilities.md)。（所有权必须在声明模块内部转移或显式销毁该值。）
 
 ```move
 {
     let x = 0;
-    Coin { value: x }; // ERROR!
-//  ^^^^^^^^^^^^^^^^^ unused value without the `drop` ability
+    Coin { value: x }; // 错误！
+//  ^^^^^^^^^^^^^^^^^ 未使用值且缺少 `drop` 能力
     x
 }
 ```
 
-If a final expression is not present in a block---that is, if there is a trailing semicolon `;`,
-there is an implicit [unit `()` value](https://en.wikipedia.org/wiki/Unit_type). Similarly, if the
-expression block is empty, there is an implicit unit `()` value.
+如果在块中没有最终表达式 --- 也就是说，如果有一个尾随的分号 `;`，那么会有一个隐式的 [单元 `()` 值](https://en.wikipedia.org/wiki/Unit_type)。同样地，如果表达式块为空，也有一个隐式的单元 `()` 值。
 
-Both are equivalent
+两者是等效的
 
 ```move
 { x = x + 1; 1 / x; }
@@ -619,7 +579,7 @@ Both are equivalent
 { x = x + 1; 1 / x; () }
 ```
 
-Similarly both are equivalent
+同样地，这两者也是等效的
 
 ```move
 { }
@@ -629,9 +589,7 @@ Similarly both are equivalent
 { () }
 ```
 
-An expression block is itself an expression and can be used anyplace an expression is used. (Note:
-The body of a function is also an expression block, but the function body cannot be replaced by
-another expression.)
+表达式块本身是一个表达式，并且可以在任何需要表达式的地方使用。（注意：函数体本身是一个表达式块，但函数体不能被其他表达式替换。）
 
 ```move
 let my_vector: vector<vector<u8>> = {
@@ -642,53 +600,48 @@ let my_vector: vector<vector<u8>> = {
 };
 ```
 
-(The type annotation is not needed in this example and only added for clarity.)
+（在这个例子中不需要类型注释，只是为了清晰起见添加的。）
 
-### Shadowing
+### 遮蔽
 
-If a `let` introduces a local variable with a name already in scope, that previous variable can no
-longer be accessed for the rest of this scope. This is called _shadowing_.
+如果 `let` 引入的局部变量与作用域中已有的变量同名，那么之前的变量在此作用域后将无法访问。这称为 _遮蔽_。
 
 ```move
 let x = 0;
 assert!(x == 0, 42);
 
-let x = 1; // x is shadowed
+let x = 1; // x 被遮蔽
 assert!(x == 1, 42);
 ```
 
-When a local is shadowed, it does not need to retain the same type as before.
+当一个局部变量被遮蔽时，它不需要保留之前的类型。
 
 ```move
 let x = 0;
 assert!(x == 0, 42);
 
-let x = b"hello"; // x is shadowed
+let x = b"hello"; // x 被遮蔽
 assert!(x == b"hello", 42);
 ```
 
-After a local is shadowed, the value stored in the local still exists, but will no longer be
-accessible. This is important to keep in mind with values of types without the
-[`drop` ability](./abilities.md), as ownership of the value must be transferred by the end of the
-function.
+局部变量被遮蔽后，其值仍然存在，但将不再可访问。这点在处理没有 [`drop` 能力](./abilities.md) 的类型的值时尤为重要，因为该值的所有权必须在函数结束前转移。
 
 ```move
 module 0x42::example {
     public struct Coin has store { value: u64 }
 
     fun unused_coin(): Coin {
-        let x = Coin { value: 0 }; // ERROR!
-//          ^ This local still contains a value without the `drop` ability
+        let x = Coin { value: 0 }; // 错误！
+//          ^ 此局部变量仍包含没有 `drop` 能力的值
         x.value = 1;
         let x = Coin { value: 10 };
         x
-//      ^ Invalid return
+//      ^ 返回无效
     }
 }
 ```
 
-When a local is shadowed inside a scope, the shadowing only remains for that scope. The shadowing is
-gone once that scope ends.
+当局部变量在作用域内被遮蔽时，遮蔽仅在该作用域内有效。一旦作用域结束，遮蔽就消失了。
 
 ```move
 let x = 0;
@@ -699,7 +652,7 @@ let x = 0;
 assert!(x == 0, 42);
 ```
 
-Remember, locals can change type when they are shadowed.
+请记住，局部变量在被遮蔽时可以改变类型。
 
 ```move
 let x = 0;
@@ -710,16 +663,11 @@ let x = 0;
 assert!(x == 0, 42);
 ```
 
-## Move and Copy
+## Move 和 Copy
 
-All local variables in Move can be used in two ways, either by `move` or `copy`. If one or the other
-is not specified, the Move compiler is able to infer whether a `copy` or a `move` should be used.
-This means that in all of the examples above, a `move` or a `copy` would be inserted by the
-compiler. A local variable cannot be used without the use of `move` or `copy`.
+在 Move 中，所有局部变量可以通过 `move` 或 `copy` 两种方式使用。如果没有明确指定其中一种，Move 编译器可以推断出应该使用 `copy` 还是 `move`。这意味着在上述所有例子中，编译器会插入 `move` 或 `copy`。
 
-`copy` will likely feel the most familiar coming from other programming languages, as it creates a
-new copy of the value inside of the variable to use in that expression. With `copy`, the local
-variable can be used more than once.
+从其他编程语言过来的人会更熟悉 `copy`，因为它会创建变量内部值的新副本以供表达式使用。使用 `copy`，局部变量可以多次使用。
 
 ```move
 let x = 0;
@@ -727,49 +675,43 @@ let y = copy x + 1;
 let z = copy x + 2;
 ```
 
-Any value with the `copy` [ability](./abilities.md) can be copied in this way, and will be copied
-implicitly unless a `move` is specified.
+任何具有 `copy` [能力](./abilities.md) 的值都可以以此方式复制，并且除非指定了 `move`，否则会自动复制。
 
-`move` takes the value out of the local variable _without_ copying the data. After a `move` occurs,
-the local variable is unavailable, even if the value's type has the `copy`
-[ability](./abilities.md).
+`move` 将值从局部变量中取出，而不复制数据。一旦发生 `move`，该局部变量将不再可用，即使值的类型具有 `copy`
+[能力](./abilities.md) 也是如此。
 
 ```move
 let x = 1;
 let y = move x + 1;
-//      ------ Local was moved here
-let z = move x + 2; // Error!
-//      ^^^^^^ Invalid usage of local 'x'
+//      ------ 局部变量在此处被移动
+let z = move x + 2; // 错误！
+//      ^^^^^^ 无效使用局部变量 'x'
 y + z
 ```
 
-### Safety
+### 安全性
 
-Move's type system will prevent a value from being used after it is moved. This is the same safety
-check described in [`let` declaration](#let-bindings) that prevents local variables from being used
-before it is assigned a value.
+Move 的类型系统将阻止在值移动后继续使用该值。这与[`let`声明](#let-bindings)中描述的安全检查相同，防止局部变量在分配值之前被使用。
 
-<!-- For more information, see TODO future section on ownership and move semantics. -->
+<!-- 更多信息，请参见 TODO 有关所有权和移动语义的未来部分。 -->
 
-### Inference
+### 推断
 
-As mentioned above, the Move compiler will infer a `copy` or `move` if one is not indicated. The
-algorithm for doing so is quite simple:
+如上所述，如果未指定 `copy` 或 `move`，Move 编译器会推断出应该使用 `copy` 还是 `move`。该算法非常简单：
 
-- Any value with the `copy` [ability](./abilities.md) is given a `copy`.
-- Any reference (both mutable `&mut` and immutable `&`) is given a `copy`.
-  - Except under special circumstances where it is made a `move` for predictable borrow checker
-    errors. This will happen once the reference is no longer used.
-- Any other value is given a `move`.
+- 任何具有 `copy` [能力](./abilities.md) 的值被视为 `copy`。
+- 任何引用（可变 `&mut` 和不可变 `&`）被视为 `copy`。
+  - 除了在特殊情况下，为了可预测的借用检查错误而被视为 `move`。这将在引用不再使用时发生。
+- 其他任何值被视为 `move`。
 
-Given the structs
+给定以下结构体
 
 ```move
 public struct Foo has copy, drop, store { f: u64 }
 public struct Coin has store { value: u64 }
 ```
 
-we have the following example
+我们有以下示例
 
 ```move
 let s = b"hello";
