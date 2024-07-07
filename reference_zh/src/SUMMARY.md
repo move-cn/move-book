@@ -27,7 +27,7 @@
 - [结构体](structs.md)
 - [枚举](enums.md)
 - [常量](constants.md)
-- [反向](generics.md)
+- [泛型](generics.md)
 - [能力](abilities.md)
 - [别名](uses.md)
 
