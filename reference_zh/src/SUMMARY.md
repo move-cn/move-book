@@ -8,43 +8,41 @@
 
 # 基础概念 
 
-- [Primitive Types](primitive-types.md)
-  - [Integers](primitive-types/integers.md)
-  - [Bool](primitive-types/bool.md)
-  - [Address](primitive-types/address.md)
-  - [Vector](primitive-types/vector.md)
-  - [References](primitive-types/references.md)
-  - [Tuples and Unit](primitive-types/tuples.md)
-- [Local Variables and Scopes](variables.md)
-- [Equality](equality.md)
-- [Abort and Assert](abort-and-assert.md)
-- [Control Flow](control-flow.md)
-  - [Conditional Expressions](control-flow/conditionals.md)
-  - [Loops](control-flow/loops.md)
-  - [Labeled Control FLow](control-flow/labeled-control-flow.md)
-  - [Patterm Matching](control-flow/pattern-matching.md)
-- [Functions](functions.md)
-- [Structs](structs.md)
-- [Enums](enums.md)
-- [Constants](constants.md)
-- [Generics](generics.md)
-- [Type Abilities](abilities.md)
-- [Uses and Aliases](uses.md)
+- [基本数据类型](primitive-types.md)
+  - [整型](primitive-types/integers.md)
+  - [布尔类型](primitive-types/bool.md)
+  - [地址类型](primitive-types/address.md)
+  - [数组](primitive-types/vector.md)
+  - [引用](primitive-types/references.md)
+  - [元组和单元](primitive-types/tuples.md)
+- [局部变量和作用域](variables.md)
+- [等式](equality.md)
+- [错误处理](abort-and-assert.md)
+- [流程控制](control-flow.md)
+  - [条件表达式](control-flow/conditionals.md)
+  - [循环](control-flow/loops.md)
+  - [流程控制标记](control-flow/labeled-control-flow.md)
+  - [模式匹配](control-flow/pattern-matching.md)
+- [方法](functions.md)
+- [结构体](structs.md)
+- [枚举](enums.md)
+- [常量](constants.md)
+- [反向](generics.md)
+- [能力](abilities.md)
+- [别名](uses.md)
 
 # 进阶概念
 
-- [Method Syntax](method-syntax.md)
-- [Index Syntax Methods](index-syntax.md)
+- [方法语法](method-syntax.md)
+- [方法索引](index-syntax.md)
 
 # 工具
 
-- [Packages](packages.md)
-- [Unit Tests](unit-testing.md)
+- [包](packages.md)
+- [单元测试](unit-testing.md)
 
 # 参考
 
-- [Coding Conventions](coding-conventions.md)
+- [代码约定](coding-conventions.md)
 
-# 废弃
 
-- [Friends](friends.md)
