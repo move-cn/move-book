@@ -14,6 +14,22 @@
 - Gas 对象 - 用于支付交易费用的 `Coin` 对象；
 - Gas 价格和预算 - 交易的费用；
 
+## 输入
+
+交易输入是传递给交易的参数，分为两种类型：
+- 纯参数: 这些参数大多是 [基本类型](../move-basics/primitive-types.html)，并包含一些额外的扩展。
+纯参数可以是以下几种：
+    - [`bool`](../move-basics/primitive-types.html#booleans)。
+    - [unsigned integer](../move-basics/primitive-types.html#integer-types) (`u8`，`u16`，`u32`，`u64`，`u128`，`u256`)。
+    - [`address`](../move-basics/address.html)。
+    - [`std::string::String`](../move-basics/string.html)，UTF8 字符串。
+    - [`std::ascii::String`](../move-basics/string.html#ascii-strings)，ASCII 字符串。
+    - [`vector<T>`](../move-basics/vector.html)，其中 `T` 是纯类型。
+    - [`std::option::Option<T>`](../move-basics/option.html), 其中 `T` 是纯类型。
+    - [`std::object::ID`](../storage/uid-and-id.html)，通常指向一个对象。参见 [什么是对象](../object/object-model.html)。
+- 对象参数: 这些参数是交易将要访问的对象或对象的引用。对象参数必须是共享对象、冻结对象，或交易发送者拥有的对象，才能保证交易成功。
+更多信息请参见 [对象模型](../object/index.html).
+
 ## 命令
 
 Sui 的交易可以包含多个命令。每个命令可以是一个内置命令（如发布一个包），或者是对已发布包中函数的调用。命令按照在交易中列出的顺序依次执行，并且可以使用前面命令的结果，形成一个链条。交易要么完全成功，要么完全失败。

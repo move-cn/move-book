@@ -31,7 +31,7 @@ Move 中的所有原始类型都表现得像是具有 _copy_ 和 _drop_ 能力�
 Move 中的所有本机类型都具有 `copy` 能力。这包括：
 
 - [布尔值](./../move-basics/primitive-types.md#booleans)
-- [无符号整数](./../move-basics/primitive-types.md#integers)
+- [无符号整数](./../move-basics/primitive-types.md#integer-types)
 - [向量](./../move-basics/vector.md)
 - [地址](./../move-basics/address.md)
 

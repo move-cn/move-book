@@ -109,7 +109,7 @@
   - [时间](./programmability/events.md)
   - [Balance & Coin]() <!-- ./programmability/balance-and-coin.md) -->
   - [Sui Framework](./programmability/sui-framework.md)
-  - [设计模式: 烫手山芋]() <!-- ./programmability/hot-potato.md) -->
+  - [设计模式: 烫手山芋](./programmability/hot-potato-pattern.md) <!-- ./programmability/hot-potato.md) -->
   - [设计模式: 请求]()
   - [设计模式: 对象能力]()
   - [升级]()<!-- (./programmability/package-upgrades.md) -->
