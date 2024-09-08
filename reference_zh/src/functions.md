@@ -1,13 +1,14 @@
 # Functions（函数）
 
-函数被声明在模块内部，并定义模块的逻辑和行为。函数可以被重用，可以作为其他函数的调用点或作为执行的入口点。
+函数被声明在模块内部，并定义模块的逻辑和行为。函数可以被重用，可以作为其他函数的调用点或作为执行的入
+口点。
 
 ## 声明
 
 函数使用 `fun` 关键字声明，后面跟着函数名、类型参数、参数列表、返回类型和函数体。
 
 ```text
-<visibility>? <entry>? fun <identifier><[type_parameters: constraint],*>([identifier: type],*): <return_type> <function_body>
+<visibility>? <entry>? <macro>? fun <identifier><[type_parameters: constraint],*>([identifier: type],*): <return_type> <function_body>
 ```
 
 例如
@@ -34,7 +35,8 @@ module b::other {
 }
 ```
 
-要允许从其他模块访问该函数，函数必须声明为 `public` 或 `public(package)`。与可见性相对应，一个 [`entry`](#entry-modifier) 函数可以作为执行的入口点。
+要允许从其他模块访问该函数，函数必须声明为 `public` 或 `public(package)`。与可见性相对应，一个
+[`entry`](#entry-modifier) 函数可以作为执行的入口点。
 
 #### `public` 可见性
 
@@ -61,7 +63,8 @@ module b::other {
 
 #### `public(package)` 可见性
 
-`public(package)` 可见性修饰符是 `public` 修饰符的一种更受限制的形式，用于更精确地控制函数的使用范围。`public(package)` 函数可以被：
+`public(package)` 可见性修饰符是 `public` 修饰符的一种更受限制的形式，用于更精确地控制函数的使用范围
+。`public(package)` 函数可以被：
 
 - 同一模块中定义的其他函数调用，
 - 同一包（同一地址）中定义的其他函数调用。
@@ -88,11 +91,13 @@ module b::other {
 
 #### 已废弃的 `public(friend)` 可见性
 
-在引入 `public(package)` 之前，`public(friend)` 用于允许有限的公共访问权限，但必须由被调用模块显式列出允许的模块列表。详细信息请参阅 [Friends](./friends.md)。
+在引入 `public(package)` 之前，`public(friend)` 用于允许有限的公共访问权限，但必须由被调用模块显式列
+出允许的模块列表。详细信息请参阅 [Friends](./friends.md)。
 
 ### `entry` 修饰符
 
-除了 `public` 函数外，可能还有一些函数希望用作执行的入口点。`entry` 修饰符设计用于允许模块函数发起执行，而无需将功能公开给其他模块。
+除了 `public` 函数外，可能还有一些函数希望用作执行的入口点。`entry` 修饰符设计用于允许模块函数发起执
+行，而无需将功能公开给其他模块。
 
 虽然 `entry` 函数可以作为 Move 程序的起始点，但它们并不限制于此用例。
 
@@ -114,9 +119,11 @@ module a::n {
 
 `entry` 函数可能对其参数和返回类型有限制。但这些限制是针对每个 Move 部署的特定情况的。
 
-关于 Sui 中 `entry` 函数的文档可以在 [这里找到](https://docs.sui.io/concepts/sui-move-concepts/entry-functions)。
+关于 Sui 中 `entry` 函数的文档可以在
+[这里找到](https://docs.sui.io/concepts/sui-move-concepts/entry-functions)。
 
-为了更轻松地进行测试，`entry` 函数可以从 [`#[test]` 和 `#[test_only]`](./unit-testing.md) 上下文中调用。
+为了更轻松地进行测试，`entry` 函数可以从 [`#[test]` 和 `#[test_only]`](./unit-testing.md) 上下文中调
+用。
 
 ```move
 module a::m {
@@ -130,9 +137,33 @@ module a::m_test {
 }
 ```
 
+### `macro` 修饰符
+
+与普通函数不同，宏函数在运行时不存在。相反，这些函数在编译期间在每个调用点内联替换。这些宏函数利用编
+译过程提供标准函数之外的功能，例如接受高阶 _lambda_-style 函数作为参数。这些 lambda 参数在编译期间也
+展开，允许将函数体的一部分作为参数传递给宏。例如，考虑以下简单的循环宏，其中循环体作为 lambda 传递：
+
+```move
+macro fun ntimes($n: u64, $body: |u64| -> ()) {
+    let i = 0;
+    while (i < $n) {
+        $body(i);
+        i = i + 1;
+    }
+}
+
+fun example() {
+    let mut sum = 0;
+    ntimes!(10, |x| sum = sum + x );
+}
+```
+
+有关更多信息，请参见[宏](./macros.md)
+
 ### 名称
 
-函数名称可以以字母 `a` 到 `z` 开头。在第一个字符之后，函数名称可以包含下划线 `_`，字母 `a` 到 `z`，字母 `A` 到 `Z`，或数字 `0` 到 `9`。
+函数名称可以以字母 `a` 到 `z` 开头。在第一个字符之后，函数名称可以包含下划线 `_`，字母 `a` 到 `z`，
+字母 `A` 到 `Z`，或数字 `0` 到 `9`。
 
 ```move
 fun fOO() {}
@@ -203,7 +234,8 @@ fun just_unit() { () }
 fun just_unit() { }
 ```
 
-正如在 [元组部分](./primitive-types/tuples.md) 提到的，这些元组 "值" 在运行时并不存在。这意味着返回单元 `()` 的函数在执行期间不返回任何值。
+正如在 [元组部分](./primitive-types/tuples.md) 提到的，这些元组 "值" 在运行时并不存在。这意味着返回
+单元 `()` 的函数在执行期间不返回任何值。
 
 ### 函数体
 
@@ -225,7 +257,8 @@ fun example(): u64 {
 
 某些函数没有指定函数体,而是由虚拟机(VM)提供函数体。这些函数被标记为`native`。
 
-如果不修改VM源代码,程序员无法添加新的原生函数。此外,`native`函数的目的是用于标准库代码或特定Move环境所需的功能。
+如果不修改 VM 源代码,程序员无法添加新的原生函数。此外,`native`函数的目的是用于标准库代码或特定 Move
+环境所需的功能。
 
 你可能会看到的大多数`native`函数都在标准库代码中,例如`vector`:
 
@@ -291,7 +324,7 @@ module b::other {
 }
 ```
 
-更多详情,请参见[Move泛型](./generics.md)。
+更多详情,请参见[Move 泛型](./generics.md)。
 
 ## 返回值
 
@@ -305,7 +338,8 @@ fun add(x: u64, y: u64): u64 {
 
 这里的返回值是`x + y`的结果。
 
-[如上所述](#function-body),函数的主体是一个[表达式块](./variables.md)。表达式块可以按顺序执行各种语句,块中的最后一个表达式将成为该块的值:
+[如上所述](#function-body),函数的主体是一个[表达式块](./variables.md)。表达式块可以按顺序执行各种语
+句,块中的最后一个表达式将成为该块的值:
 
 ```move
 fun double_and_add(x: u64, y: u64): u64 {
@@ -326,7 +360,8 @@ fun f1(): u64 { return 0 }
 fun f2(): u64 { 0 }
 ```
 
-这两个函数是等价的。在这个稍微复杂一点的例子中,函数将两个`u64`值相减,但如果第二个值太大,则提前返回`0`:
+这两个函数是等价的。在这个稍微复杂一点的例子中,函数将两个`u64`值相减,但如果第二个值太大,则提前返
+回`0`:
 
 ```move
 fun safe_sub(x: u64, y: u64): u64 {
@@ -337,7 +372,8 @@ fun safe_sub(x: u64, y: u64): u64 {
 
 注意,这个函数的主体也可以写成`if (y > x) 0 else x - y`。
 
-然而,`return`的真正优势在于可以在其他控制流结构的深处退出。在这个例子中,函数遍历一个向量以查找给定值的索引:
+然而,`return`的真正优势在于可以在其他控制流结构的深处退出。在这个例子中,函数遍历一个向量以查找给定值
+的索引:
 
 ```move
 use std::vector;

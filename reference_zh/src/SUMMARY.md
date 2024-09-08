@@ -6,7 +6,7 @@
 
 - [Modules](modules.md)
 
-# 基础概念 
+# 基础概念
 
 - [基本数据类型](primitive-types.md)
   - [整型](primitive-types/integers.md)
@@ -24,6 +24,7 @@
   - [流程控制标记](control-flow/labeled-control-flow.md)
   - [模式匹配](control-flow/pattern-matching.md)
 - [方法](functions.md)
+  - [宏函数](functions/macros.md)
 - [结构体](structs.md)
 - [枚举](enums.md)
 - [常量](constants.md)
@@ -44,5 +45,3 @@
 # 参考
 
 - [代码约定](coding-conventions.md)
-
-
