@@ -1,5 +1,3 @@
-以下是对英文文章的翻译：
-
 # 存储功能
 
 定义主要存储操作的模块是 `sui::transfer`。它在所有依赖[Sui 框架](./../programmability/sui-framework.md)的包中都是隐式导入的，因此，像其他隐式导入的模块（例如 `std::option` 或 `std::vector`）一样，不需要添加 `use` 声明。

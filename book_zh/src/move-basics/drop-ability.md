@@ -53,7 +53,7 @@ Links:
 Move中的所有原生类型都具有 `drop` 能力。包括：
 
 - [bool](./../move-basics/primitive-types.md#booleans)
-- [无符号整数](./../move-basics/primitive-types.md#integers)
+- [无符号整数](./../move-basics/primitive-types.md#integer-types)
 - [vector](./../move-basics/vector.md)
 - [address](./../move-basics/address.md)
 
