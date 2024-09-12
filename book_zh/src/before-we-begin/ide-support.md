@@ -2,7 +2,7 @@
 
 目前最流行的 Move 开发 IDE 有两个：VSCode 和 IntelliJ IDEA。它们都提供基本功能，如语法高亮和错误消息，但在附加功能上有所不同。无论你选择哪个 IDE，都需要使用终端运行 [Move CLI](./install-sui.md)。
 
-> **IntelliJ 插件不支持 Move 2024 版，不分语法不会被高亮显示。**
+> **IntelliJ 插件不支持 Move 2024 版，某些语法不会被高亮显示。**
 
 ## VSCode
 
