@@ -68,9 +68,9 @@ $ sui client active-address
 
 该命令将输出你账户的地址，以 `0x` 开头，后面跟着64个字符。
 
-## 请求硬币
+## 获取测试币
 
-在 _devnet_ 和 _testnet_ 环境中，CLI 提供了一种方式来请求硬币到你的账户，以便你可以与网络进行交互。要请求硬币，请运行 `sui client faucet` 命令：
+在 _devnet_ 和 _testnet_ 环境中，CLI 提供了一种方式来请求测试币到你的账户，以便你可以与网络进行交互。要请求测试币，请运行 `sui client faucet` 命令：
 
 ```bash
 $ sui client faucet
