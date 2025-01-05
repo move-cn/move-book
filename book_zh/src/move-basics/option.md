@@ -2,7 +2,6 @@
 
 Option 是一种表示可选值的类型，它可能存在，也可能不存在。Move 中的 Option 概念借鉴自 Rust，它是 Move 中非常有用的原语。`Option` 在[标准库](./standard-library.md)中定义，如下所示：
 
-文件：move-stdlib/source/option.move
 
 ```move
 // 文件：move-stdlib/source/option.move

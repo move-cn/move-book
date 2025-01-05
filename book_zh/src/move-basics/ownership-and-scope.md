@@ -7,21 +7,19 @@ Move 中的每个变量都拥有一个作用域和一个所有者。作用域是
 在函数作用域中定义的变量由该作用域所有。运行时会遍历函数作用域并执行每个表达式和语句。一旦函数作用域结束，定义在其中的变量就会被丢弃或释放。
 
 ```move
-module book::ownership {
-    public fun owner() {
-        let a = 1; // a 由 `owner` 函数拥有
-    } // a 在此处被丢弃
+module book::ownership;
 
-    public fun other() {
-        let b = 2; // b 由 `other` 函数拥有
-    } // b 在此处被丢弃
-
-    #[test]
-    fun test_owner() {
-        owner();
-        other();
-        // a 和 b 在此处无效
-    }
+public fun owner() {
+    let a = 1; // a is owned by the `owner` function
+} // a is dropped here
+public fun other() {
+    let b = 2; // b is owned by the `other` function
+} // b is dropped here
+#[test]
+fun test_owner() {
+    owner();
+    other();
+    // a & b is not valid here
 }
 ```
 
@@ -32,18 +30,18 @@ module book::ownership {
 如果我们将 `owner` 函数改为返回变量 `a`，那么 `a` 的所有权将被转移到函数的调用者。
 
 ```move
-module book::ownership {
-    public fun owner(): u8 {
-        let a = 1; // a 在此处定义
-        a // 作用域结束，a 被返回
-    }
+module book::ownership;
 
-    #[test]
-    fun test_owner() {
-        let a = owner();
-        // a 在此处有效
-    } // a 在此处被丢弃
+public fun owner(): u8 {
+    let a = 1; // a defined here
+    a // scope ends, a is returned
 }
+
+#[test]
+fun test_owner() {
+    let a = owner();
+    // a is valid here
+} // a is dropped here
 ```
 
 ## 按值传递
@@ -51,22 +49,22 @@ module book::ownership {
 此外，如果我们将变量 `a` 传递给另一个函数，则 `a` 的所有权将被转移到该函数。执行此操作时，我们将值从一个作用域 _移动_ 到另一个作用域。这也被称为 _move 语义_。
 
 ```move
-module book::ownership {
-    public fun owner(): u8 {
-        let a = 10;
-        a
-    } // a 被返回
+module book::ownership;
 
-    public fun take_ownership(v: u8) {
-        // v 由 `take_ownership` 拥有
-    } // v 在此处被丢弃
+public fun owner(): u8 {
+    let a = 10;
+    a
+} // a is returned
 
-    #[test]
-    fun test_owner() {
-        let a = owner();
-        take_ownership(a);
-        // a 在此处无效
-    }
+public fun take_ownership(v: u8) {
+    // v is owned by `take_ownership`
+} // v is dropped here
+
+#[test]
+fun test_owner() {
+    let a = owner();
+    take_ownership(a);
+    // a is not valid here
 }
 ```
 
@@ -75,33 +73,33 @@ module book::ownership {
 每个函数都有一个主作用域，还可以通过使用块来拥有子作用域。块是一系列语句和表达式，它有自己的作用域。在块中定义的变量由该块拥有，当块结束时，变量将被丢弃。
 
 ```move
-module book::ownership {
-    public fun owner() {
-        let a = 1; // a 由 `owner` 函数的作用域拥有
+module book::ownership;
+
+public fun owner() {
+    let a = 1; // a is owned by the `owner` function's scope
+    {
+        let b = 2; // b is owned by the block
         {
-            let b = 2; // b 由块拥有
-            {
-                let c = 3; // c 由块拥有
-            }; // c 在此处被丢弃
-        }; // b 在此处被丢弃
-        // a = b; // 错误：b 在此处无效
-        // a = c; // 错误：c 在此处无效
-    } // a 在此处被丢弃
-}
+            let c = 3; // c is owned by the block
+        }; // c is dropped here
+    }; // b is dropped here
+    // a = b; // error: b is not valid here
+    // a = c; // error: c is not valid here
+} // a is dropped here
 ```
 
 但是，如果我们使用块的返回值，则变量的所有权将被转移到块的调用者。
 
 ```move
-module book::ownership {
-    public fun owner(): u8 {
-        let a = 1; // a 由 `owner` 函数的作用域拥有
-        let b = {
-            let c = 2; // c 由块拥有
-            c // c 被返回
-        }; // c 在此处被丢弃
-        a + b // a 和 b 在此处都有效
-    }
+module book::ownership;
+
+public fun owner(): u8 {
+    let a = 1; // a is owned by the `owner` function's scope
+    let b = {
+        let c = 2; // c is owned by the block
+        c // c is returned
+    }; // c is dropped here
+    a + b // both a and b are valid here
 }
 ```
 

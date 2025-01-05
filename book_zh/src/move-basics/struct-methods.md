@@ -31,7 +31,7 @@ public use fun function_path as Type.method_name;
 在下面的示例中，我们更改了 `hero` 模块，并添加了另一种类型 - `Villain`。`Hero` 和 `Villain` 都具有类似的字段名称和方法。为了避免名称冲突，我们为这些方法添加了前缀 `hero_` 和 `villain_`。但是，我们可以为这些方法创建别名，以便在结构体实例上调用时不需要前缀。
 
 ```move
-{{#include ../../../packages/samples/sources/move-basics/struct-methods.move:hero_and_villain}}
+{{#include ../../../packages/samples/sources/move-basics/struct-methods-2.move:hero_and_villain}}
 ```
 
 正如你所看到的，在测试函数中，我们在 `Hero` 和 `Villain` 的实例上调用了 `health` 方法，而不使用前缀。编译器将自动将方法与结构体关联起来。
@@ -41,7 +41,7 @@ public use fun function_path as Type.method_name;
 还可以将在另一个模块中定义的函数与当前模块的结构体关联起来。按照相同的方法，我们可以为在另一个模块中定义的方法创建别名。让我们使用[标准库](./standard-library.md)中的 `bcs::to_bytes` 方法，并将其与 `Hero` 结构体关联起来。这将允许将 `Hero` 结构体序列化为字节向量。
 
 ```move
-{{#include ../../../packages/samples/sources/move-basics/struct-methods.move:hero_to_bytes}}
+{{#include ../../../packages/samples/sources/move-basics/struct-methods-3.move:hero_to_bytes}}
 ```
 
 ## 进一步阅读
