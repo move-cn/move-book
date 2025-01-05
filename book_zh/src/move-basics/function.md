@@ -21,7 +21,7 @@
 与任何其他模块成员一样，函数可以通过路径导入和访问。路径由模块路径和函数名称组成，用 `::` 分隔。例如，如果在 `book` 包的 `math` 模块中有一个名为 `add` 的函数，则其路径为 `book::math::add`；如果模块已导入，则为 `math::add`。
 
 ```move
-{{#include ../../../packages/samples/sources/move-basics/function.move:use_math}}
+{{#include ../../../packages/samples/sources/move-basics/function_use.move:use_math}}
 ```
 
 ## 多返回值

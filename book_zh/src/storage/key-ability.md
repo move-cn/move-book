@@ -37,5 +37,5 @@ public fun new(name: String, ctx: &mut TxContext): Object {
 
 ## 进一步阅读
 
-- 在 Move 参考手册中的[类型能力](/reference/type-abilities.html)。
+- 在 Move 参考手册中的[类型能力](/reference/abilities.html)。
 

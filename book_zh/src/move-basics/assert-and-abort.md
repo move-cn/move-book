@@ -16,19 +16,28 @@
 
 ## 断言 (assert!)
 
-`assert!` 是一个内置宏，用于断言一个条件是否成立。如果条件为假，则交易会中止，并返回给定的中止代码。`assert!` 宏提供了一种方便的方法，可以在条件不满足时中止交易。该宏可以替代使用 `if` 语句和 `abort` 来编写的代码。`code` 参数是必需的，它必须是一个 `u64` 值。
+`assert!` 是一个内置宏，用于断言一个条件是否成立。如果条件为假，则交易会中止，并返回给定的中止代码。这个宏简化了原本需要使用 `if` 表达式和 `abort` 编写的代码。`code` 参数是可选的，但必须是一个 `u64` 值或 `#[error]`（详细信息请参见下文）。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/assert-and-abort.move:assert}}
 ```
 
-## 错误代码
+## 错误常量
 
-为了使中止代码更具描述性，定义 [错误代码](./constants.md) 是一个好习惯。错误代码使用 `const` 关键字声明，通常以 `E` 开头，后面跟驼峰式命名。错误代码与其他常量没有什么不同，没有特殊的处理方式，但是它们可以提高代码的可读性，并使人们更容易理解中止场景。
+为了使中止代码更具描述性，定义 [错误常量](./constants.md) 是一个好习惯。错误代码使用 `const` 关键字声明，通常以 `E` 开头，后面跟驼峰式命名。错误代码与其他常量没有什么不同，没有特殊的处理方式，但是它们可以提高代码的可读性，并使人们更容易理解中止场景。
 
 ```move
 {{#include ../../../packages/samples/sources/move-basics/assert-and-abort.move:error_const}}
 ```
+
+## 错误消息
+
+Move 2024 引入了一种特殊的错误常量类型，用 `#[error]` 属性标记。  这个属性允许错误常量的类型为 `vector<u8>`，并可用于存储错误消息。
+
+```move
+{{#include ../../../packages/samples/sources/move-basics/assert-and-abort.move:error_attribute}}
+```
+
 
 ## 进一步阅读
 

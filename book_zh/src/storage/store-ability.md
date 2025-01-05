@@ -46,4 +46,4 @@ public struct MegaConfig has key {
 
 ## 进一步阅读
 
-- Move参考中的[类型能力](/reference/type-abilities.html)。
+- Move参考中的[类型能力](/reference/abilities.html)。

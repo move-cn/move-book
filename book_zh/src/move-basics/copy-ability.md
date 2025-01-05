@@ -43,4 +43,4 @@ Move 中的所有本机类型都具有 `copy` 能力。这包括：
 
 ## 进一步阅读
 
-- [类型能力](/reference/type-abilities.html) 在 Move 参考中。
+- [类型能力](/reference/abilities.html) 在 Move 参考中。
