@@ -18,6 +18,10 @@
 `VecSet` 是一种用于存储一组唯一项目的集合类型。它类似于 `vector`，但它不允许重复的项目。这使得它非常
 适合存储一组唯一的项目，例如唯一 ID 或地址列表。
 
+```move
+{{#include ../../../packages/samples/sources/programmability/collections-2.move:vec_set}}
+```
+
 VecSet 在尝试插入已存在于集合中的项时将失败。
 
 ## VecMap
@@ -29,7 +33,7 @@ VecSet 在尝试插入已存在于集合中的项时将失败。
 ，则旧值将被新值替换。
 
 ```move
-{{#include ../../../packages/samples/sources/programmability/collections.move:vec_map}}
+{{#include ../../../packages/samples/sources/programmability/collections-3.move:vec_map}}
 ```
 
 ## 限制
@@ -44,7 +48,7 @@ VecSet 在尝试插入已存在于集合中的项时将失败。
 > 此行为会由 linter 捕获并发出警告：_比较类型为 'sui::vec_set::VecSet' 的集合可能会产生意外的结果_
 
 ```move
-{{#include ../../../packages/samples/sources/programmability/collections.move:vec_set_comparison}}
+{{#include ../../../packages/samples/sources/programmability/collections-4.move:vec_set_comparison}}
 ```
 
 在上面的例子中，比较会失败，因为插入顺序不是确定的，并且两个 `VecSet` 实例可能具有不同的元素顺序。即

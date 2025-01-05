@@ -17,7 +17,7 @@
 一种常见的做法是在包发布时创建一个单独的`AdminCap`对象。这样，应用程序可以有一个设置阶段，管理员账户可以准备应用程序的状态。
 
 ```move
-{{#include ../../../packages/samples/sources/programmability/capability.move:admin_cap}}
+{{#include ../../../packages/samples/sources/programmability/capability-2.move:admin_cap}}
 ```
 
 ## 地址检查与能力
@@ -27,13 +27,13 @@
 让我们看一下如果使用地址检查的方式来实现创建用户的`new`函数会是什么样子：
 
 ```move
-{{#include ../../../packages/samples/sources/programmability/capability.move:with_address}}
+{{#include ../../../packages/samples/sources/programmability/capability-3.move:with_address}}
 ```
 
 现在，让我们看看如果使用能力的方式来实现相同的函数会是什么样子：
 
 ```move
-{{#include ../../../packages/samples/sources/programmability/capability.move:with_capability}}
+{{#include ../../../packages/samples/sources/programmability/capability-4.move:with_capability}}
 ```
 
 与地址检查相比，使用能力具有以下几个优势：

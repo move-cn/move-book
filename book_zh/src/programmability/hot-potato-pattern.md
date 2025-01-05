@@ -94,9 +94,9 @@ transfer::public_transfer(proceeds, ctx.sender());
 
 该模式在 Sui Framework中以各种形式使用。以下是一些示例：
 
-- `sui::borrow` - 使用“烫手山芋”模式确保借出的值被正确归还到原始容器。
-- `sui::transfer_policy` - 定义了 `TransferRequest`，一种只能在满足所有条件时才能被消耗的“烫手山芋”。
-- `sui::token` - 在闭环代币系统中，`ActionRequest` 携带已执行操作的信息，并像 `TransferRequest` 一样收集批准。
+- [sui::borrow](https://docs.sui.io/references/framework/sui-framework/borrow) - 使用“烫手山芋”模式，确保借用的值被返回到正确的容器。
+- [sui::transfer_policy](https://docs.sui.io/references/framework/sui-framework/transfer_policy) - 定义了 `TransferRequest`，一种“烫手山芋”对象，只有在满足所有条件时才能被消费。
+- [sui::token](https://docs.sui.io/references/framework/sui-framework/token) - 在闭环代币系统中，`ActionRequest` 用于携带已执行操作的信息，并类似于 `TransferRequest`，收集批准。
 
 ## 总结
 

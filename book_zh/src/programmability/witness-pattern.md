@@ -11,30 +11,30 @@
 > 通常情况下，证明者结构体不会被存储，因此函数可能需要该类型的 [Drop](./../move-basics/drop-ability.md) 能力。
 
 ```move
-module book::witness {
-    /// 需要证明者才能创建的结构体。
-    public struct Instance<T> { t: T }
+module book::witness;
 
-    /// 使用提供的 T 创建 `Instance<T>` 的新实例。
-    public fun new<T>(witness: T): Instance<T> {
-        Instance { t: witness }
-    }
+/// A struct that requires a witness to be created.
+public struct Instance<T> { t: T }
+
+/// Create a new instance of `Instance<T>` with the provided T.
+public fun new<T>(witness: T): Instance<T> {
+    Instance { t: witness }
 }
 ```
 
 构造 `Instance<T>` 的唯一方法是调用 `new` 函数，并提供类型 `T` 的一个实例。这是 Move 中证明者模式的基本示例。提供证明者的模块通常会有相应的实现，例如下面的 `book::witness_source` 模块：
 
 ```move
-module book::witness_source {
-    use book::witness::{Self, Instance};
+module book::witness_source;
 
-    /// 作为证明者使用的结构体。
-    public struct W {}
+use book::witness::{Self, Instance};
 
-    /// 创建 `Instance<W>` 的新实例。
-    public fun new_instance(): Instance<W> {
-        witness::new(W {})
-    }
+/// A struct used as a witness.
+public struct W {}
+
+/// Create a new instance of `Instance<W>`.
+public fun new_instance(): Instance<W> {
+    witness::new(W {})
 }
 ```
 
