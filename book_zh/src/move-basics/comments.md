@@ -16,14 +16,10 @@
 
 ## 行注释
 
-```Move
-{{#include ../../../packages/samples/sources/move-basics/comments.move:line}}
-```
-
 你可以使用双斜杠 `//` 来注释掉余下的行。编译器会忽略 `//` 之后的所有内容。
 
 ```Move
-{{#include ../../../packages/samples/sources/move-basics/comments.move:line_2}}
+{{#include ../../../packages/samples/sources/move-basics/comments-line.move:main}}
 ```
 
 ## 块注释
@@ -31,7 +27,7 @@
 块注释用于注释掉一段代码。它们以 `/*` 开始，以 `*/` 结束。编译器会忽略 `/*` 和 `*/` 之间的所有内容。你可以使用块注释来注释掉单行或多行代码，甚至可以注释掉一行中的一部分。
 
 ```Move
-{{#include ../../../packages/samples/sources/move-basics/comments.move:block}}
+{{#include ../../../packages/samples/sources/move-basics/comments-block.move:main}}
 ```
 
 这个例子有点极端，但它展示了如何使用块注释来注释掉一行中的一部分。
@@ -41,7 +37,7 @@
 文档注释是一种特殊的注释，用于为代码生成文档。它们类似于块注释，但以三个斜杠 `///` 开始，并放在它们所记录的项目定义之前。
 
 ```Move
-{{#include ../../../packages/samples/sources/move-basics/comments.move:doc}}
+{{#include ../../../packages/samples/sources/move-basics/comments-doc.move:main}}
 ```
 
 <!-- TODO: docgen, 哪些成员会在文档中 -->

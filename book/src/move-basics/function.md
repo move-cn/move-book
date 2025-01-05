@@ -38,7 +38,7 @@ function called `add` in the `math` module in the `book` package, the path to it
 `book::math::add`, or, if the module is imported, `math::add`.
 
 ```move
-{{#include ../../../packages/samples/sources/move-basics/function.move:use_math}}
+{{#include ../../../packages/samples/sources/move-basics/function_use.move:use_math}}
 ```
 
 ## Multiple return values

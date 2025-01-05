@@ -11,7 +11,7 @@
 在同一个包中，另一个模块可以有自己的`init`函数，封装不同的逻辑。
 
 ```move
-{{#include ../../../packages/samples/sources/programmability/module-initializer.move:other}}
+{{#include ../../../packages/samples/sources/programmability/module-initializer-2.move:other}}
 ```
 
 ## `init`功能

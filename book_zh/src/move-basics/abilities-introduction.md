@@ -38,8 +38,8 @@ struct VeryAble has copy, drop {
 
 ## 没有能力
 
-没有能力的结构体不能被丢弃、复制或存储在存储中。我们称这种结构体为 _Hot Potato_。这是一个玩笑，但也是记住没有能力的结构体就像一个烫手山芋的好方法——它只能被传递，需要特殊处理。Hot Potato 是 Move 中最强大的模式之一，我们在[Hot Potato](./../programmability/hot-potato.md)章节中详细介绍了它。
+没有能力的结构体不能被丢弃、复制或存储在存储中。我们称这种结构体为 _Hot Potato_。这是一个玩笑，但也是记住没有能力的结构体就像一个烫手山芋的好方法——它只能被传递，需要特殊处理。Hot Potato 是 Move 中最强大的模式之一，我们在[Hot Potato 模式（烫手山芋模式）](./../programmability/hot-potato.md)章节中详细介绍了它。
 
 ## 延伸阅读
 
-- Move参考中的[类型能力](/reference/type-abilities.html)。
+- Move参考中的[类型能力](/reference/abilities.html)。

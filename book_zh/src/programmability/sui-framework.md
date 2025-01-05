@@ -43,9 +43,12 @@ Sui Framework 是 [Package Manifest](./../concepts/manifest.md) 中的默认依�
 
 <div class="modules-table">
 
-| 模块                                                                                         | 描述                                                        | 章节                                                   |
-| -------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------ |
-| [sui::bcs](https://docs.sui.io/references/framework/sui-framework/bcs)                         | 实现了 BCS 编码和解码函数                                     | [二进制规范序列化](./bcs.md)                            |
+| 模块                                                                           | 描述                                                        | 章节                                      |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------- |
+| [sui::bcs](https://docs.sui.io/references/framework/sui-framework/bcs)       | 实现了 BCS（Binary Canonical Serialization）编码和解码函数 | [二进制规范序列化](./bcs.md)             |
+| [sui::borrow](https://docs.sui.io/references/framework/sui-framework/borrow) | 实现了通过**值**借用的借用机制                              | [烫手山芋模式](./hot-potato-pattern.md)   |
+| [sui::hex](https://docs.sui.io/references/framework/sui-framework/hex)       | 实现了十六进制编码和解码函数                                | -                                         |
+| [sui::types](https://docs.sui.io/references/framework/sui-framework/types)   | 提供了一种检查类型是否为一次性见证（One-Time-Witness）的方法 | [一次性见证](./one-time-witness.md)      |
 
 ## 导出地址
 
@@ -93,11 +96,12 @@ Sui Framework 的源代码可以在 [Sui 仓库](https://github.com/MystenLabs/s
 - sui::transfer_policy
 
 
-- sui::bcs
-- sui::hex
-- sui::math
-- sui::types
-- sui::borrow
+工具:
++ sui::bcs
++ sui::hex
+- sui::math (deprecated)
++ sui::types
++ sui::borrow
 
 
 - sui::authenticator

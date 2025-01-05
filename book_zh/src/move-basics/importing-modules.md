@@ -15,7 +15,7 @@ Move 通过允许模块导入来实现高模块化和代码重用。同一个包
 
 ```move
 // 文件: sources/module_two.move
-{{#include ../../../packages/samples/sources/move-basics/importing-modules.move:module_two}}
+{{#include ../../../packages/samples/sources/move-basics/importing-modules-two.move:module_two}}
 ```
 
 ## 导入成员
@@ -23,7 +23,7 @@ Move 通过允许模块导入来实现高模块化和代码重用。同一个包
 您还可以从模块中导入特定成员。这在您只需要来自模块的单个函数或单个类型时非常有用。语法与导入模块相同，但您在模块路径之后添加成员名称。
 
 ```move
-{{#include ../../../packages/samples/sources/move-basics/importing-modules.move:members}}
+{{#include ../../../packages/samples/sources/move-basics/importing-modules-members.move:members}}
 ```
 
 ## 分组导入
@@ -31,7 +31,7 @@ Move 通过允许模块导入来实现高模块化和代码重用。同一个包
 可以使用花括号 `{}` 将导入分组到单个 `use` 语句中。当您需要从同一个模块导入多个成员时，这非常有用。Move 允许对来自同一个模块和来自同一个包的导入进行分组。
 
 ```move
-{{#include ../../../packages/samples/sources/move-basics/importing-modules.move:grouped}}
+{{#include ../../../packages/samples/sources/move-basics/importing-modules-grouped.move:grouped}}
 ```
 
 在 Move 中，单个函数的导入并不常见，因为函数名称可能会重叠并引起混淆。推荐的做法是导入整个模块并使用模块路径来访问函数。类型具有唯一名称，应该单独导入。
@@ -39,7 +39,7 @@ Move 通过允许模块导入来实现高模块化和代码重用。同一个包
 要将成员和模块本身一起导入到组导入中，可以使用 `Self` 关键字。`Self` 关键字指的是模块本身，可用于导入模块及其成员。
 
 ```move
-{{#include ../../../packages/samples/sources/move-basics/importing-modules.move:self}}
+{{#include ../../../packages/samples/sources/move-basics/importing-modules-self.move:self}}
 ```
 
 ## 解决命名冲突
@@ -47,7 +47,7 @@ Move 通过允许模块导入来实现高模块化和代码重用。同一个包
 从不同模块导入多个成员时，可能会出现命名冲突。例如，如果您导入了两个都具有相同名称的函数的模块，则需要使用模块路径来访问该函数。不同的包中也可能存在具有相同名称的模块。为了解决冲突并避免歧义，Move 提供了 `as` 关键字来重命名导入的成员。
 
 ```move
-{{#include ../../../packages/samples/sources/move-basics/importing-modules.move:conflict}}
+{{#include ../../../packages/samples/sources/move-basics/importing-modules-conflict-resolution.move:conflict}}
 ```
 
 ## 添加外部依赖项
@@ -71,5 +71,5 @@ Local = { local = "../my_other_package" }
 要从另一个包导入模块，请使用 `use` 关键字后跟模块路径。模块路径由包地址（或别名）和模块名称组成，两者之间用 `::` 分隔。
 
 ```move
-{{#include ../../../packages/samples/sources/move-basics/importing-modules.move:external}}
+{{#include ../../../packages/samples/sources/move-basics/importing-modules-external.move:external}}
 ```

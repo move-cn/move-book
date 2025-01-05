@@ -46,7 +46,7 @@ Links:
 
 `drop` 能力通常在自定义的集合类型上使用，以消除在不再需要集合时的特殊处理需求。例如，`vector` 类型具有 `drop` 能力，这使得在不再需要时可以忽略该向量。然而，Move类型系统最大的特点是能够没有 `drop`。这确保了资产得到正确处理，而不被忽略。
 
-一个仅具有 `drop` 能力的结构体称为 _Witness_。我们在[见证和抽象实现](./../programmability/witness-and-abstract-implementation.md)部分解释了 _Witness_ 的概念。
+一个仅具有 `drop` 能力的结构体称为 _Witness_。我们在[见证和抽象实现](./../programmability/witness-pattern.md)部分解释了 _Witness_ 的概念。
 
 ## 带有 `drop` 能力的类型
 
@@ -65,4 +65,4 @@ Move中的所有原生类型都具有 `drop` 能力。包括：
 
 ## 进一步阅读
 
-- Move参考中的[Type Abilities](/reference/type-abilities.html)。
+- Move参考中的[Type Abilities](/reference/abilities.html)。

@@ -6,14 +6,16 @@
 
 ```move
 // 文件：sui-framework/sources/event.move
-module sui::event {
-    /// 发布自定义的Move事件，将数据发送到链下。
-    ///
-    /// 用于创建自定义索引并以最适合特定应用程序的方式跟踪链上活动。
-    ///
-    /// 类型 `T` 是索引事件的主要方式，可以包含幻象参数，例如 `emit(MyEvent<phantom T>)`。
-    public native fun emit<T: copy + drop>(event: T);
-}
+
+module sui::event;
+
+/// 发出一个自定义的 Move 事件，将数据发送到链下。
+///
+/// 用于以最适合特定应用程序的方式创建自定义索引和跟踪链上活动。
+///
+/// 类型 `T` 是索引事件的主要方式，并且可以包含虚类型参数，例如 `emit(MyEvent<phantom T>)`。
+public native fun emit<T: copy + drop>(event: T);
+
 ```
 
 ## 发布事件

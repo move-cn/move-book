@@ -68,9 +68,7 @@ hello_world = "0x0"
 ```move
 /*
 /// 模块：hello_world
-module hello_world::hello_world {
-
-}
+module hello_world::hello_world;
 */
 ```
 
@@ -92,21 +90,20 @@ module hello_world::hello_world {
 ```move
 /*
 #[test_only]
-module hello_world::hello_world_tests {
-    // uncomment this line to import the module
-    // use hello_world::hello_world;
+module hello_world::hello_world_tests;
+// uncomment this line to import the module
+// use hello_world::hello_world;
 
-    const ENotImplemented: u64 = 0;
+const ENotImplemented: u64 = 0;
 
-    #[test]
-    fun test_hello_world() {
-        // pass
-    }
+#[test]
+fun test_hello_world() {
+    // pass
+}
 
-    #[test, expected_failure(abort_code = hello_world::hello_world_tests::ENotImplemented)]
-    fun test_hello_world_fail() {
-        abort ENotImplemented
-    }
+#[test, expected_failure(abort_code = hello_world::hello_world_tests::ENotImplemented)]
+fun test_hello_world_fail() {
+    abort ENotImplemented
 }
 */
 ```
@@ -125,13 +122,15 @@ Move 是一种编译型语言，因此它需要将源文件编译成 Move 字节
 ```move
 /// 命名地址 `hello_world` 下的 `hello_world` 模块。
 /// 命名地址在 `Move.toml` 中设置。
-module hello_world::hello_world {
-    // 从标准库导入 `String` 类型
-    use std::string::String;
-    /// 返回 "Hello, World!" 作为 `String`。
-    public fun hello_world(): String {
-        b"Hello, World!".to_string()
-    }
+
+module hello_world::hello_world;
+// Imports the `String` type from the Standard Library
+
+use std::string::String;
+
+/// Returns the "Hello, World!" as a `String`.
+public fun hello_world(): String {
+    b"Hello, World!".to_string()
 }
 ```
 
@@ -164,13 +163,13 @@ BUILDING hello_world
 请用以下内容替换 `tests/hello_world_tests.move`：
 
 ```move
-#[test_only]
-module hello_world::hello_world_tests {
-    use hello_world::hello_world;
-    #[test]
-    fun test_hello_world() {
-        assert!(hello_world::hello_world() == b"Hello, World!".to_string(), 0);
-    }
+module hello_world::hello_world_tests;
+
+use hello_world::hello_world;
+
+#[test]
+fun test_hello_world() {
+    assert!(hello_world::hello_world() == b"Hello, World!".to_string(), 0);
 }
 ```
 

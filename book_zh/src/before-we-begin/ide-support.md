@@ -13,7 +13,7 @@
 ## IntelliJ IDEA
 
 - [IntelliJ IDEA](https://www.jetbrains.com/idea/) 是 JetBrains 推出的一款商业 IDE。
-- [Move Language Plugin](https://plugins.jetbrains.com/plugin/14721-move-language) 是由 [Pontem Network](https://pontem.network/) 开发的 Move 语言扩展。
+- [Move Language Plugin](https://plugins.jetbrains.com/plugin/14721-move-language) 是由 [MoveFuns](https://movefuns.org/) 开发的 Sui Move 语言扩展。
 
 ## Emacs
 

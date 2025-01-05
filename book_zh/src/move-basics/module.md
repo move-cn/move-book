@@ -2,12 +2,14 @@
 
 ## 模块声明
 
-使用 `module` 关键字后跟包地址、模块名称和模块体在花括号 `{}` 内来声明模块。模块名称应采用 `snake_case` 形式，即所有小写字母，单词之间用下划线分隔。模块名称在包内必须是唯一的。
+模块使用 `module` 关键字声明，后跟包地址、模块名称、分号以及模块主体。模块名称应采用 `snake_case` 命名规则，即全部使用小写字母，单词之间用下划线分隔。模块名称在包内必须唯一。
 
-通常，`sources/` 文件夹中的单个文件包含一个模块。文件名应与模块名称匹配 - 例如，`donut_shop` 模块应存储在 `donut_shop.move` 文件中。您可以在[Coding Conventions](../special-topics/coding-conventions.md)部分了解更多有关编码约定的信息。
+通常，`sources/` 文件夹中的单个文件包含一个模块。文件名应与模块名称匹配 - 例如，`donut_shop` 模块应存储在 `donut_shop.move` 文件中。您可以在[Coding Conventions](../guides/coding-conventions.md)部分了解更多有关编码约定的信息。
+
+> 如果需要在一个文件中声明多个模块，必须使用 [模块块](#模块块)。
 
 ```move
-{{#include ../../../packages/samples/sources/move-basics/module.move:module}}
+{{#include ../../../packages/samples/sources/move-basics/module-label.move:module}}
 ```
 
 模块的成员包括结构体、函数、常量和导入：
@@ -38,9 +40,18 @@ book = "0x0"
 
 模块成员声明在模块体内部。为了说明这一点，让我们定义一个简单的模块，其中包含一个结构体、一个函数和一个常量：
 
-```move
+```Move
+{{#include ../../../packages/samples/sources/move-basics/module-members.move:members}}
+```
+
+## 模块块
+
+在 2024 年之前的 Move 版本中，需要使用**模块块**——模块的内容必须用大括号 `{}` 包裹。使用模块块而不是**标签**的主要原因是当需要在一个文件中定义多个模块时。
+
+```Move
 {{#include ../../../packages/samples/sources/move-basics/module.move:members}}
 ```
+
 
 ## 进一步阅读
 

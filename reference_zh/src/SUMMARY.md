@@ -18,6 +18,7 @@
 - [局部变量和作用域](variables.md)
 - [相等性](equality.md)
 - [错误处理](abort-and-assert.md)
+  - [Clever Errors](abort-and-assert/clever-errors.md)
 - [流程控制](control-flow.md)
   - [条件表达式](control-flow/conditionals.md)
   - [循环](control-flow/loops.md)
