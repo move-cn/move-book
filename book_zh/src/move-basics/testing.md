@@ -10,21 +10,21 @@
 测试函数是常规函数，但不能接受任何参数，也不能有返回值。它们不会被编译成字节码，也不会被发布。
 
 ```move
-module book::testing {
-    // `#[test]` 属性放置在 `fun` 关键字之前。
-    // 可以放在函数签名的上方或紧挨着 `fun` 关键字：`#[test] fun my_test() { ... }`
-    // 测试的名称将会是 `book::testing::simple_test`。
-    #[test]
-    fun simple_test() {
-        let sum = 2 + 2;
-        assert!(sum == 4, 1);
-    }
+module book::testing;
 
-    // 测试的名称将会是 `book::testing::more_advanced_test`.
-    #[test] fun more_advanced_test() {
-        let sum = 2 + 2 + 2;
-        assert!(sum == 4, 1);
-    }
+// Test attribute is placed before the `fun` keyword. Can be both above or
+// right before the `fun` keyword: `#[test] fun my_test() { ... }`
+// The name of the test would be `book::testing::simple_test`.
+#[test]
+fun simple_test() {
+    let sum = 2 + 2;
+    assert!(sum == 4);
+}
+
+// The name of the test would be `book::testing::more_advanced_test`.
+#[test] fun more_advanced_test() {
+    let sum = 2 + 2 + 2;
+    assert!(sum == 4);
 }
 ```
 
@@ -58,21 +58,20 @@ $ sui move test
 如果执行过程中没有终止，测试同样会失败。
 
 ```move
-module book::testing_failure {
+module book::testing_failure;
 
-    const EInvalidArgument: u64 = 1;
+const EInvalidArgument: u64 = 1;
 
-    #[test]
-    #[expected_failure(abort_code = 0)]
-    fun test_fail() {
-        abort 0 // 以终止码 0 终止
-    }
+#[test]
+#[expected_failure(abort_code = 0)]
+fun test_fail() {
+    abort 0 // aborts with 0
+}
 
-    // 属性可以组合在一起使用。
-    #[test, expected_failure(abort_code = EInvalidArgument)]
-    fun test_fail_1() {
-        abort 1 // 以终止码 1 终止
-    }
+// attributes can be grouped together
+#[test, expected_failure(abort_code = EInvalidArgument)]
+fun test_fail_1() {
+    abort 1 // aborts with 1
 }
 ```
 
@@ -87,29 +86,29 @@ module book::testing_failure {
 这时，`#[test_only]` 属性就派上用场了。
 
 ```move
-module book::testing {
-    // 使用 `secret` 函数的公共函数
-    public fun multiply_by_secret(x: u64): u64 {
-        x * secret()
-    }
+module book::testing;
 
-    /// 私有函数不能被公共函数使用
-    fun secret(): u64 { 100 }
+// Public function which uses the `secret` function.
+public fun multiply_by_secret(x: u64): u64 {
+    x * secret()
+}
 
-    #[test_only]
-    /// 此函数仅用于测试中的测试目的以及其他仅限测试的函数。
-    /// 注意可见性——对于 `#[test_only]`，
-    /// 通常使用 `public` 可见性。
-    public fun secret_for_testing(): u64 {
-        secret()
-    }
+/// Private function which is not available to the public.
+fun secret(): u64 { 100 }
 
-    #[test]
-    // 在测试环境中，我们可以访问 `secret_for_testing` 函数。
-    fun test_multiply_by_secret() {
-        let expected = secret_for_testing() * 2;
-        assert!(multiply_by_secret(2) == expected, 1);
-    }
+#[test_only]
+/// This function is only available for testing purposes in tests and other
+/// test-only functions. Mind the visibility - for `#[test_only]` it is
+/// common to use `public` visibility.
+public fun secret_for_testing(): u64 {
+    secret()
+}
+
+#[test]
+// In the test environment we have access to the `secret_for_testing` function.
+fun test_multiply_by_secret() {
+    let expected = secret_for_testing() * 2;
+    assert!(multiply_by_secret(2) == expected);
 }
 ```
 
