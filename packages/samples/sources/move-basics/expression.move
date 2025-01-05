@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #[allow(unused_variable)]
-module book::expression {
+module book::expression;
 
 #[test]
 fun expression_examples() {
@@ -16,8 +16,8 @@ let a;
 let b = true;     // true is a literal
 let n = 1000;     // 1000 is a literal
 let h = 0x0A;     // 0x0A is a literal
-let v = b"hello"; // b'hello' is a byte vector literal
-let x = x"0A";    // x'0A' is a byte vector literal
+let v = b"hello"; // b"hello" is a byte vector literal
+let x = x"0A";    // x"0A" is a byte vector literal
 let c = vector[1, 2, 3]; // vector[] is a vector literal
 // ANCHOR_END: literals
 
@@ -81,7 +81,4 @@ while (bool_expr) { expr; };
 // loop is an expression, but returns `()` as well.
 loop { expr; break };
 // ANCHOR_END: control_flow
-
-
-}
 }
