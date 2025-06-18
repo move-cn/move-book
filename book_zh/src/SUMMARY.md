@@ -125,6 +125,7 @@
 - [升级实践](./guides/upgradeability-practices.md)
 - [限制](./guides/building-against-limits.md)
 - [错误处理](./guides/better-error-handling.md)
+- [代码质量检查清单](./guides/code-quality-checklist.md)
 - [Open-sourcing Libraries]()
 - [Creating an NFT Collection]()
 - [Tests with Objects]()<!-- (./guides/testing.md) -->
